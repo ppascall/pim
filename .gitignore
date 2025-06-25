@@ -1,0 +1,68 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+out/
+coverage/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Misc
+*.local
+*.cache
+*.tmp
+*.swp
+*.bak
+*.orig
+
+# Mac system files
+.AppleDouble
+.LSOverride
+
+# Windows system files
+ehthumbs.db
+Icon?
+
+# Ignore compressed/bundled files
+*.gz
+*.br
+*.zip
+*.tar
+
+# Ignore middleware build output
+middleware/
+
+
+
+// filepath: [.gitignore](http://_vscodecontentref_/1)
+
+
+# Next.js build output
+.next/
