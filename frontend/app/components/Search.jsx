@@ -53,7 +53,6 @@ const styles = {
     border: "1px solid #d1d5db",
     fontSize: 16,
     background: "#f9fafd",
-    outline: "none",
     transition: "border 0.2s",
   },
   select: {

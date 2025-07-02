@@ -332,30 +332,16 @@ const ManageProducts = ({
                   ref={selectAllRef}
                   type="checkbox"
                   checked={
-                    paginatedProducts.length > 0 &&
-                    paginatedProducts.every((_, idx) =>
-                      selected.includes(idx + page * PRODUCTS_PER_PAGE)
-                    )
+                    filteredProducts.length > 0 &&
+                    filteredProducts.every((_, idx) => selected.includes(idx))
                   }
                   onChange={e => {
                     if (e.target.checked) {
-                      // Select all on this page
-                      setSelected(sel => [
-                        ...sel,
-                        ...paginatedProducts
-                          .map((_, idx) => idx + page * PRODUCTS_PER_PAGE)
-                          .filter(idx => !sel.includes(idx))
-                      ]);
+                      // Select all filtered products (across all pages)
+                      setSelected(filteredProducts.map((_, idx) => idx));
                     } else {
-                      // Deselect all on this page
-                      setSelected(sel =>
-                        sel.filter(
-                          idx =>
-                            !paginatedProducts
-                              .map((_, i) => i + page * PRODUCTS_PER_PAGE)
-                              .includes(idx)
-                        )
-                      );
+                      // Deselect all
+                      setSelected([]);
                     }
                   }}
                   style={{ cursor: 'pointer' }}
@@ -373,27 +359,30 @@ const ManageProducts = ({
                   No products found.
                 </td>
               </tr>
-            ) : paginatedProducts.map((p, idx) => (
-              <tr
-                key={idx + page * PRODUCTS_PER_PAGE}
-                style={selected.includes(idx + page * PRODUCTS_PER_PAGE) ? styles.trSelected : {}}
-              >
-                <td style={styles.td}>
-                  <input
-                    type="checkbox"
-                    checked={selected.includes(idx + page * PRODUCTS_PER_PAGE)}
-                    onChange={() => toggleSelect(idx + page * PRODUCTS_PER_PAGE)}
-                  />
-                </td>
-                {visibleFields.map(f => (
-                  <td key={f.field_name} style={styles.td}>
-                    {p[f.field_name] && String(p[f.field_name]).trim() !== ''
-                      ? p[f.field_name]
-                      : <span style={{ color: '#aaa' }}>—</span>}
+            ) : paginatedProducts.map((p, idx) => {
+              const globalIdx = page * PRODUCTS_PER_PAGE + idx;
+              return (
+                <tr
+                  key={globalIdx}
+                  style={selected.includes(globalIdx) ? styles.trSelected : {}}
+                >
+                  <td style={styles.td}>
+                    <input
+                      type="checkbox"
+                      checked={selected.includes(globalIdx)}
+                      onChange={() => toggleSelect(globalIdx)}
+                    />
                   </td>
-                ))}
-              </tr>
-            ))}
+                  {visibleFields.map(f => (
+                    <td key={f.field_name} style={styles.td}>
+                      {p[f.field_name] && String(p[f.field_name]).trim() !== ''
+                        ? p[f.field_name]
+                        : <span style={{ color: '#aaa' }}>—</span>}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
