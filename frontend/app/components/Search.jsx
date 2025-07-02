@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 
 const PAGE_SIZE = 5;
+const CATEGORY_PAGE_SIZE = 4;
 
 const styles = {
   container: {
@@ -165,6 +166,15 @@ const SearchProducts = ({
   const [pageIndices, setPageIndices] = useState({});
   const [status, setStatus] = useState({ message: '', color: '' });
 
+  // Modal state for editing all fields
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editProduct, setEditProduct] = useState(null);
+  const [editFields, setEditFields] = useState({});
+  const [editStatus, setEditStatus] = useState({ message: '', color: '' });
+
+  // Add this state for modal paging
+  const [editFieldPage, setEditFieldPage] = useState(0);
+
   // Fetch fields and products on mount
   useEffect(() => {
     const fetchFields = async () => {
@@ -304,6 +314,58 @@ const SearchProducts = ({
     }
   };
 
+  // Open modal to edit all fields of a product
+  const openEditModal = (product) => {
+    setEditProduct(product);
+    setEditFields({ ...product.data });
+    setEditStatus({ message: '', color: '' });
+    setEditFieldPage(0); // Reset to first page of fields
+    setEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+    setEditProduct(null);
+    setEditFields({});
+    setEditStatus({ message: '', color: '' });
+    setEditFieldPage(0);
+  };
+
+  // Save all edited fields for the product
+  const handleEditSave = async () => {
+    if (!editProduct) return;
+    try {
+      // Prepare bulk edit payload for all changed fields
+      const updates = [];
+      for (const [field, value] of Object.entries(editFields)) {
+        updates.push({
+          indices: [editProduct.index],
+          field,
+          value
+        });
+      }
+      // Send all updates in parallel
+      const results = await Promise.all(
+        updates.map(update =>
+          fetch('/api/bulk_edit_products', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(update)
+          }).then(res => res.json())
+        )
+      );
+      if (results.every(r => r.success)) {
+        setEditStatus({ message: 'Product updated!', color: 'green' });
+        await fetchProducts();
+        setTimeout(closeEditModal, 800);
+      } else {
+        setEditStatus({ message: 'Edit failed.', color: 'red' });
+      }
+    } catch {
+      setEditStatus({ message: 'Error updating product.', color: 'red' });
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>Search Products</h1>
@@ -385,23 +447,13 @@ const SearchProducts = ({
                       </td>
                       <td style={styles.td}>
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <form
-                            method="get"
-                            action="/manage_products"
-                            style={{ display: "inline-block", margin: 0 }}
-                            onSubmit={e => {
-                              e.preventDefault();
-                              window.location.href = `/manage_products?product_index=${product.index}`;
-                            }}
+                          <button
+                            className="button"
+                            style={styles.button}
+                            onClick={() => openEditModal(product)}
                           >
-                            <input type="hidden" name="product_index" value={product.index} />
-                            <input
-                              className="button"
-                              type="submit"
-                              value="Edit"
-                              style={styles.button}
-                            />
-                          </form>
+                            Edit
+                          </button>
                           <button
                             className="button"
                             style={styles.buttonDanger}
@@ -467,6 +519,94 @@ const SearchProducts = ({
       <a href="/" className="button" style={styles.buttonSecondary}>
         Back
       </a>
+
+      {editModalOpen && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+          background: 'rgba(0,0,0,0.25)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: '#fff', borderRadius: 10, padding: 32, minWidth: 340, boxShadow: '0 8px 32px rgba(0,0,0,0.18)'
+          }}>
+            <h2 style={{ marginBottom: 18, fontWeight: 700, fontSize: 20 }}>Edit Product</h2>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                handleEditSave();
+              }}
+            >
+              {fields
+                .slice(editFieldPage * CATEGORY_PAGE_SIZE, (editFieldPage + 1) * CATEGORY_PAGE_SIZE)
+                .map(field => (
+                  <div key={field} style={{ marginBottom: 14 }}>
+                    <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>{field}</label>
+                    <input
+                      type="text"
+                      value={editFields[field] ?? ''}
+                      onChange={e => setEditFields(f => ({ ...f, [field]: e.target.value }))}
+                      style={styles.input}
+                    />
+                  </div>
+              ))}
+              <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', margin: '10px 0 18px 0' }}>
+                <button
+                  type="button"
+                  className="button"
+                  style={{
+                    ...styles.button,
+                    minWidth: 70,
+                    background: editFieldPage === 0 ? '#ccc' : styles.button.background,
+                    color: '#fff',
+                    cursor: editFieldPage === 0 ? 'not-allowed' : 'pointer'
+                  }}
+                  disabled={editFieldPage === 0}
+                  onClick={() => setEditFieldPage(p => Math.max(0, p - 1))}
+                >
+                  Prev
+                </button>
+                <span style={{ alignSelf: 'center', color: '#444', fontSize: 15 }}>
+                  Page {editFieldPage + 1} of {Math.ceil(fields.length / CATEGORY_PAGE_SIZE)}
+                </span>
+                <button
+                  type="button"
+                  className="button"
+                  style={{
+                    ...styles.button,
+                    minWidth: 70,
+                    background: (editFieldPage + 1) * CATEGORY_PAGE_SIZE >= fields.length ? '#ccc' : styles.button.background,
+                    color: '#fff',
+                    cursor: (editFieldPage + 1) * CATEGORY_PAGE_SIZE >= fields.length ? 'not-allowed' : 'pointer'
+                  }}
+                  disabled={(editFieldPage + 1) * CATEGORY_PAGE_SIZE >= fields.length}
+                  onClick={() => setEditFieldPage(p => Math.min(Math.ceil(fields.length / CATEGORY_PAGE_SIZE) - 1, p + 1))}
+                >
+                  Next
+                </button>
+              </div>
+              {editStatus.message && (
+                <div style={{ color: editStatus.color, marginBottom: 12, fontWeight: 600 }}>{editStatus.message}</div>
+              )}
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                <button
+                  className="button"
+                  style={styles.button}
+                  type="submit"
+                >
+                  Save
+                </button>
+                <button
+                  className="button"
+                  style={{ ...styles.button, background: '#888' }}
+                  type="button"
+                  onClick={closeEditModal}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -181,6 +181,9 @@ const ManageProducts = ({
   const [status, setStatus] = useState({ message: '', color: '' });
   const [fieldOffset, setFieldOffset] = useState(0);
   const [page, setPage] = useState(0);
+  const [editProduct, setEditProduct] = useState(null);
+  const [editFields, setEditFields] = useState({});
+  const [editStatus, setEditStatus] = useState({ message: '', color: '' });
   const selectAllRef = useRef();
 
   // Fetch products and fields
@@ -257,6 +260,29 @@ const ManageProducts = ({
       setStatus({ message: 'Edited selected products.', color: 'green' });
     } else {
       setStatus({ message: data.message || 'Edit failed.', color: 'red' });
+    }
+  };
+
+  // Edit product
+  const handleEditSave = async () => {
+    if (!editProduct) return;
+    try {
+      const payload = { index: editProduct.index, ...editFields };
+      const res = await fetch('/api/update_product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
+        setEditStatus({ message: 'Product updated!', color: 'green' });
+        await fetchProducts();
+        setTimeout(closeEditModal, 800);
+      } else {
+        setEditStatus({ message: data.message || 'Edit failed.', color: 'red' });
+      }
+    } catch {
+      setEditStatus({ message: 'Error updating product.', color: 'red' });
     }
   };
 
