@@ -1,3 +1,4 @@
+'use client';
 export default function DownloadPage() {
   // This will trigger a download when the page is visited
   React.useEffect(() => {

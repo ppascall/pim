@@ -1,12 +1,161 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 
 const PAGE_SIZE = 5;
 
+const styles = {
+  container: {
+    maxWidth: 900,
+    margin: "0 auto",
+    background: "#f8fafc",
+    borderRadius: 16,
+    boxShadow: "0 6px 32px rgba(0,0,0,0.09)",
+    padding: 36,
+    marginTop: 36,
+    marginBottom: 36,
+  },
+  heading: {
+    marginBottom: 24,
+    textAlign: 'center',
+    fontWeight: 800,
+    fontSize: '2.2rem',
+    letterSpacing: '-1px',
+    color: "#1a2233"
+  },
+  form: {
+    marginBottom: 32,
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 24,
+    alignItems: 'flex-end',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    background: "#fff",
+    borderRadius: 10,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+    padding: 18,
+  },
+  formGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: 180,
+    fontWeight: 600,
+  },
+  label: {
+    marginBottom: 6,
+    fontWeight: 600,
+    color: "#222",
+    fontSize: 15,
+  },
+  input: {
+    padding: "10px 14px",
+    borderRadius: 6,
+    border: "1px solid #d1d5db",
+    fontSize: 16,
+    background: "#f9fafd",
+    outline: "none",
+    transition: "border 0.2s",
+  },
+  select: {
+    padding: "10px 14px",
+    borderRadius: 6,
+    border: "1px solid #d1d5db",
+    fontSize: 16,
+    background: "#f9fafd",
+    outline: "none",
+    transition: "border 0.2s",
+  },
+  button: {
+    background: '#1976d2',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 5,
+    padding: '7px 18px',
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: 'pointer',
+    margin: '0 4px',
+    minWidth: 70,
+    transition: 'background 0.2s,opacity 0.2s',
+    boxShadow: 'none',
+    height: 36,
+    lineHeight: '20px',
+    letterSpacing: 0
+  },
+  buttonDanger: {
+    background: '#d32f2f',
+    color: '#fff',
+    minWidth: 60,
+    maxWidth: 90,
+    padding: '7px 10px',
+    textAlign: 'center',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap'
+  },
+  buttonSecondary: {
+    background: '#616161',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 5,
+    fontWeight: 600,
+    fontSize: 15,
+    cursor: 'pointer',
+    height: 36,
+    minWidth: 80,
+    margin: '32px auto 0 auto',
+    display: 'block'
+  },
+  tableWrap: {
+    overflowX: "auto",
+    background: "#fff",
+    borderRadius: 12,
+    boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+    marginBottom: 18,
+    marginTop: 18,
+  },
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    fontSize: 16,
+    minWidth: 420,
+  },
+  th: {
+    background: "#f3f4f6",
+    color: "#333",
+    fontWeight: 800,
+    padding: "12px 10px",
+    borderBottom: "2px solid #e5e9f2",
+    textAlign: "left",
+    fontSize: 16,
+    letterSpacing: "0.2px"
+  },
+  td: {
+    padding: "10px 10px",
+    borderBottom: "1px solid #f0f0f0",
+    background: "#fff",
+    maxWidth: 220,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    fontSize: 15,
+    verticalAlign: "top"
+  },
+  trExpanded: {
+    background: "#f6fafd"
+  },
+  status: {
+    marginTop: 8,
+    textAlign: "center",
+    fontWeight: 600,
+    fontSize: 15,
+  }
+};
+
 const SearchProducts = ({
-  fetchFieldsEndpoint = '/fields',
-  fetchProductsEndpoint = '/products',
-  searchEndpoint = '/search_products',
-  deleteProductEndpoint = '/delete_product'
+  fetchFieldsEndpoint = '/api/fields',
+  fetchProductsEndpoint = '/api/products',
+  searchEndpoint = '/api/search_products',
+  deleteProductEndpoint = '/api/delete_product'
 }) => {
   const [fields, setFields] = useState([]);
   const [products, setProducts] = useState([]);
@@ -17,7 +166,7 @@ const SearchProducts = ({
   const [pageIndices, setPageIndices] = useState({});
   const [status, setStatus] = useState({ message: '', color: '' });
 
-  // Fetch fields and all products on mount
+  // Fetch fields and products on mount
   useEffect(() => {
     const fetchFields = async () => {
       try {
@@ -32,7 +181,6 @@ const SearchProducts = ({
       try {
         const res = await fetch(fetchProductsEndpoint);
         const data = await res.json();
-        // Expecting array of objects with { index, ...fields }
         setProducts(
           (data.products || []).map((p, idx) => ({
             index: idx,
@@ -47,13 +195,11 @@ const SearchProducts = ({
     fetchProducts();
   }, [fetchFieldsEndpoint, fetchProductsEndpoint]);
 
-  // Toggle product details expand/collapse
   const toggleDetails = (index) => {
     setExpandedIndex(prev => (prev === index ? null : index));
     setPageIndices(prev => ({ ...prev, [index]: 0 }));
   };
 
-  // Pagination handlers
   const nextPage = (pid) => {
     const product = products.find(p => p.index === pid);
     const keys = Object.keys(product?.data || {});
@@ -77,23 +223,24 @@ const SearchProducts = ({
     });
   };
 
-  // Render product details table rows for current page
   const renderPage = (product) => {
     const data = product.data || {};
     const keys = Object.keys(data);
     const pageIndex = pageIndices[product.index] || 0;
     const start = pageIndex * PAGE_SIZE;
     const end = Math.min(start + PAGE_SIZE, keys.length);
-    const rows = keys.slice(start, end).map(key => (
-      <tr key={key}>
-        <th>{key}</th>
-        <td>{data[key]}</td>
-      </tr>
-    ));
-    return rows;
+    return (
+      <tbody>
+        {keys.slice(start, end).map(key => (
+          <tr key={key}>
+            <th style={{ ...styles.td, background: "#f3f4f6", width: 180 }}>{key}</th>
+            <td style={styles.td}>{data[key]}</td>
+          </tr>
+        ))}
+      </tbody>
+    );
   };
 
-  // Search handler (calls backend)
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
     setExpandedIndex(null);
@@ -123,7 +270,21 @@ const SearchProducts = ({
     }
   };
 
-  // Delete handler (calls backend)
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch(fetchProductsEndpoint);
+      const data = await res.json();
+      setProducts(
+        (data.products || []).map((p, idx) => ({
+          index: idx,
+          data: p
+        }))
+      );
+    } catch {
+      setStatus({ message: 'Failed to fetch products.', color: 'red' });
+    }
+  };
+
   const handleDelete = async (productIdx) => {
     if (!window.confirm('Are you sure?')) return;
     try {
@@ -134,7 +295,7 @@ const SearchProducts = ({
       });
       const data = await res.json();
       if (data.success) {
-        setProducts(products.filter(p => p.index !== productIdx));
+        await fetchProducts(); // Refetch after delete
         setStatus({ message: 'Product deleted!', color: 'green' });
       } else {
         setStatus({ message: data.message || 'Delete failed.', color: 'red' });
@@ -145,136 +306,168 @@ const SearchProducts = ({
   };
 
   return (
-    <div className="container" style={{ maxWidth: 800, margin: 'auto', padding: 20 }}>
-      <h1>Search Products</h1>
+    <div style={styles.container}>
+      <h1 style={styles.heading}>Search Products</h1>
 
-      <form onSubmit={handleSearchSubmit} style={{ marginBottom: 20 }}>
-        <label>
-          Search:&nbsp;
+      <form onSubmit={handleSearchSubmit} style={styles.form}>
+        <div style={styles.formGroup}>
+          <label className="form-label" htmlFor="search_query" style={styles.label}>Search:</label>
           <input
+            id="search_query"
             type="text"
             name="query"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            style={{ marginRight: 10 }}
+            style={styles.input}
           />
-        </label>
-
-        <label>
-          Field:&nbsp;
+        </div>
+        <div style={styles.formGroup}>
+          <label className="form-label" htmlFor="field_key" style={styles.label}>Field:</label>
           <select
+            id="field_key"
             name="field_key"
             value={fieldKey}
             onChange={e => setFieldKey(e.target.value)}
-            style={{ marginRight: 10 }}
+            style={styles.select}
           >
             <option value="">Any Field</option>
             {fields.map(f => (
               <option key={f} value={f}>{f}</option>
             ))}
           </select>
-        </label>
-
-        <label>
-          Value:&nbsp;
+        </div>
+        <div style={styles.formGroup}>
+          <label className="form-label" htmlFor="field_value" style={styles.label}>Value:</label>
           <input
+            id="field_value"
             type="text"
             name="field_value"
             value={fieldValue}
             onChange={e => setFieldValue(e.target.value)}
-            style={{ marginRight: 10 }}
+            style={styles.input}
           />
-        </label>
-
-        <button type="submit" style={{ padding: '6px 12px' }}>Search</button>
+        </div>
+        <button type="submit" className="button" style={styles.button}>Search</button>
       </form>
 
-      <h2>Results</h2>
+      <h2 style={{ marginBottom: 16, textAlign: 'center', fontWeight: 700, fontSize: 20, color: "#1a2233" }}>Results</h2>
       {status.message && (
-        <div style={{ color: status.color, marginBottom: 10 }}>{status.message}</div>
+        <div style={{ color: status.color, marginBottom: 10, textAlign: 'center', fontWeight: 600 }}>{status.message}</div>
       )}
       {products.length === 0 ? (
-        <p>No results found.</p>
+        <p style={{ textAlign: 'center', color: '#888', fontSize: 17, marginTop: 32 }}>No results found.</p>
       ) : (
-        products.map(product => {
-          const productName = product.data['Product Description EN'] || product.data.product_name || 'Unnamed Product';
-          const isExpanded = expandedIndex === product.index;
-          return (
-            <div key={product.index} className="card" style={{
-              border: '1px solid #ddd',
-              borderRadius: 6,
-              marginBottom: 15,
-              padding: 10,
-            }}>
-              <div
-                className="title"
-                onClick={() => toggleDetails(product.index)}
-                style={{ cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1em', color: '#007BFF' }}
-              >
-                {productName}
-              </div>
-
-              {isExpanded && (
-                <div className="expandable-content" style={{ marginTop: 10, borderTop: '1px solid #ddd', paddingTop: 10 }}>
-                  <table
-                    id={`product-table-${product.index}`}
-                    style={{ width: '100%', borderCollapse: 'collapse' }}
-                  >
-                    <tbody>
-                      {renderPage(product)}
-                    </tbody>
-                  </table>
-
-                  <div style={{ marginTop: 10 }}>
-                    <button onClick={() => prevPage(product.index)} disabled={(pageIndices[product.index] || 0) === 0}>
-                      Prev
-                    </button>
-                    <button onClick={() => nextPage(product.index)} style={{ marginLeft: 10 }}>
-                      Next
-                    </button>
-                  </div>
-
-                  <form
-                    method="get"
-                    action="/manage_products"
-                    style={{ marginTop: 10 }}
-                    onSubmit={e => {
-                      e.preventDefault();
-                      window.location.href = `/manage_products?product_index=${product.index}`;
-                    }}
-                  >
-                    <input type="hidden" name="product_index" value={product.index} />
-                    <input
-                      style={{ backgroundColor: '#007BFF', color: 'white', cursor: 'pointer', border: 'none', padding: '8px 12px', borderRadius: 4 }}
-                      type="submit"
-                      value="Edit"
-                    />
-                  </form>
-
-                  <form
-                    method="post"
-                    action="#"
-                    className="delete-form"
-                    style={{ marginTop: 10 }}
-                    onSubmit={e => {
-                      e.preventDefault();
-                      handleDelete(product.index);
-                    }}
-                  >
-                    <input
-                      style={{ backgroundColor: 'red', color: 'white', cursor: 'pointer', border: 'none', padding: '8px 12px', borderRadius: 4 }}
-                      type="submit"
-                      value="Delete"
-                    />
-                  </form>
-                </div>
-              )}
-            </div>
-          );
-        })
+        <div style={styles.tableWrap}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Product Name</th>
+                <th style={styles.th}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map(product => {
+                const productName = product.data['Product Description EN'] || product.data.product_name || 'Unnamed Product';
+                const isExpanded = expandedIndex === product.index;
+                return (
+                  <React.Fragment key={product.index}>
+                    <tr style={isExpanded ? styles.trExpanded : {}}>
+                      <td
+                        style={{
+                          ...styles.td,
+                          cursor: "pointer",
+                          color: "#007BFF",
+                          fontWeight: 700,
+                          fontSize: 16
+                        }}
+                        onClick={() => toggleDetails(product.index)}
+                      >
+                        {productName}
+                      </td>
+                      <td style={styles.td}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <form
+                            method="get"
+                            action="/manage_products"
+                            style={{ display: "inline-block", margin: 0 }}
+                            onSubmit={e => {
+                              e.preventDefault();
+                              window.location.href = `/manage_products?product_index=${product.index}`;
+                            }}
+                          >
+                            <input type="hidden" name="product_index" value={product.index} />
+                            <input
+                              className="button"
+                              type="submit"
+                              value="Edit"
+                              style={styles.button}
+                            />
+                          </form>
+                          <button
+                            className="button"
+                            style={styles.buttonDanger}
+                            onClick={() => handleDelete(product.index)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    {isExpanded && (
+                      <tr>
+                        <td colSpan={2} style={{ background: "#f8fafc", padding: 0 }}>
+                          <div style={{ padding: 18 }}>
+                            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                              {renderPage(product)}
+                            </table>
+                            <div style={{ marginTop: 10, display: 'flex', gap: 10, justifyContent: "center" }}>
+                              <button
+                                onClick={() => prevPage(product.index)}
+                                disabled={(pageIndices[product.index] || 0) === 0}
+                                className="button"
+                                style={{
+                                  ...styles.button,
+                                  background: (pageIndices[product.index] || 0) === 0 ? "#ccc" : "#007BFF",
+                                  color: "#fff",
+                                  minWidth: 80
+                                }}
+                              >
+                                Prev
+                              </button>
+                              <button
+                                onClick={() => nextPage(product.index)}
+                                className="button"
+                                style={{
+                                  ...styles.button,
+                                  minWidth: 80
+                                }}
+                                disabled={
+                                  (() => {
+                                    const keys = Object.keys(product.data || {});
+                                    const pageIndex = pageIndices[product.index] || 0;
+                                    const maxPage = Math.floor((keys.length - 1) / PAGE_SIZE);
+                                    return pageIndex >= maxPage;
+                                  })()
+                                }
+                              >
+                                Next
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       )}
 
-      <a href="/" style={{ display: 'block', marginTop: 20 }}>Back</a>
+      <a href="/" className="button" style={styles.buttonSecondary}>
+        Back
+      </a>
     </div>
   );
 };

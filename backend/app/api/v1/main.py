@@ -1,7 +1,10 @@
+import os
+import csv
+import requests
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import csv
-import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
@@ -10,6 +13,68 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 CATEGORY_FILE = 'categories.csv'
 PRODUCT_FILE = 'products.csv'
+
+# --- Shopify Integration ---
+SHOP = os.environ.get("SHOPIFY_SHOP")  # e.g. 'nextime-clocks.myshopify.com'
+TOKEN = os.environ.get("SHOPIFY_ADMIN_TOKEN")  # your Admin API access token
+
+def fetch_shopify_products():
+    if not SHOP or not TOKEN:
+        return None, "Shopify credentials not set"
+    url = f"https://{SHOP}/admin/api/2024-01/products.json"
+    headers = {
+        "X-Shopify-Access-Token": TOKEN,
+        "Content-Type": "application/json"
+    }
+    all_products = []
+    params = {'limit': 250}  # Shopify max limit per page
+    last_id = None
+
+    while True:
+        if last_id:
+            params['since_id'] = last_id
+        resp = requests.get(url, headers=headers, params=params)
+        if resp.status_code != 200:
+            return None, resp.text
+        products = resp.json().get("products", [])
+        if not products:
+            break
+        all_products.extend(products)
+        if len(products) < params['limit']:
+            break
+        last_id = products[-1]['id']
+
+    return all_products, None
+
+def save_shopify_products_to_csv(products):
+    if not products:
+        return
+    # Collect all unique keys from all products
+    keys = set()
+    for p in products:
+        keys.update(p.keys())
+    keys = list(keys)
+
+    # Update categories.csv (fields)
+    existing_fields = set(f['field_name'] for f in load_fields())
+    new_fields = [
+        {'field_name': k, 'required': 'False', 'description': ''}
+        for k in keys if k not in existing_fields
+    ]
+    if new_fields:
+        with open(CATEGORY_FILE, 'a', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=['field_name', 'required', 'description'])
+            if os.path.getsize(CATEGORY_FILE) == 0:
+                writer.writeheader()
+            writer.writerows(new_fields)
+
+    # Write products.csv
+    with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=keys)
+        writer.writeheader()
+        for p in products:
+            row = {k: (str(p[k]) if not isinstance(p[k], (str, int, float, bool, type(None))) else p[k]) for k in keys}
+            writer.writerow(row)
 
 # --- Helper Functions ---
 
@@ -129,7 +194,30 @@ def delete_field():
 
 @app.route('/products', methods=['GET'])
 def get_products():
+    # --- Always fetch from Shopify and update CSV before returning products ---
+    products, error = fetch_shopify_products()
+    if error:
+        return jsonify({'success': False, 'message': error}), 500
+    save_shopify_products_to_csv(products)
     return jsonify({'products': load_products()})
+
+@app.route('/shopify-products', methods=['GET'])
+def get_shopify_products():
+    products, error = fetch_shopify_products()
+    if error:
+        return jsonify({'success': False, 'message': error}), 500
+    return jsonify({'products': products})
+
+@app.route('/refresh_products', methods=['POST'])
+def refresh_products():
+    products, error = fetch_shopify_products()
+    if error:
+        return jsonify({'success': False, 'message': error}), 500
+    if not products:
+        return jsonify({'success': False, 'message': 'No products found on Shopify'}), 404
+    save_shopify_products_to_csv(products)
+    clean_products_csv()  # <-- Clean after saving!
+    return jsonify({'success': True, 'count': len(products)})
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -167,6 +255,11 @@ def delete_product():
 
 @app.route('/search_products', methods=['POST'])
 def search_products():
+    # --- Always fetch from Shopify and update CSV before searching ---
+    products, error = fetch_shopify_products()
+    if error:
+        return jsonify({'success': False, 'message': error}), 500
+    save_shopify_products_to_csv(products)
     data = request.json
     query = data.get('query', '').lower()
     field_key = data.get('fieldKey', '')
@@ -210,6 +303,60 @@ def upload_csv():
 @app.route('/download', methods=['GET'])
 def download():
     return send_file(PRODUCT_FILE, as_attachment=True)
+
+@app.route('/bulk_delete_products', methods=['POST'])
+def bulk_delete_products():
+    try:
+        data = request.get_json()
+        indices = data.get('indices', [])
+        # Load products
+        with open(PRODUCT_FILE, newline='', encoding='utf-8') as f:
+            reader = list(csv.DictReader(f))
+        # Remove products at the given indices
+        new_products = [p for i, p in enumerate(reader) if i not in indices]
+        # Write back
+        with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
+            if new_products:
+                writer = csv.DictWriter(f, fieldnames=new_products[0].keys())
+                writer.writeheader()
+                writer.writerows(new_products)
+            else:
+                # If no products left, still write the header row using fields
+                fields = load_fields()
+                if fields:
+                    writer = csv.DictWriter(f, fieldnames=[fld['field_name'] for fld in fields])
+                    writer.writeheader()
+                else:
+                    f.truncate(0)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+def clean_products_csv():
+    import ast
+    import tempfile
+
+    # Read and clean each row
+    cleaned_rows = []
+    with open(PRODUCT_FILE, newline='', encoding='utf-8') as infile:
+        reader = csv.DictReader(infile)
+        fieldnames = reader.fieldnames
+        for row in reader:
+            # Example: Clean 'images' field if it's a Python list
+            if 'images' in row and row['images']:
+                try:
+                    images = ast.literal_eval(row['images'])
+                    if isinstance(images, list):
+                        row['images'] = ','.join([img['src'] for img in images if isinstance(img, dict) and 'src' in img])
+                except Exception:
+                    pass
+            # You can add more cleaning for other fields here
+            cleaned_rows.append(row)
+    # Write cleaned rows back
+    with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as outfile:
+        writer = csv.DictWriter(outfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(cleaned_rows)
 
 if __name__ == '__main__':
     app.run(debug=True)

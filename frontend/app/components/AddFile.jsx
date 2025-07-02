@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function AddField({ endpoint = '/add_field' }) { // Added endpoint prop with default
+export default function AddField({ endpoint = '/api/add_field' }) { // Use /api/ prefix for proxy
   const [fieldName, setFieldName] = useState('');
   const [required, setRequired] = useState('no');
   const [description, setDescription] = useState('');
@@ -15,7 +15,7 @@ export default function AddField({ endpoint = '/add_field' }) { // Added endpoin
     formData.append('description', description);
 
     try {
-      const response = await fetch(endpoint, { // Use endpoint prop here
+      const response = await fetch(endpoint, {
         method: 'POST',
         body: formData,
       });
@@ -34,7 +34,6 @@ export default function AddField({ endpoint = '/add_field' }) { // Added endpoin
       setStatus({ message: 'Error occurred. Try again.', color: 'red' });
     }
   };
-
 
   return (
     <div style={styles.container}>

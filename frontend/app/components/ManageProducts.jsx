@@ -1,282 +1,473 @@
-import React, { useState, useEffect } from 'react';
+'use client';
+import React, { useState, useEffect, useRef } from 'react';
+
+const MAX_VISIBLE_FIELDS = 6;
+const PRODUCTS_PER_PAGE = 25;
+
+const styles = {
+  container: {
+    padding: 32,
+    maxWidth: 1100,
+    margin: '0 auto',
+    background: '#f9fafd',
+    borderRadius: 12,
+    boxShadow: '0 4px 24px rgba(0,0,0,0.07)',
+  },
+  heading: {
+    fontSize: '2rem',
+    fontWeight: 700,
+    marginBottom: 28,
+    textAlign: 'center',
+    color: '#1a2233',
+    letterSpacing: '-1px',
+  },
+  filterRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 20,
+    justifyContent: 'space-between',
+  },
+  filterInput: {
+    padding: '10px 14px',
+    borderRadius: 6,
+    border: '1px solid #d1d5db',
+    fontSize: 16,
+    width: 320,
+    background: '#fff',
+  },
+  navFields: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+    justifyContent: 'center',
+  },
+  navButton: {
+    background: '#e5e9f2',
+    color: '#222',
+    border: 'none',
+    borderRadius: 6,
+    padding: '7px 16px',
+    fontSize: 16,
+    cursor: 'pointer',
+    transition: 'background 0.2s',
+    fontWeight: 600,
+  },
+  navButtonDisabled: {
+    background: '#f3f4f6',
+    color: '#aaa',
+    cursor: 'not-allowed',
+  },
+  tableWrap: {
+    overflowX: 'auto',
+    background: '#fff',
+    borderRadius: 8,
+    boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+    marginBottom: 18,
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: 15,
+  },
+  th: {
+    background: '#f3f4f6',
+    color: '#333',
+    fontWeight: 700,
+    padding: '10px 8px',
+    borderBottom: '2px solid #e5e9f2',
+    textAlign: 'left',
+    position: 'sticky',
+    top: 0,
+    zIndex: 1,
+  },
+  td: {
+    padding: '8px 8px',
+    borderBottom: '1px solid #f0f0f0',
+    background: '#fff',
+    maxWidth: 180,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  trSelected: {
+    background: '#e6f7ff',
+  },
+  actionRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 18,
+    marginBottom: 18,
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+  },
+  actionGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    flexWrap: 'wrap',
+  },
+  button: {
+    background: 'linear-gradient(90deg,#007bff 60%,#0056b3 100%)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: 6,
+    padding: '10px 20px',
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'background 0.2s,opacity 0.2s',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
+  },
+  buttonDanger: {
+    background: 'linear-gradient(90deg,#ff4d4f 60%,#b30000 100%)',
+    color: '#fff',
+  },
+  buttonDisabled: {
+    opacity: 0.6,
+    cursor: 'not-allowed',
+  },
+  select: {
+    padding: '8px 12px',
+    borderRadius: 6,
+    border: '1px solid #d1d5db',
+    fontSize: 15,
+    background: '#fff',
+  },
+  input: {
+    padding: '8px 12px',
+    borderRadius: 6,
+    border: '1px solid #d1d5db',
+    fontSize: 15,
+    background: '#fff',
+    minWidth: 120,
+  },
+  pagination: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  status: {
+    marginTop: 8,
+    textAlign: 'center',
+    fontWeight: 600,
+    fontSize: 15,
+  },
+  backLink: {
+    display: 'block',
+    marginTop: 24,
+    textAlign: 'center',
+    color: '#007bff',
+    textDecoration: 'none',
+    fontWeight: 600,
+    fontSize: 16,
+  }
+};
 
 const ManageProducts = ({
-  fetchProductsEndpoint = '/products',
-  fetchFieldsEndpoint = '/fields',
-  updateProductEndpoint = '/update_product',
-  deleteProductEndpoint = '/delete_product'
+  fetchEndpoint = '/api/products',
+  bulkDeleteEndpoint = 'api/bulk_delete_products',
+  bulkEditEndpoint = '/api/bulk_edit_products'
 }) => {
-  const [fields, setFields] = useState([]);
   const [products, setProducts] = useState([]);
-  const [searchProduct, setSearchProduct] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(null);
-  const [editData, setEditData] = useState({});
+  const [fields, setFields] = useState([]);
+  const [selected, setSelected] = useState([]);
+  const [filter, setFilter] = useState('');
+  const [editField, setEditField] = useState('');
+  const [editValue, setEditValue] = useState('');
   const [status, setStatus] = useState({ message: '', color: '' });
+  const [fieldOffset, setFieldOffset] = useState(0);
+  const [page, setPage] = useState(0);
+  const selectAllRef = useRef();
 
-  // Fetch fields and products on mount
+  // Fetch products and fields
   useEffect(() => {
-    const fetchFields = async () => {
-      try {
-        const res = await fetch(fetchFieldsEndpoint);
-        const data = await res.json();
-        setFields(data.fields || []);
-      } catch {
-        setStatus({ message: 'Failed to fetch fields.', color: 'red' });
-      }
-    };
     const fetchProducts = async () => {
-      try {
-        const res = await fetch(fetchProductsEndpoint);
-        const data = await res.json();
-        setProducts(data.products || []);
-      } catch {
-        setStatus({ message: 'Failed to fetch products.', color: 'red' });
-      }
+      const res = await fetch(fetchEndpoint);
+      const data = await res.json();
+      setProducts(data.products || []);
     };
-    fetchFields();
+    const fetchFields = async () => {
+      const res = await fetch('/api/fields');
+      const data = await res.json();
+      setFields(data.fields || []);
+    };
     fetchProducts();
-  }, [fetchFieldsEndpoint, fetchProductsEndpoint]);
+    fetchFields();
+  }, [fetchEndpoint]);
 
-  // Update editData when selected product changes
-  useEffect(() => {
-    if (selectedIndex !== null && products[selectedIndex]) {
-      setEditData(products[selectedIndex]);
-    } else {
-      setEditData({});
-    }
-  }, [selectedIndex, products]);
-
-  // Filter products by search input
+  // Filtered products
   const filteredProducts = products.filter(p =>
-    (p['Product Description EN'] || p.product_name || 'Unnamed Product')
-      .toLowerCase()
-      .includes(searchProduct.toLowerCase())
+    !filter ||
+    Object.values(p).some(val => String(val).toLowerCase().includes(filter.toLowerCase()))
   );
 
-  const handleSelectChange = (e) => {
-    const idx = e.target.value !== '' ? parseInt(e.target.value, 10) : null;
-    setSelectedIndex(idx);
+  // Pagination for products
+  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+  const paginatedProducts = filteredProducts.slice(
+    page * PRODUCTS_PER_PAGE,
+    (page + 1) * PRODUCTS_PER_PAGE
+  );
+
+  // Handle select/deselect
+  const toggleSelect = idx => {
+    setSelected(sel =>
+      sel.includes(idx) ? sel.filter(i => i !== idx) : [...sel, idx]
+    );
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    if (selectedIndex !== null) {
-      try {
-        const res = await fetch(updateProductEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            index: selectedIndex,
-            ...editData
-          }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          const updatedProducts = [...products];
-          updatedProducts[selectedIndex] = { ...editData };
-          setProducts(updatedProducts);
-          setStatus({ message: 'Product updated!', color: 'green' });
-        } else {
-          setStatus({ message: data.message || 'Update failed.', color: 'red' });
-        }
-      } catch {
-        setStatus({ message: 'Error updating product.', color: 'red' });
-      }
+  // Bulk delete
+  const handleBulkDelete = async () => {
+    if (!selected.length) return;
+    if (!window.confirm('Delete selected products?')) return;
+    const res = await fetch(bulkDeleteEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ indices: selected }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setProducts(products.filter((_, idx) => !selected.includes(idx)));
+      setSelected([]);
+      setStatus({ message: 'Deleted selected products.', color: 'green' });
+    } else {
+      setStatus({ message: data.message || 'Delete failed.', color: 'red' });
     }
   };
 
-  const handleDelete = async (e) => {
-    e.preventDefault();
-    if (selectedIndex !== null && window.confirm('Are you sure you want to delete this product?')) {
-      try {
-        const res = await fetch(deleteProductEndpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ index: selectedIndex }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          const updatedProducts = products.filter((_, idx) => idx !== selectedIndex);
-          setProducts(updatedProducts);
-          setSelectedIndex(null);
-          setEditData({});
-          setStatus({ message: 'Product deleted!', color: 'green' });
-        } else {
-          setStatus({ message: data.message || 'Delete failed.', color: 'red' });
-        }
-      } catch {
-        setStatus({ message: 'Error deleting product.', color: 'red' });
-      }
+  // Bulk edit
+  const handleBulkEdit = async () => {
+    if (!selected.length || !editField) return;
+    const res = await fetch(bulkEditEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        indices: selected,
+        field: editField,
+        value: editValue
+      }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setProducts(products.map((p, idx) =>
+        selected.includes(idx) ? { ...p, [editField]: editValue } : p
+      ));
+      setStatus({ message: 'Edited selected products.', color: 'green' });
+    } else {
+      setStatus({ message: data.message || 'Edit failed.', color: 'red' });
     }
   };
+
+  // Pagination for fields
+  const visibleFields = fields.slice(fieldOffset, fieldOffset + MAX_VISIBLE_FIELDS);
+  const canPrevField = fieldOffset > 0;
+  const canNextField = fieldOffset + MAX_VISIBLE_FIELDS < fields.length;
+
+  // Pagination for products
+  const canPrevPage = page > 0;
+  const canNextPage = page < totalPages - 1;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      const allSelected = paginatedProducts.length > 0 &&
+        paginatedProducts.every((_, idx) =>
+          selected.includes(idx + page * PRODUCTS_PER_PAGE)
+        );
+      const someSelected = paginatedProducts.some((_, idx) =>
+        selected.includes(idx + page * PRODUCTS_PER_PAGE)
+      );
+      selectAllRef.current.indeterminate = someSelected && !allSelected;
+    }
+  }, [selected, paginatedProducts, page]);
 
   return (
-    <div className="container" style={{
-      fontFamily: 'Arial, sans-serif',
-      backgroundColor: '#f2f2f2',
-      margin: 0,
-      padding: 0,
-      minHeight: '100vh',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-    }}>
-      <div style={{
-        backgroundColor: '#fff',
-        padding: '30px 40px',
-        borderRadius: '12px',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-        width: '90%',
-        maxWidth: '700px',
-      }}>
-        <h1 style={{ textAlign: 'center', color: '#333' }}>Manage Products</h1>
-
-        <form
-          onSubmit={e => e.preventDefault()}
-          style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
+    <div style={styles.container}>
+      <h1 style={styles.heading}>Bulk Manage Products</h1>
+      <div style={styles.filterRow}>
+        <input
+          type="text"
+          placeholder="Filter products..."
+          value={filter}
+          onChange={e => { setFilter(e.target.value); setPage(0); }}
+          style={styles.filterInput}
+        />
+        <span style={{ color: '#888', fontSize: 15 }}>
+          Showing {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+      <div style={styles.navFields}>
+        <button
+          onClick={() => setFieldOffset(o => Math.max(0, o - MAX_VISIBLE_FIELDS))}
+          disabled={!canPrevField}
+          style={{
+            ...styles.navButton,
+            ...(canPrevField ? {} : styles.navButtonDisabled)
+          }}
         >
-          <label htmlFor="search_product" style={{ fontWeight: 'bold', color: '#444' }}>
-            Search or Select a Product
-          </label>
-          <input
-            id="search_product"
-            name="search_product"
-            type="text"
-            placeholder="Enter product name"
-            value={searchProduct}
-            onChange={e => setSearchProduct(e.target.value)}
+          ◀ Prev Fields
+        </button>
+        <span style={{ fontSize: 15, color: '#444' }}>
+          Fields {fieldOffset + 1} - {Math.min(fieldOffset + MAX_VISIBLE_FIELDS, fields.length)} of {fields.length}
+        </span>
+        <button
+          onClick={() => setFieldOffset(o => Math.min(fields.length - MAX_VISIBLE_FIELDS, o + MAX_VISIBLE_FIELDS))}
+          disabled={!canNextField}
+          style={{
+            ...styles.navButton,
+            ...(canNextField ? {} : styles.navButtonDisabled)
+          }}
+        >
+          Next Fields ▶
+        </button>
+      </div>
+      <div style={styles.tableWrap}>
+        <table style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.th}>
+                <input
+                  ref={selectAllRef}
+                  type="checkbox"
+                  checked={
+                    paginatedProducts.length > 0 &&
+                    paginatedProducts.every((_, idx) =>
+                      selected.includes(idx + page * PRODUCTS_PER_PAGE)
+                    )
+                  }
+                  onChange={e => {
+                    if (e.target.checked) {
+                      // Select all on this page
+                      setSelected(sel => [
+                        ...sel,
+                        ...paginatedProducts
+                          .map((_, idx) => idx + page * PRODUCTS_PER_PAGE)
+                          .filter(idx => !sel.includes(idx))
+                      ]);
+                    } else {
+                      // Deselect all on this page
+                      setSelected(sel =>
+                        sel.filter(
+                          idx =>
+                            !paginatedProducts
+                              .map((_, i) => i + page * PRODUCTS_PER_PAGE)
+                              .includes(idx)
+                        )
+                      );
+                    }
+                  }}
+                  style={{ cursor: 'pointer' }}
+                />
+              </th>
+              {visibleFields.map(f => (
+                <th key={f.field_name} style={styles.th}>{f.field_name}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedProducts.length === 0 ? (
+              <tr>
+                <td colSpan={visibleFields.length + 1} style={{ ...styles.td, textAlign: 'center', color: '#aaa' }}>
+                  No products found.
+                </td>
+              </tr>
+            ) : paginatedProducts.map((p, idx) => (
+              <tr
+                key={idx + page * PRODUCTS_PER_PAGE}
+                style={selected.includes(idx + page * PRODUCTS_PER_PAGE) ? styles.trSelected : {}}
+              >
+                <td style={styles.td}>
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(idx + page * PRODUCTS_PER_PAGE)}
+                    onChange={() => toggleSelect(idx + page * PRODUCTS_PER_PAGE)}
+                  />
+                </td>
+                {visibleFields.map(f => (
+                  <td key={f.field_name} style={styles.td}>
+                    {p[f.field_name] && String(p[f.field_name]).trim() !== ''
+                      ? p[f.field_name]
+                      : <span style={{ color: '#aaa' }}>—</span>}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={styles.actionRow}>
+        <div style={styles.actionGroup}>
+          <button
+            onClick={handleBulkDelete}
+            disabled={!selected.length}
             style={{
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              fontSize: '14px',
-              marginTop: '5px'
-            }}
-          />
-
-          <select
-            name="product_index"
-            id="product_index"
-            value={selectedIndex !== null ? selectedIndex : ''}
-            onChange={handleSelectChange}
-            style={{
-              padding: '10px',
-              borderRadius: '6px',
-              border: '1px solid #ccc',
-              fontSize: '14px',
-              marginTop: '5px'
+              ...styles.button,
+              ...styles.buttonDanger,
+              ...(!selected.length ? styles.buttonDisabled : {})
             }}
           >
-            <option value="">Select a Product</option>
-            {filteredProducts.map((p, idx) => {
-              // Find original index in products array
-              const originalIndex = products.findIndex(
-                prod =>
-                  (prod['Product Description EN'] || prod.product_name || 'Unnamed Product') ===
-                  (p['Product Description EN'] || p.product_name || 'Unnamed Product')
-              );
-              return (
-                <option key={originalIndex} value={originalIndex}>
-                  {p['Product Description EN'] || p.product_name || 'Unnamed Product'}
-                </option>
-              );
-            })}
+            Delete Selected
+          </button>
+          <select
+            value={editField}
+            onChange={e => setEditField(e.target.value)}
+            style={styles.select}
+          >
+            <option value="">Bulk Edit Field...</option>
+            {fields.map(f => (
+              <option key={f.field_name} value={f.field_name}>{f.field_name}</option>
+            ))}
           </select>
-        </form>
-
-        <hr />
-
-        {selectedIndex !== null && products[selectedIndex] ? (
-          <>
-            <h3 style={{ textAlign: 'center', color: '#333' }}>Edit Product</h3>
-
-            <form
-              onSubmit={handleUpdate}
-              style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
-            >
-              {fields.map((field) => (
-                <label
-                  key={field.field_name}
-                  style={{ display: 'flex', flexDirection: 'column', fontWeight: 'bold', color: '#444' }}
-                >
-                  {field.field_name}
-                  {field.required === 'True' && (
-                    <span style={{ color: 'red', marginLeft: '4px', fontWeight: 'normal' }}>*</span>
-                  )}
-                  <input
-                    type="text"
-                    name={field.field_name}
-                    value={editData[field.field_name] || ''}
-                    required={field.required === 'True'}
-                    onChange={handleInputChange}
-                    style={{
-                      padding: '10px',
-                      borderRadius: '6px',
-                      border: '1px solid #ccc',
-                      fontSize: '14px',
-                      marginTop: '5px'
-                    }}
-                  />
-                </label>
-              ))}
-
-              <input
-                type="submit"
-                value="Update Product"
-                style={{
-                  padding: '12px',
-                  fontSize: '16px',
-                  backgroundColor: '#007BFF',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.3s'
-                }}
-                onMouseOver={e => e.currentTarget.style.backgroundColor = '#0056b3'}
-                onMouseOut={e => e.currentTarget.style.backgroundColor = '#007BFF'}
-              />
-            </form>
-
-            <form
-              onSubmit={handleDelete}
-              style={{ textAlign: 'center', marginTop: '20px' }}
-            >
-              <button
-                type="submit"
-                style={{
-                  backgroundColor: 'red',
-                  color: 'white',
-                  padding: '12px',
-                  fontSize: '16px',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer'
-                }}
-              >
-                Delete Product
-              </button>
-            </form>
-          </>
-        ) : (
-          <p style={{ textAlign: 'center' }}>No product selected.</p>
-        )}
-
-        {status.message && (
-          <div style={{ color: status.color, marginTop: 10, textAlign: 'center' }}>
-            {status.message}
-          </div>
-        )}
-
-        <a href="/" style={{ display: 'block', marginTop: '20px', textAlign: 'center', color: '#666', textDecoration: 'none' }}>
-          ← Back
-        </a>
+          <input
+            type="text"
+            placeholder="New value"
+            value={editValue}
+            onChange={e => setEditValue(e.target.value)}
+            style={styles.input}
+          />
+          <button
+            onClick={handleBulkEdit}
+            disabled={!selected.length || !editField}
+            style={{
+              ...styles.button,
+              ...(!selected.length || !editField ? styles.buttonDisabled : {})
+            }}
+          >
+            Set For Selected
+          </button>
+        </div>
+        <div style={styles.pagination}>
+          <button
+            onClick={() => setPage(p => Math.max(0, p - 1))}
+            disabled={!canPrevPage}
+            style={{
+              ...styles.navButton,
+              ...(canPrevPage ? {} : styles.navButtonDisabled)
+            }}
+          >
+            ◀ Previous
+          </button>
+          <span style={{ fontSize: 15, color: '#444' }}>
+            Page {page + 1} of {totalPages}
+          </span>
+          <button
+            onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+            disabled={!canNextPage}
+            style={{
+              ...styles.navButton,
+              ...(canNextPage ? {} : styles.navButtonDisabled)
+            }}
+          >
+            Next ▶
+          </button>
+        </div>
       </div>
+      {status.message && (
+        <div style={{ ...styles.status, color: status.color }}>{status.message}</div>
+      )}
+      <a href="/" style={styles.backLink}>← Back</a>
     </div>
   );
 };

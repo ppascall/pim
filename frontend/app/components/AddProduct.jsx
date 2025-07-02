@@ -1,20 +1,48 @@
-import React, { useState } from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
-export default function AddProduct({ fields, endpoint = '/add_product' }) {
-  const pageSize = 5;
-  const totalPages = Math.ceil(fields.length / pageSize);
+export default function AddProduct({ fields: initialFields, endpoint = '/api/add_product', fetchFieldsEndpoint = '/api/fields' }) {
+  const [fields, setFields] = useState(initialFields || []);
+  const [loading, setLoading] = useState(!initialFields || initialFields.length === 0);
 
+  const [primaryTitle, setPrimaryTitle] = useState('');
   const [currentPage, setCurrentPage] = useState(0);
-  const [formData, setFormData] = useState(() => {
-    // Initialize all fields with empty strings
-    const initialData = {};
-    fields.forEach(field => {
-      initialData[field.field_name] = '';
-    });
-    return initialData;
-  });
+  const [formData, setFormData] = useState({});
   const [status, setStatus] = useState({ message: '', color: '' });
+
+  // Fetch fields if not provided
+  useEffect(() => {
+    if (!initialFields || initialFields.length === 0) {
+      setLoading(true);
+      fetch(fetchFieldsEndpoint)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data.fields) && data.fields.length > 0) {
+            setFields(data.fields);
+            // Initialize formData for all fields
+            const initialData = {};
+            data.fields.forEach(field => {
+              initialData[field.field_name] = '';
+            });
+            setFormData(initialData);
+          } else {
+            setFields([]);
+            setStatus({ message: 'No fields found.', color: 'red' });
+          }
+        })
+        .catch(() => setStatus({ message: 'Failed to load fields.', color: 'red' }))
+        .finally(() => setLoading(false));
+    } else {
+      // Initialize formData for all fields
+      const initialData = {};
+      initialFields.forEach(field => {
+        initialData[field.field_name] = '';
+      });
+      setFormData(initialData);
+      setLoading(false);
+    }
+  }, [initialFields, fetchFieldsEndpoint]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,27 +52,26 @@ export default function AddProduct({ fields, endpoint = '/add_product' }) {
     }));
   };
 
+  const handlePrimaryTitleChange = (e) => {
+    setPrimaryTitle(e.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Prepare FormData to send (could also send JSON if backend supports)
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      data.append(key, value);
-    });
-
+    const submitData = { ...formData, primary_title: primaryTitle };
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        body: data,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submitData),
       });
       const result = await response.json();
       if (result.success) {
         setStatus({ message: 'Product added successfully!', color: 'green' });
-        // Reset form
         const resetData = {};
         fields.forEach(field => (resetData[field.field_name] = ''));
         setFormData(resetData);
+        setPrimaryTitle('');
         setCurrentPage(0);
       } else {
         setStatus({ message: result.message || 'Failed to add product.', color: 'red' });
@@ -62,34 +89,107 @@ export default function AddProduct({ fields, endpoint = '/add_product' }) {
     if (currentPage > 0) setCurrentPage(currentPage - 1);
   };
 
-  // Calculate fields to show on current page
+  const pageSize = 5;
+  const totalPages = Math.max(1, Math.ceil(fields.length / pageSize));
   const startIndex = currentPage * pageSize;
   const visibleFields = fields.slice(startIndex, startIndex + pageSize);
+
+  if (loading) {
+    return (
+      <div style={styles.container}>
+        <h1 style={styles.heading}>Add Product</h1>
+        <div style={{ textAlign: 'center', margin: 40, fontSize: 18 }}>Loading fields...</div>
+        <Link href="/" style={styles.link}>← Back</Link>
+      </div>
+    );
+  }
 
   return (
     <div style={styles.container}>
       <h1 style={styles.heading}>Add Product</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
+        <label style={styles.label}>
+          Primary Title <span style={styles.required}>*</span>
+          <input
+            type="text"
+            name="primary_title"
+            required
+            value={primaryTitle}
+            onChange={handlePrimaryTitleChange}
+            style={styles.input}
+            placeholder="Enter main product title"
+          />
+        </label>
+
         {visibleFields.map((field, idx) => (
           <label key={idx} style={styles.label}>
-            {field.field_name}
-            {field.required === 'True' && <span style={styles.required}>*</span>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span>
+                {field.field_name}
+                {field.required === 'True' && <span style={styles.required}>*</span>}
+              </span>
+              <button
+                type="button"
+                title="Not Applicable"
+                style={styles.iconButton}
+                onClick={() =>
+                  setFormData(prev => ({
+                    ...prev,
+                    [field.field_name]: 'NA'
+                  }))
+                }
+              >
+                NA
+              </button>
+              <button
+                type="button"
+                title="Missing Data"
+                style={styles.iconButton}
+                onClick={() =>
+                  setFormData(prev => ({
+                    ...prev,
+                    [field.field_name]: 'MD'
+                  }))
+                }
+              >
+                MD
+              </button>
+            </div>
             <input
               type="text"
               name={field.field_name}
               required={field.required === 'True'}
-              value={formData[field.field_name]}
+              value={formData[field.field_name] || ''}
               onChange={handleChange}
               style={styles.input}
             />
+            {field.description && (
+              <div style={{ color: '#888', fontSize: 13, marginTop: 2 }}>{field.description}</div>
+            )}
           </label>
         ))}
 
         <div style={styles.navButtons}>
-          <button type="button" onClick={prevPage} disabled={currentPage === 0} style={styles.navButton}>
+          <button
+            type="button"
+            onClick={prevPage}
+            disabled={currentPage === 0}
+            style={{
+              ...styles.navButton,
+              ...(currentPage === 0 ? styles.navButtonDisabled : {})
+            }}
+          >
             Previous
           </button>
-          <button type="button" onClick={nextPage} disabled={currentPage === totalPages - 1} style={styles.navButton}>
+          <button
+            type="button"
+            onClick={nextPage}
+            disabled={currentPage === totalPages - 1}
+            style={{
+              ...styles.navButton,
+              ...(currentPage === totalPages - 1 ? styles.navButtonDisabled : {})
+            }}
+          >
             Next
           </button>
         </div>
@@ -164,10 +264,10 @@ const styles = {
     borderRadius: 6,
     cursor: 'pointer',
     transition: 'background-color 0.3s',
-    disabled: {
-      backgroundColor: '#ccc',
-      cursor: 'not-allowed',
-    },
+  },
+  navButtonDisabled: {
+    backgroundColor: '#ccc',
+    cursor: 'not-allowed',
   },
   submit: {
     padding: 12,
@@ -178,6 +278,7 @@ const styles = {
     borderRadius: 6,
     cursor: 'pointer',
     transition: 'background-color 0.3s',
+    marginTop: 16,
   },
   pageIndicator: {
     textAlign: 'center',
@@ -196,5 +297,22 @@ const styles = {
     textAlign: 'center',
     color: '#666',
     textDecoration: 'none',
+  },
+  iconButton: {
+    background: '#f4f4f4',
+    border: '1px solid #ccc',
+    borderRadius: 4,
+    cursor: 'pointer',
+    padding: '2px 4px',
+    fontSize: 13,
+    marginLeft: 2,
+    marginRight: 2,
+    color: '#555',
+    transition: 'background 0.2s, color 0.2s',
+    display: 'flex',
+    alignItems: 'center',
+    height: 22,
+    width: 22,
+    justifyContent: 'center'
   },
 };

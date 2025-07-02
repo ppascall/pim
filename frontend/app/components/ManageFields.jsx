@@ -1,9 +1,10 @@
+"use client";
 import React, { useState, useEffect } from 'react';
 
 const ManageFields = ({
-  fetchEndpoint = '/fields',
-  updateEndpoint = '/update_field',
-  deleteEndpoint = '/delete_field'
+  fetchEndpoint = '/api/fields',
+  updateEndpoint = '/api/update_field',
+  deleteEndpoint = '/api/delete_field'
 }) => {
   const [fields, setFields] = useState([]);
   const [searchField, setSearchField] = useState('');
@@ -12,13 +13,27 @@ const ManageFields = ({
   const [editData, setEditData] = useState({ field_name: '', description: '', required: 'False' });
   const [status, setStatus] = useState({ message: '', color: '' });
 
-  // Fetch fields on mount
+  // Fetch fields and parse them like in Search.jsx
   useEffect(() => {
     const fetchFields = async () => {
       try {
         const res = await fetch(fetchEndpoint);
         const data = await res.json();
-        setFields(data.fields || []);
+        // In Search.jsx, fields are mapped to just field_name strings
+        // Here, we want the full field objects, but ensure they're not empty
+        if (Array.isArray(data.fields)) {
+          setFields(
+            data.fields
+              .filter(f => f && (f.field_name || f.description || f.required))
+              .map(f => ({
+                field_name: f.field_name || '',
+                description: f.description || '',
+                required: f.required || 'False'
+              }))
+          );
+        } else {
+          setFields([]);
+        }
       } catch {
         setStatus({ message: 'Failed to fetch fields.', color: 'red' });
       }
@@ -42,7 +57,7 @@ const ManageFields = ({
   }, [selectedIndex, fields]);
 
   const filteredFields = fields.filter(f =>
-    f.field_name.toLowerCase().includes(searchField.toLowerCase())
+    (f.field_name || '').toLowerCase().includes(searchField.toLowerCase())
   );
 
   const handleSelectChange = (e) => {
@@ -69,7 +84,6 @@ const ManageFields = ({
         });
         const data = await res.json();
         if (data.success) {
-          // Update local fields state
           const updatedFields = [...fields];
           updatedFields[selectedIndex] = { ...editData };
           setFields(updatedFields);
@@ -108,98 +122,113 @@ const ManageFields = ({
   };
 
   return (
-    <div className="container">
-      <h1>Manage Custom Fields</h1>
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#f4f6f8'
+    }}>
+      <div className="container" style={{ width: 420, padding: 32 }}>
+        <h1 style={{ textAlign: 'center', marginBottom: 24, fontWeight: 700, fontSize: '2rem' }}>
+          Manage Custom Fields
+        </h1>
 
-      <form onSubmit={e => e.preventDefault()}>
-        <label htmlFor="search_field">Search or Select a Field:</label>
-        <input
-          id="search_field"
-          name="search_field"
-          placeholder="Enter field name"
-          value={searchField}
-          onChange={(e) => setSearchField(e.target.value)}
-        />
+        <form onSubmit={e => e.preventDefault()} style={{ marginBottom: 18 }}>
+          <label htmlFor="search_field">Search or Select a Field:</label>
+          <input
+            id="search_field"
+            name="search_field"
+            placeholder="Enter field name"
+            value={searchField}
+            onChange={(e) => setSearchField(e.target.value)}
+          />
 
-        <select
-          name="field_index"
-          id="field_index"
-          value={selectedIndex !== null ? selectedIndex : ''}
-          onChange={handleSelectChange}
-        >
-          <option value="">Select a Field</option>
-          {filteredFields.map((field, idx) => {
-            const originalIndex = fields.findIndex(f => f.field_name === field.field_name);
-            return (
-              <option key={originalIndex} value={originalIndex}>
-                {field.field_name}
-              </option>
-            );
-          })}
-        </select>
-      </form>
+          <select
+            name="field_index"
+            id="field_index"
+            value={selectedIndex !== null ? selectedIndex : ''}
+            onChange={handleSelectChange}
+          >
+            <option value="">Select a Field</option>
+            {filteredFields.map((field, idx) => {
+              const originalIndex = fields.findIndex(f => f.field_name === field.field_name);
+              return (
+                <option key={originalIndex} value={originalIndex}>
+                  {field.field_name}
+                </option>
+              );
+            })}
+          </select>
+        </form>
 
-      {selectedField ? (
-        <>
-          <h3>Edit Field: {selectedField.field_name}</h3>
-          <form onSubmit={handleUpdate}>
-            <input type="hidden" name="field_index" value={selectedIndex} />
+        {selectedField ? (
+          <>
+            <h3 style={{ textAlign: 'center', margin: '18px 0 10px 0', fontWeight: 600 }}>
+              Edit Field: {selectedField.field_name}
+            </h3>
+            <form onSubmit={handleUpdate} style={{ marginBottom: 10 }}>
+              <input type="hidden" name="field_index" value={selectedIndex} />
 
-            <label htmlFor="field_name">Field Name:</label>
-            <input
-              id="field_name"
-              name="field_name"
-              type="text"
-              value={editData.field_name}
-              onChange={handleInputChange}
-              required
-            />
+              <label htmlFor="field_name">Field Name:</label>
+              <input
+                id="field_name"
+                name="field_name"
+                type="text"
+                value={editData.field_name}
+                onChange={handleInputChange}
+                required
+              />
 
-            <label htmlFor="description">Description:</label>
-            <input
-              id="description"
-              name="description"
-              type="text"
-              value={editData.description}
-              onChange={handleInputChange}
-            />
+              <label htmlFor="description">Description:</label>
+              <input
+                id="description"
+                name="description"
+                type="text"
+                value={editData.description}
+                onChange={handleInputChange}
+              />
 
-            <label htmlFor="required">Required:</label>
-            <select
-              id="required"
-              name="required"
-              value={editData.required}
-              onChange={handleInputChange}
-            >
-              <option value="True">Yes</option>
-              <option value="False">No</option>
-            </select>
+              <label htmlFor="required">Required:</label>
+              <select
+                id="required"
+                name="required"
+                value={editData.required}
+                onChange={handleInputChange}
+              >
+                <option value="True">Yes</option>
+                <option value="False">No</option>
+              </select>
 
-            <br />
-            <button type="submit">Update Field</button>
-          </form>
+              <button type="submit" className="button" style={{ marginTop: 10 }}>
+                Update Field
+              </button>
+            </form>
 
-          <form onSubmit={handleDelete}>
-            <button
-              type="submit"
-              style={{ backgroundColor: 'red', color: 'white', marginTop: '10px' }}
-            >
-              Delete Field
-            </button>
-          </form>
-        </>
-      ) : (
-        <p>No field selected yet.</p>
-      )}
+            <form onSubmit={handleDelete}>
+              <button
+                type="submit"
+                className="button button-danger"
+                style={{ marginTop: 0 }}
+              >
+                Delete Field
+              </button>
+            </form>
+          </>
+        ) : (
+          <p style={{ textAlign: 'center', marginTop: 24, color: '#888' }}>No field selected yet.</p>
+        )}
 
-      {status.message && (
-        <div style={{ color: status.color, marginTop: 10, textAlign: 'center' }}>
-          {status.message}
-        </div>
-      )}
+        {status.message && (
+          <div style={{ color: status.color, marginTop: 14, textAlign: 'center' }}>
+            {status.message}
+          </div>
+        )}
 
-      <br />
-      <a href="/">Back</a>
+        <a href="/" className="button" style={{ marginTop: 28 }}>
+          ← Back
+        </a>
+      </div>
     </div>
   );
 };
