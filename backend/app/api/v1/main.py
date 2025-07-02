@@ -194,11 +194,7 @@ def delete_field():
 
 @app.route('/products', methods=['GET'])
 def get_products():
-    # --- Always fetch from Shopify and update CSV before returning products ---
-    products, error = fetch_shopify_products()
-    if error:
-        return jsonify({'success': False, 'message': error}), 500
-    save_shopify_products_to_csv(products)
+    # Just return local products
     return jsonify({'products': load_products()})
 
 @app.route('/shopify-products', methods=['GET'])
@@ -255,11 +251,7 @@ def delete_product():
 
 @app.route('/search_products', methods=['POST'])
 def search_products():
-    # --- Always fetch from Shopify and update CSV before searching ---
-    products, error = fetch_shopify_products()
-    if error:
-        return jsonify({'success': False, 'message': error}), 500
-    save_shopify_products_to_csv(products)
+    # Just search local products
     data = request.json
     query = data.get('query', '').lower()
     field_key = data.get('fieldKey', '')

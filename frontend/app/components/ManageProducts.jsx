@@ -184,17 +184,18 @@ const ManageProducts = ({
   const selectAllRef = useRef();
 
   // Fetch products and fields
+  const fetchProducts = async () => {
+    const res = await fetch(fetchEndpoint);
+    const data = await res.json();
+    setProducts(data.products || []);
+  };
+  const fetchFields = async () => {
+    const res = await fetch('/api/fields');
+    const data = await res.json();
+    setFields(data.fields || []);
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await fetch(fetchEndpoint);
-      const data = await res.json();
-      setProducts(data.products || []);
-    };
-    const fetchFields = async () => {
-      const res = await fetch('/api/fields');
-      const data = await res.json();
-      setFields(data.fields || []);
-    };
     fetchProducts();
     fetchFields();
   }, [fetchEndpoint]);
@@ -230,7 +231,7 @@ const ManageProducts = ({
     });
     const data = await res.json();
     if (data.success) {
-      setProducts(products.filter((_, idx) => !selected.includes(idx)));
+      await fetchProducts(); // <-- Refresh after delete
       setSelected([]);
       setStatus({ message: 'Deleted selected products.', color: 'green' });
     } else {
@@ -252,9 +253,7 @@ const ManageProducts = ({
     });
     const data = await res.json();
     if (data.success) {
-      setProducts(products.map((p, idx) =>
-        selected.includes(idx) ? { ...p, [editField]: editValue } : p
-      ));
+      await fetchProducts(); // <-- Refresh after edit
       setStatus({ message: 'Edited selected products.', color: 'green' });
     } else {
       setStatus({ message: data.message || 'Edit failed.', color: 'red' });
@@ -337,10 +336,9 @@ const ManageProducts = ({
                   }
                   onChange={e => {
                     if (e.target.checked) {
-                      // Select all filtered products (across all pages)
-                      setSelected(filteredProducts.map((_, idx) => idx));
+                      // Select all filtered products (across all pages, using their index in products)
+                      setSelected(filteredProducts.map(fp => products.indexOf(fp)));
                     } else {
-                      // Deselect all
                       setSelected([]);
                     }
                   }}
@@ -360,7 +358,8 @@ const ManageProducts = ({
                 </td>
               </tr>
             ) : paginatedProducts.map((p, idx) => {
-              const globalIdx = page * PRODUCTS_PER_PAGE + idx;
+              // Find the global index of this product in filteredProducts
+              const globalIdx = products.indexOf(p);
               return (
                 <tr
                   key={globalIdx}
