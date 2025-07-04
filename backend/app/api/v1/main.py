@@ -27,8 +27,12 @@ def fetch_shopify_products():
         "Content-Type": "application/json"
     }
     all_products = []
-    params = {'limit': 250}  # Shopify max limit per page
+    params = {'limit': 250}
     last_id = None
+
+    # Fetch all locations (warehouses)
+    locations = fetch_shopify_locations(headers)
+    location_map = {loc['id']: loc['name'] for loc in locations}
 
     while True:
         if last_id:
@@ -39,6 +43,38 @@ def fetch_shopify_products():
         products = resp.json().get("products", [])
         if not products:
             break
+        all_inventory_item_ids = []
+        product_variant_map = {}  # Map inventory_item_id to (product, variant)
+
+        for product in products:
+            inventory_total = 0
+            warehouse_stock = {}
+            for variant in product.get('variants', []):
+                inventory_total += variant.get('inventory_quantity', 0)
+                inventory_item_id = variant.get('inventory_item_id')
+                if inventory_item_id:
+                    all_inventory_item_ids.append(inventory_item_id)
+                    product_variant_map[inventory_item_id] = (product, variant)
+
+            product['read_inventory'] = inventory_total
+            product['warehouse_stock'] = warehouse_stock  # <-- Add this line
+
+        # Fetch all inventory levels in batches
+        levels = fetch_inventory_levels_batch(headers, all_inventory_item_ids)
+
+        # Map location_id to name
+        warehouse_stock_map = {}
+        for level in levels:
+            loc_id = level['location_id']
+            available = level['available']
+            inventory_item_id = level['inventory_item_id']
+            warehouse_name = location_map.get(loc_id, f"Warehouse {loc_id}")
+            product, variant = product_variant_map[inventory_item_id]
+            # Add to product's warehouse_stock
+            if 'warehouse_stock' not in product:
+                product['warehouse_stock'] = {}
+            product['warehouse_stock'][warehouse_name] = product['warehouse_stock'].get(warehouse_name, 0) + available
+
         all_products.extend(products)
         if len(products) < params['limit']:
             break
@@ -324,6 +360,21 @@ def bulk_delete_products():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
+@app.route('/bulk_edit_products', methods=['POST'])
+def bulk_edit_products():
+    data = request.json
+    indices = data.get('indices', [])
+    field = data.get('field')
+    value = data.get('value')
+    if not indices or field is None:
+        return jsonify({'success': False, 'message': 'Missing indices or field'}), 400
+    products = load_products()
+    for idx in indices:
+        if 0 <= idx < len(products):
+            products[idx][field] = value
+    save_products(products)
+    return jsonify({'success': True})
+
 def clean_products_csv():
     import ast
     import tempfile
@@ -349,6 +400,34 @@ def clean_products_csv():
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(cleaned_rows)
+
+def fetch_shopify_locations(headers):
+    url = f"https://{SHOP}/admin/api/2024-01/locations.json"
+    resp = requests.get(url, headers=headers)
+    if resp.status_code != 200:
+        return []
+    return resp.json().get("locations", [])
+
+def fetch_inventory_levels(headers, inventory_item_id):
+    url = f"https://{SHOP}/admin/api/2024-01/inventory_levels.json"
+    params = {'inventory_item_ids': inventory_item_id}
+    resp = requests.get(url, headers=headers, params=params)
+    if resp.status_code != 200:
+        return []
+    return resp.json().get("inventory_levels", [])
+
+# Instead of calling fetch_inventory_levels for each variant,
+# collect all inventory_item_ids, then fetch in batches.
+def fetch_inventory_levels_batch(headers, inventory_item_ids):
+    url = f"https://{SHOP}/admin/api/2024-01/inventory_levels.json"
+    levels = []
+    for i in range(0, len(inventory_item_ids), 50):
+        batch_ids = inventory_item_ids[i:i+50]
+        params = {'inventory_item_ids': ','.join(str(iid) for iid in batch_ids)}
+        resp = requests.get(url, headers=headers, params=params)
+        if resp.status_code == 200:
+            levels.extend(resp.json().get("inventory_levels", []))
+    return levels
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
