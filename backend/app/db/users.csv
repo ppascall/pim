@@ -1,0 +1,6 @@
+email,hashed_password,role
+admin@example.com,$2b$12$KIXQ6QwQ8v6wQwQ8v6wQwOQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw,admin
+user1@example.com,$2b$12$KIXQ6QwQ8v6wQwQ8v6wQwOQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw,user
+user2@example.com,$2b$12$KIXQ6QwQ8v6wQwQ8v6wQwOQwQwQwQwQwQwQwQwQwQwQwQwQwQwQw,usertest@test.test,$2b$12$ySKKBGAlqzJm73y2B5p05eCWdHJzZGv6yOCFM3GIJUh4GCdyvLlrW,user
+test@test.test,$2b$12$bCRnMBD9LKoFz3SNK8rjLug/2om8fmWdhgVC3c8kgn5irhtFELurK,user
+test1@test.test,$2b$12$.tYkWUEq6eE6Wa7XYaqZdOT0P0sEtNsHl//1nOp36P6fFtVyJ/CVK,user
