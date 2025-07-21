@@ -1,83 +1,113 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "http://localhost:3000/api";
+const PAGE_SIZE = 5;
 
 export default function UserDashboard() {
   // Search state
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
+  const [products, setProducts] = useState([]);
   const [searching, setSearching] = useState(false);
 
-  // Edit state
-  const [editingIdx, setEditingIdx] = useState(null);
-  const [editData, setEditData] = useState({});
-  const [editAnim, setEditAnim] = useState(false);
-
-  // Add product state
+  // Edit modal state
   const [fields, setFields] = useState([]);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editProduct, setEditProduct] = useState(null);
+  const [editFields, setEditFields] = useState({});
+  const [editStatus, setEditStatus] = useState({ message: "", color: "" });
+  const [editFieldPage, setEditFieldPage] = useState(0);
+
+  // Add product state (untouched)
   const [addForm, setAddForm] = useState({});
   const [addStatus, setAddStatus] = useState("");
   const [addAnim, setAddAnim] = useState(false);
 
-  // Fetch fields for add form on mount
+  // Fetch fields and products on mount
   useEffect(() => {
     fetch(`${API_BASE}/fields`)
       .then(res => res.json())
-      .then(data => setFields(data.fields || []));
+      .then(data => setFields(data.fields ? data.fields.map(f => f.field_name) : []));
+    fetchProducts();
   }, []);
 
-  // Search products
-  const handleSearch = async () => {
-    setSearching(true);
-    setTimeout(async () => {
+  const fetchProducts = async () => {
+    try {
       const res = await fetch(`${API_BASE}/products`);
       const data = await res.json();
-      const products = data.products || [];
-      const filtered = products.filter(product =>
-        Object.values(product).some(val =>
-          String(val).toLowerCase().includes(query.toLowerCase())
-        )
-      );
-      setResults(filtered);
+      setProducts(data.products || []);
+    } catch {
+      setProducts([]);
+    }
+  };
+
+  // Search products
+  const handleSearch = async (e) => {
+    e && e.preventDefault();
+    setSearching(true);
+    setTimeout(async () => {
+      try {
+        const res = await fetch(`${API_BASE}/products`);
+        const data = await res.json();
+        const allProducts = data.products || [];
+        const filtered = allProducts.filter(product =>
+          Object.values(product).some(val =>
+            String(val).toLowerCase().includes(query.toLowerCase())
+          )
+        );
+        setProducts(filtered);
+      } catch {
+        setProducts([]);
+      }
       setSearching(false);
-    }, 400); // Animation delay
-  };
-
-  // Start editing a product
-  const startEdit = (idx) => {
-    setEditingIdx(idx);
-    setEditData({ ...results[idx] });
-    setEditAnim(true);
-    setTimeout(() => setEditAnim(false), 400);
-  };
-
-  // Handle edit input change
-  const handleEditChange = (e) => {
-    setEditData({ ...editData, [e.target.name]: e.target.value });
-  };
-
-  // Save edited product
-  const saveEdit = async () => {
-    setEditAnim(true);
-    await fetch(`${API_BASE}/update_product`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editData),
-    });
-    setTimeout(() => {
-      setEditingIdx(null);
-      setEditAnim(false);
-      handleSearch();
     }, 400);
   };
 
-  // Add product form change
+  // Edit modal logic
+  const openEditModal = (product) => {
+    setEditProduct(product);
+    setEditFields({ ...product });
+    setEditStatus({ message: "", color: "" });
+    setEditFieldPage(0);
+    setEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+    setEditProduct(null);
+    setEditFields({});
+    setEditStatus({ message: "", color: "" });
+    setEditFieldPage(0);
+  };
+
+  const handleEditSave = async () => {
+    if (!editProduct) return;
+    try {
+      const payload = { ...editFields };
+      const res = await fetch(`${API_BASE}/update_product`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success || res.ok) {
+        setEditStatus({ message: "Product updated!", color: "green" });
+        await fetchProducts();
+        setTimeout(closeEditModal, 800);
+      } else {
+        setEditStatus({ message: data.message || "Edit failed.", color: "red" });
+      }
+    } catch {
+      setEditStatus({ message: "Error updating product.", color: "red" });
+    }
+  };
+
+  // Add product form change (untouched)
   const handleAddChange = (e) => {
     setAddForm({ ...addForm, [e.target.name]: e.target.value });
   };
 
-  // Submit new product
+  // Submit new product (untouched)
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     setAddAnim(true);
@@ -89,7 +119,7 @@ export default function UserDashboard() {
     if (res.ok) {
       setAddStatus("✅ Product added!");
       setAddForm({});
-      handleSearch();
+      fetchProducts();
     } else {
       setAddStatus("❌ Error adding product.");
     }
@@ -102,87 +132,177 @@ export default function UserDashboard() {
       <div style={styles.container}>
         <h1 style={styles.heading}>🛒 Product Dashboard</h1>
         {/* Search Bar */}
-        <div style={{ ...styles.card, ...styles.fadeIn }}>
-          <div style={styles.searchBarWrap}>
+        <form
+          onSubmit={handleSearch}
+          style={styles.form}
+        >
+          <div style={styles.formGroup}>
+            <label htmlFor="search_query" style={styles.label}>Search:</label>
             <input
+              id="search_query"
               type="text"
-              placeholder="🔍 Search products..."
               value={query}
               onChange={e => setQuery(e.target.value)}
-              style={styles.searchBar}
-              onKeyDown={e => e.key === "Enter" && handleSearch()}
+              style={styles.input}
+              placeholder="Type to search..."
             />
-            <button
-              onClick={handleSearch}
-              className="button"
-              style={styles.searchBtn}
-              disabled={searching}
-            >
-              {searching ? (
-                <span className="spinner" style={styles.spinner}></span>
-              ) : (
-                "Search"
-              )}
-            </button>
           </div>
+          <button
+            type="submit"
+            className="button"
+            style={styles.button}
+            disabled={searching}
+          >
+            {searching ? (
+              <span className="spinner" style={styles.spinner}></span>
+            ) : (
+              "Search"
+            )}
+          </button>
+        </form>
+
+        {/* Product Names List */}
+        <div style={styles.tableWrap}>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Product Name</th>
+                <th style={styles.th}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((product, idx) => {
+                const productName =
+                  product["Product Description EN"] ||
+                  product.product_name ||
+                  Object.values(product)[0] ||
+                  "Unnamed Product";
+                return (
+                  <tr key={idx}>
+                    <td
+                      style={{
+                        ...styles.td,
+                        cursor: "pointer",
+                        color: "#007BFF",
+                        fontWeight: 700,
+                        fontSize: 16,
+                      }}
+                      onClick={() => openEditModal(product)}
+                    >
+                      {productName}
+                    </td>
+                    <td style={styles.td}>
+                      <button
+                        className="button"
+                        style={styles.button}
+                        onClick={() => openEditModal(product)}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          {products.length === 0 && (
+            <p style={{ textAlign: "center", color: "#888", fontSize: 17, marginTop: 32 }}>
+              No results found.
+            </p>
+          )}
         </div>
 
-        {/* Results */}
-        <ul style={styles.resultsList}>
-          {results.map((product, idx) => (
-            <li
-              key={idx}
-              style={{
-                ...styles.resultItem,
-                ...(editingIdx === idx && editAnim ? styles.editAnim : {}),
-              }}
-              className={editingIdx === idx ? "editing" : ""}
-            >
-              {editingIdx === idx ? (
-                <div style={styles.editForm}>
-                  {Object.keys(product).map(key => (
-                    <div key={key} style={styles.editField}>
-                      <label style={styles.editLabel}>{key}:</label>
+        {/* Edit Modal */}
+        {editModalOpen && (
+          <div style={{
+            position: "fixed",
+            top: 0, left: 0, width: "100vw", height: "100vh",
+            background: "rgba(0,0,0,0.25)", zIndex: 1000,
+            display: "flex", alignItems: "center", justifyContent: "center"
+          }}>
+            <div style={{
+              background: "#fff", borderRadius: 10, padding: 32, minWidth: 340,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.18)"
+            }}>
+              <h2 style={{ marginBottom: 18, fontWeight: 700, fontSize: 20 }}>Edit Product</h2>
+              <form
+                onSubmit={e => {
+                  e.preventDefault();
+                  handleEditSave();
+                }}
+              >
+                {fields
+                  .slice(editFieldPage * PAGE_SIZE, (editFieldPage + 1) * PAGE_SIZE)
+                  .map(field => (
+                    <div key={field} style={{ marginBottom: 14 }}>
+                      <label style={{ fontWeight: 600, marginBottom: 6, display: "block" }}>{field}</label>
                       <input
-                        name={key}
-                        value={editData[key] || ""}
-                        onChange={handleEditChange}
-                        style={styles.editInput}
+                        type="text"
+                        value={editFields[field] ?? ""}
+                        onChange={e => setEditFields(f => ({ ...f, [field]: e.target.value }))}
+                        style={styles.input}
                       />
                     </div>
                   ))}
-                  <div style={styles.editBtns}>
-                    <button onClick={saveEdit} className="button" style={styles.saveBtn}>
-                      Save
-                    </button>
-                    <button
-                      onClick={() => setEditingIdx(null)}
-                      className="button"
-                      style={styles.cancelBtn}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={styles.productView}>
-                  {Object.entries(product).map(([k, v]) => (
-                    <div key={k} style={styles.productField}>
-                      <b>{k}:</b> <span>{v}</span>
-                    </div>
-                  ))}
+                <div style={{ display: "flex", gap: 8, justifyContent: "space-between", margin: "10px 0 18px 0" }}>
                   <button
-                    onClick={() => startEdit(idx)}
+                    type="button"
                     className="button"
-                    style={styles.editBtn}
+                    style={{
+                      ...styles.button,
+                      minWidth: 70,
+                      background: editFieldPage === 0 ? "#ccc" : styles.button.background,
+                      color: "#fff",
+                      cursor: editFieldPage === 0 ? "not-allowed" : "pointer"
+                    }}
+                    disabled={editFieldPage === 0}
+                    onClick={() => setEditFieldPage(p => Math.max(0, p - 1))}
                   >
-                    Edit
+                    Prev
+                  </button>
+                  <span style={{ alignSelf: "center", color: "#444", fontSize: 15 }}>
+                    Page {editFieldPage + 1} of {Math.ceil(fields.length / PAGE_SIZE)}
+                  </span>
+                  <button
+                    type="button"
+                    className="button"
+                    style={{
+                      ...styles.button,
+                      minWidth: 70,
+                      background: (editFieldPage + 1) * PAGE_SIZE >= fields.length ? "#ccc" : styles.button.background,
+                      color: "#fff",
+                      cursor: (editFieldPage + 1) * PAGE_SIZE >= fields.length ? "not-allowed" : "pointer"
+                    }}
+                    disabled={(editFieldPage + 1) * PAGE_SIZE >= fields.length}
+                    onClick={() => setEditFieldPage(p => Math.min(Math.ceil(fields.length / PAGE_SIZE) - 1, p + 1))}
+                  >
+                    Next
                   </button>
                 </div>
-              )}
-            </li>
-          ))}
-        </ul>
+                {editStatus.message && (
+                  <div style={{ color: editStatus.color, marginBottom: 12, fontWeight: 600 }}>{editStatus.message}</div>
+                )}
+                <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+                  <button
+                    className="button"
+                    style={styles.button}
+                    type="submit"
+                  >
+                    Save
+                  </button>
+                  <button
+                    className="button"
+                    style={{ ...styles.button, background: "#888" }}
+                    type="button"
+                    onClick={closeEditModal}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Add Product */}
         <div
@@ -196,11 +316,11 @@ export default function UserDashboard() {
           <h2 style={styles.subheading}>➕ Add a Product</h2>
           <form onSubmit={handleAddSubmit} style={styles.addForm}>
             {fields.map(field => (
-              <div key={field.field_name} style={styles.addField}>
-                <label style={styles.addLabel}>{field.field_name}</label>
+              <div key={field} style={styles.addField}>
+                <label style={styles.addLabel}>{field}</label>
                 <input
-                  name={field.field_name}
-                  value={addForm[field.field_name] || ""}
+                  name={field}
+                  value={addForm[field] || ""}
                   onChange={handleAddChange}
                   style={styles.addInput}
                   autoComplete="off"
@@ -308,106 +428,90 @@ const styles = {
   fadeIn: {
     animation: "fadeIn 0.7s",
   },
-  searchBarWrap: {
-    flexDirection: "column",
+  form: {
+    marginBottom: 32,
     display: "flex",
-    gap: 10,
-    alignItems: "center",
-    marginBottom: 0,
-  },
-  searchBar: {
-    flex: 1,
-    padding: "14px 180px",
-    borderRadius: 8,
-    border: "1.5px solid #b2c2e0",
-    fontSize: 18, // Increased font size
-    height: 48,   // Increased height
+    flexDirection: "row",
+    gap: 24,
+    alignItems: "flex-end",
+    flexWrap: "wrap",
+    justifyContent: "center",
     background: "#fff",
-    transition: "border 0.2s",
-    outline: "none",
+    borderRadius: 10,
+    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+    padding: 18,
   },
-  searchBtn: {
-    minWidth: 90,
+  formGroup: {
+    display: "flex",
+    flexDirection: "column",
+    minWidth: 180,
+    fontWeight: 600,
+  },
+  label: {
+    marginBottom: 6,
+    fontWeight: 600,
+    color: "#222",
+    fontSize: 15,
+  },
+  input: {
+    padding: "10px 14px",
+    borderRadius: 6,
+    border: "1px solid #d1d5db",
+    fontSize: 16,
+    background: "#f9fafd",
+    transition: "border 0.2s",
+  },
+  button: {
+    background: "#1976d2",
+    color: "#fff",
+    border: "none",
+    borderRadius: 5,
+    padding: "10px 22px",
     fontSize: 16,
     fontWeight: 600,
-  },
-  resultsList: {
-    listStyle: "none",
-    padding: 0,
-    margin: "0 0 32px 0",
-    animation: "fadeIn 0.7s",
-  },
-  resultItem: {
-    background: "#f4f8ff",
-    borderRadius: 10,
-    marginBottom: 18,
-    padding: "18px 18px 12px 18px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-    transition: "box-shadow 0.3s, background 0.3s",
-    position: "relative",
-    animation: "slideUp 0.5s",
-  },
-  productView: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 6,
-    marginBottom: 8,
-    animation: "fadeIn 0.5s",
-  },
-  productField: {
-    fontSize: 15,
-    color: "#222",
-    marginBottom: 2,
-  },
-  editBtn: {
-    marginTop: 10,
-    background: "linear-gradient(90deg, #00c6ff 60%, #007bff 100%)",
-    color: "#fff",
-    fontWeight: 600,
-    border: "none",
-    borderRadius: 6,
-    padding: "8px 18px",
-    fontSize: 15,
     cursor: "pointer",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
-    transition: "background 0.2s, transform 0.15s",
+    margin: "0 4px",
+    minWidth: 90,
+    transition: "background 0.2s,opacity 0.2s",
+    boxShadow: "none",
+    height: 48,
+    lineHeight: "20px",
+    letterSpacing: 0,
   },
-  editForm: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 10,
-    animation: "fadeIn 0.4s",
-  },
-  editField: {
-    display: "flex",
-    alignItems: "center",
-    gap: 8,
-  },
-  editLabel: {
-    minWidth: 80,
-    fontWeight: 600,
-    color: "#007bff",
-  },
-  editInput: {
-    flex: 1,
-    padding: "8px 10px",
-    borderRadius: 6,
-    border: "1.5px solid #b2c2e0",
-    fontSize: 15,
+  tableWrap: {
+    overflowX: "auto",
     background: "#fff",
-    outline: "none",
-    transition: "border 0.2s",
+    borderRadius: 12,
+    boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+    marginBottom: 18,
+    marginTop: 18,
   },
-  editBtns: {
-    display: "flex",
-    gap: 12,
-    marginTop: 8,
+  table: {
+    width: "100%",
+    borderCollapse: "collapse",
+    fontSize: 16,
+    minWidth: 420,
   },
-  saveBtn: {
-    background: "linear-gradient(90deg, #27ae60 60%, #00c6ff 100%)",
+  th: {
+    background: "#f3f4f6",
+    color: "#333",
+    fontWeight: 800,
+    padding: "12px 10px",
+    borderBottom: "2px solid #e5e9f2",
+    textAlign: "left",
+    fontSize: 16,
+    letterSpacing: "0.2px",
   },
-  cancelBtn: {
-    background: "linear-gradient(90deg, #e74c3c 60%, #ff7675 100%)",
+  td: {
+    padding: "10px 10px",
+    borderBottom: "1px solid #f0f0f0",
+    background: "#fff",
+    maxWidth: 220,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    fontSize: 15,
+    verticalAlign: "top",
   },
   addForm: {
     display: "flex",
@@ -426,10 +530,10 @@ const styles = {
     marginBottom: 2,
   },
   addInput: {
-    padding: "10px 12px",
+    padding: "12px 14px",
     borderRadius: 6,
     border: "1.5px solid #b2c2e0",
-    fontSize: 15,
+    fontSize: 17,
     background: "#fff",
     outline: "none",
     transition: "border 0.2s",
@@ -437,63 +541,16 @@ const styles = {
   addBtn: {
     marginTop: 8,
     fontWeight: 600,
-    fontSize: 16,
+    fontSize: 18,
+    height: 48,
   },
   statusMsg: {
     marginTop: 10,
     fontWeight: 600,
-    fontSize: 14,
+    fontSize: 16,
     textAlign: "center",
-  },
-  editAnim: {
-    animation: "editAnim 0.4s forwards",
   },
   addAnim: {
     animation: "addAnim 0.6s forwards",
-  },
-  "@keyframes fadeIn": {
-    "0%": {
-      opacity: 0,
-      transform: "translateY(10px)",
-    },
-    "100%": {
-      opacity: 1,
-      transform: "translateY(0)",
-    },
-  },
-  "@keyframes slideDown": {
-    "0%": {
-      opacity: 0,
-      transform: "translateY(-10px)",
-    },
-    "100%": {
-      opacity: 1,
-      transform: "translateY(0)",
-    },
-  },
-  "@keyframes spin": {
-    to: {
-      transform: "rotate(360deg)",
-    },
-  },
-  "@keyframes editAnim": {
-    "0%": {
-      backgroundColor: "#fff",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-    },
-    "100%": {
-      backgroundColor: "#e1f5fe",
-      boxShadow: "0 4px 16px rgba(0,123,255,0.2)",
-    },
-  },
-  "@keyframes addAnim": {
-    "0%": {
-      opacity: 0,
-      transform: "scale(0.95)",
-    },
-    "100%": {
-      opacity: 1,
-      transform: "scale(1)",
-    },
   },
 };

@@ -60,9 +60,28 @@ export default function LoginPage() {
         />
         <button type="submit" className="button">Login</button>
       </form>
+      <div
+        style={{
+          marginTop: 18,
+          textAlign: "center",
+        }}
+      >
+        <span
+          style={{
+            color: "#1976d2",
+            cursor: "pointer",
+            textDecoration: "underline",
+            fontWeight: 600,
+            fontSize: 16,
+          }}
+          onClick={() => router.push("/register")}
+        >
+          Don't have an account? Register
+        </span>
+      </div>
       {status.message && (
         <div style={{ color: status.color, marginTop: 14, textAlign: "center" }}>{status.message}</div>
       )}
     </div>
   );
-}
+} 

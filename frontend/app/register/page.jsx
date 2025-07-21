@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const API_BASE = "http://localhost:8000/api/v1";
+const API_BASE = "http://localhost:3000/api/v1";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -54,6 +54,25 @@ export default function RegisterPage() {
         />
         <button type="submit" className="button">Register</button>
       </form>
+      <div
+        style={{
+          marginTop: 18,
+          textAlign: "center",
+        }}
+      >
+        <span
+          style={{
+            color: "#1976d2",
+            cursor: "pointer",
+            textDecoration: "underline",
+            fontWeight: 600,
+            fontSize: 16,
+          }}
+          onClick={() => router.push("/login")}
+        >
+          Already have an account? Login
+        </span>
+      </div>
       {status.message && (
         <div style={{ color: status.color, marginTop: 14, textAlign: "center" }}>{status.message}</div>
       )}
