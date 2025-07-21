@@ -335,31 +335,19 @@ const SearchProducts = ({
   const handleEditSave = async () => {
     if (!editProduct) return;
     try {
-      // Prepare bulk edit payload for all changed fields
-      const updates = [];
-      for (const [field, value] of Object.entries(editFields)) {
-        updates.push({
-          indices: [editProduct.index],
-          field,
-          value
-        });
-      }
-      // Send all updates in parallel
-      const results = await Promise.all(
-        updates.map(update =>
-          fetch('/api/bulk_edit_products', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(update)
-          }).then(res => res.json())
-        )
-      );
-      if (results.every(r => r.success)) {
+      const payload = { index: editProduct.index, ...editFields };
+      const res = await fetch('/api/update_product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (data.success) {
         setEditStatus({ message: 'Product updated!', color: 'green' });
         await fetchProducts();
         setTimeout(closeEditModal, 800);
       } else {
-        setEditStatus({ message: 'Edit failed.', color: 'red' });
+        setEditStatus({ message: data.message || 'Edit failed.', color: 'red' });
       }
     } catch {
       setEditStatus({ message: 'Error updating product.', color: 'red' });
