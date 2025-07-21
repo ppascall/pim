@@ -17,11 +17,14 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 def register(
     email: str = Form(...),
     password: str = Form(...),
-    role: str = Form("user")  # Default to 'user'
+    role: str = Form("user")
 ):
+    print("Registering:", email)
     if get_user_by_email(email):
+        print("Already registered")
         raise HTTPException(status_code=400, detail="Email already registered")
     hashed_password = pwd_context.hash(password)
+    print("Hashed password:", hashed_password)
     add_user(email, hashed_password, role)
     token = create_access_token({"sub": email, "role": role})
     return {"access_token": token, "token_type": "bearer", "role": role}

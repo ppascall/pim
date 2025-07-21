@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const API_BASE = "http://localhost:8000/api/v1";
+
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,7 +14,7 @@ export default function LoginPage() {
     e.preventDefault();
     setStatus({ message: "", color: "" });
     try {
-      const res = await fetch("/api/v1/login", {
+      const res = await fetch(`${API_BASE}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: email, password }),
@@ -20,7 +22,7 @@ export default function LoginPage() {
       const data = await res.json();
       if (data.access_token) {
         localStorage.setItem("token", data.access_token);
-        localStorage.setItem("role", data.role || "user"); // If backend returns role
+        localStorage.setItem("role", data.role || "user");
         router.push("/");
       } else {
         setStatus({ message: data.detail || "Login failed", color: "red" });
@@ -28,14 +30,6 @@ export default function LoginPage() {
     } catch {
       setStatus({ message: "Login error", color: "red" });
     }
-  };
-
-  const token = localStorage.getItem("token");
-  const fetchData = async () => {
-    const res = await fetch("/api/your_endpoint", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    // Handle the response data as needed
   };
 
   return (
@@ -84,4 +78,4 @@ export default function LoginPage() {
       )}
     </div>
   );
-} 
+}

@@ -1,5 +1,6 @@
 import csv
 import os
+from fastapi import HTTPException
 
 USER_CSV = "app/db/users.csv"
 

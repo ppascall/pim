@@ -549,7 +549,7 @@ const styles = {
     fontWeight: 600,
     fontSize: 16,
     textAlign: "center",
-  },
+  },  
   addAnim: {
     animation: "addAnim 0.6s forwards",
   },

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const API_BASE = "http://localhost:3000/api/v1";
+const API_BASE = "http://localhost:8000/api/v1";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -70,7 +70,7 @@ export default function RegisterPage() {
           }}
           onClick={() => router.push("/login")}
         >
-          Already have an account? Login
+          Already have an account? Login8000
         </span>
       </div>
       {status.message && (
