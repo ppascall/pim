@@ -79,6 +79,11 @@ const InventoryManager = () => {
           </Link>
         </li>
         <li>
+          <Link href="/ai_theme" className="button">
+            AI Theme Descriptions
+          </Link>
+        </li>
+        <li>
           <button
             onClick={handleRefresh}
             className="button"

@@ -1,21 +1,25 @@
 import os
 import csv
 import requests
-from flask import Flask, request, jsonify, send_file
+import time
+import random
+from flask import Flask, request, jsonify, send_file, Response, stream_with_context
 from flask_cors import CORS
 from dotenv import load_dotenv
 
+# Use absolute paths for data files
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CATEGORY_FILE = os.path.join(BASE_DIR, 'categories.csv')
+PRODUCT_FILE = os.path.abspath(os.path.join(BASE_DIR, '../../../../products.csv'))
+USER_FILE = os.path.join(BASE_DIR, '../../db/users.csv')
+
 # Correct .env path (three levels up from this file)
-load_dotenv(dotenv_path=os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../.env')))
+load_dotenv(dotenv_path=os.path.abspath(os.path.join(BASE_DIR, '../../../.env')))
 
 app = Flask(__name__)
 CORS(app)
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
-
-CATEGORY_FILE = 'categories.csv'
-PRODUCT_FILE = 'products.csv'
-USER_FILE = os.path.join(os.path.dirname(__file__), '../../db/users.csv')
 
 # --- Shopify Integration ---
 SHOP = os.environ.get("SHOPIFY_SHOP")  # e.g. 'nextime-clocks.myshopify.com'
@@ -63,23 +67,20 @@ def fetch_shopify_products():
                     product_variant_map[inventory_item_id] = (product, variant)
 
             product['read_inventory'] = inventory_total
-            product['warehouse_stock'] = warehouse_stock  # <-- Add this line
+            product['warehouse_stock'] = warehouse_stock
 
         # Fetch all inventory levels in batches
         levels = fetch_inventory_levels_batch(headers, all_inventory_item_ids)
 
         # Map location_id to name
-        warehouse_stock_map = {}
         for level in levels:
             loc_id = level['location_id']
             available = level['available']
             inventory_item_id = level['inventory_item_id']
             warehouse_name = location_map.get(loc_id, f"Warehouse {loc_id}")
             product, variant = product_variant_map[inventory_item_id]
-            # Add to product's warehouse_stock
             if 'warehouse_stock' not in product:
                 product['warehouse_stock'] = {}
-            # FIX: Prevent TypeError if available is None
             product['warehouse_stock'][warehouse_name] = product['warehouse_stock'].get(warehouse_name, 0) + (available if available is not None else 0)
 
         all_products.extend(products)
@@ -142,10 +143,16 @@ def load_products():
 def save_products(products):
     if not products:
         return
+    # Collect all unique keys for header
+    all_keys = set()
+    for p in products:
+        all_keys.update(p.keys())
+    all_keys = list(all_keys)
     with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=products[0].keys())
+        writer = csv.DictWriter(f, fieldnames=all_keys)
         writer.writeheader()
-        writer.writerows(products)
+        for p in products:
+            writer.writerow(p)
 
 def save_product(product):
     file_exists = os.path.exists(PRODUCT_FILE)
@@ -263,14 +270,39 @@ def get_shopify_products():
 
 @app.route('/refresh_products', methods=['POST'])
 def refresh_products():
-    products, error = fetch_shopify_products()
+    shopify_products, error = fetch_shopify_products()
     if error:
         return jsonify({'success': False, 'message': error}), 500
-    if not products:
+    if not shopify_products:
         return jsonify({'success': False, 'message': 'No products found on Shopify'}), 404
-    save_shopify_products_to_csv(products)
-    clean_products_csv()  # <-- Clean after saving!
-    return jsonify({'success': True, 'count': len(products)})
+
+    local_products = load_products()
+    local_products_by_id = {p.get('id'): p for p in local_products if p.get('id')}
+
+    merged_products = []
+
+    for s_product in shopify_products:
+        sid = str(s_product.get('id'))
+        local = local_products_by_id.get(sid)
+        if local:
+            # Merge: update only fields from Shopify, keep extra fields from local
+            merged = local.copy()
+            for k, v in s_product.items():
+                merged[k] = v
+            merged_products.append(merged)
+        else:
+            # New product from Shopify
+            merged_products.append(s_product)
+
+    # Optionally, keep local-only products (not in Shopify)
+    shopify_ids = set(str(p.get('id')) for p in shopify_products)
+    for local in local_products:
+        if local.get('id') and str(local.get('id')) not in shopify_ids:
+            merged_products.append(local)
+
+    save_shopify_products_to_csv(merged_products)
+    clean_products_csv()
+    return jsonify({'success': True, 'count': len(merged_products)})
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
@@ -278,26 +310,80 @@ def add_product():
     fields = load_fields()
     product = {field['field_name']: data.get(field['field_name'], '') for field in fields}
 
+    # --- Generate SEO translations for description ---
+    base_desc = product.get('body_html', '')
+    title = product.get('title', '')
+
+    GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY'
+    GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}'
+    headers = {'Content-Type': 'application/json'}
+
+    def get_translation(prompt):
+        payload = {
+            "contents": [
+                {"parts": [{"text": prompt}]}
+            ]
+        }
+        try:
+            resp = requests.post(GEMINI_API_URL, headers=headers, json=payload, timeout=30)
+            resp.raise_for_status()
+            gemini_data = resp.json()
+            return gemini_data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+        except Exception as e:
+            return f"(Gemini error: {e})"
+
+    # English SEO description
+    if base_desc:
+        prompt_en = (
+            f"Rewrite the following product description in English, SEO-optimized and engaging, as valid HTML. "
+            f"Include the product title if possible. "
+            f"Product title: {title}\n"
+            f"Original description (HTML): {base_desc}\n"
+            f"Return only the new HTML description."
+        )
+        product['product_description_english'] = get_translation(prompt_en)
+
+        # Dutch SEO description
+        prompt_nl = (
+            f"Vertaal en herschrijf de volgende productbeschrijving naar het Nederlands, SEO-geoptimaliseerd en aantrekkelijk, als geldige HTML. "
+            f"Voeg indien mogelijk de producttitel toe. "
+            f"Producttitel: {title}\n"
+            f"Oorspronkelijke beschrijving (HTML): {base_desc}\n"
+            f"Geef alleen de nieuwe HTML-beschrijving terug."
+        )
+        product['product_description_dutch'] = get_translation(prompt_nl)
+
     # --- Shopify create logic ---
     shopify_id = None
     if SHOP and TOKEN:
         url = f"https://{SHOP}/admin/api/2024-01/products.json"
-        headers = {
+        headers_shopify = {
             "X-Shopify-Access-Token": TOKEN,
             "Content-Type": "application/json"
         }
-        # Only send allowed fields to Shopify
         allowed_fields = ["title", "body_html", "vendor", "product_type", "tags", "status"]
         shopify_fields = {k: v for k, v in product.items() if k in allowed_fields}
         payload = {"product": shopify_fields}
-        resp = requests.post(url, headers=headers, json=payload)
+        resp = requests.post(url, headers=headers_shopify, json=payload)
         if resp.status_code == 201:
             shopify_product = resp.json().get("product")
             if shopify_product and "id" in shopify_product:
                 shopify_id = shopify_product["id"]
-                product["id"] = str(shopify_id)  # Save Shopify ID in local CSV
+                product["id"] = str(shopify_id)
         else:
             return jsonify({'success': False, 'message': f"Shopify create failed: {resp.text}"}), 500
+
+    # Add translation fields to categories if not present
+    translation_fields = [
+        {'field_name': 'product_description_english', 'required': 'False', 'description': 'SEO HTML description in English'},
+        {'field_name': 'product_description_dutch', 'required': 'False', 'description': 'SEO HTML description in Dutch'}
+    ]
+    existing_fields = set(f['field_name'] for f in load_fields())
+    new_fields = [f for f in translation_fields if f['field_name'] not in existing_fields]
+    if new_fields:
+        fields = load_fields()
+        fields.extend(new_fields)
+        save_fields(fields)
 
     save_product(product)
     return jsonify({'success': True, 'shopify_id': shopify_id})
@@ -373,6 +459,7 @@ def upload_csv():
         rows = list(csv.reader(content.splitlines(), delimiter=delimiter))
         if rows:
             headers = rows[0]
+            # Ensure all new fields are in categories.csv
             existing_fields = set(f['field_name'] for f in load_fields())
             new_fields = [
                 {'field_name': h, 'required': 'False', 'description': ''}
@@ -384,16 +471,52 @@ def upload_csv():
                     if os.path.getsize(CATEGORY_FILE) == 0:
                         writer.writeheader()
                     writer.writerows(new_fields)
+
+            # Load existing products and index by product number (or another unique field)
+            existing_products = load_products()
+            # Try to find a unique key to match on
+            match_keys = ['product_number', 'Product Number', 'sku', 'SKU', 'id']
+            match_key = next((k for k in match_keys if k in headers), None)
+            if not match_key:
+                # Fallback: just append all as new if no match key
+                with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(headers)
+                    writer.writerows(rows[1:])
+                return jsonify({'success': True, 'message': 'No matching key found, replaced all products.'})
+
+            existing_map = {p.get(match_key): p for p in existing_products if p.get(match_key)}
+
+            # Merge or add
+            for row in rows[1:]:
+                row_dict = dict(zip(headers, row))
+                key = row_dict.get(match_key)
+                if key and key in existing_map:
+                    # Update existing product with new fields/data
+                    existing_map[key].update(row_dict)
+                else:
+                    # Add as new product
+                    existing_products.append(row_dict)
+
+            # Write back all products (updated and new)
+            # Collect all unique keys for header
+            all_keys = set()
+            for p in existing_products:
+                all_keys.update(p.keys())
+            all_keys = list(all_keys)
             with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow(headers)
-                writer.writerows(rows[1:])
+                writer = csv.DictWriter(f, fieldnames=all_keys)
+                writer.writeheader()
+                for p in existing_products:
+                    writer.writerow(p)
         return jsonify({'success': True})
     return jsonify({'success': False, 'message': 'Invalid file'}), 400
 
 @app.route('/download', methods=['GET'])
 def download():
-    return send_file(PRODUCT_FILE, as_attachment=True)
+    if not os.path.exists(PRODUCT_FILE):
+        return jsonify({'success': False, 'message': 'No products file found'}), 404
+    return send_file(PRODUCT_FILE, as_attachment=True, download_name='products.csv')
 
 @app.route('/bulk_delete_products', methods=['POST'])
 def bulk_delete_products():
@@ -503,6 +626,71 @@ def shopify_update_product(product_id):
     else:
         return jsonify({'success': False, 'message': resp.text}), resp.status_code
 
+@app.route('/theme_descriptions', methods=['GET'])
+def theme_descriptions():
+    theme = request.args.get('theme', '').strip()
+    if not theme:
+        return jsonify({'success': False, 'message': 'Theme is required'}), 400
+
+    products = load_products()
+    if not products:
+        return jsonify({'success': False, 'message': 'No products found'}), 404
+
+    theme_field = f'product_description_{theme.lower()}'
+    fields = load_fields()
+    if not any(f['field_name'] == theme_field for f in fields):
+        fields.append({'field_name': theme_field, 'required': 'False', 'description': f'SEO HTML description for {theme}'})
+        save_fields(fields)
+
+    GEMINI_API_KEY = 'AIzaSyCMTdfEtSgP0qatnNHTrmQaJjElVvES-3Y'
+    GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}'
+    headers = {'Content-Type': 'application/json'}
+
+    def generate():
+        total = len(products)
+        for idx, product in enumerate(products):
+            base_desc = product.get('body_html', '')
+            title = product.get('title', '')
+            if not base_desc:
+                product[theme_field] = ''
+                yield f'data: {{"progress": {idx+1}, "total": {total}, "status": "skipped"}}\n\n'
+                continue
+
+            prompt = (
+                f"Rewrite the following product description for the theme '{theme}'. "
+                f"Make it SEO-optimized, engaging, and relevant for {theme}. "
+                f"Return the result as valid HTML using tags like <br>, <strong>, <ul>, <li>, etc. "
+                f"Include the product title if possible. "
+                f"Product title: {title}\n"
+                f"Original description (HTML): {base_desc}\n"
+                f"Return only the new HTML description."
+            )
+
+            payload = {
+                "contents": [
+                    {"parts": [{"text": prompt}]}
+                ]
+            }
+
+            try:
+                resp = requests.post(GEMINI_API_URL, headers=headers, json=payload, timeout=30)
+                resp.raise_for_status()
+                gemini_data = resp.json()
+                new_desc = gemini_data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+                product[theme_field] = new_desc if new_desc else f"(No Gemini response for {theme})"
+                yield f'data: {{"progress": {idx+1}, "total": {total}, "status": "done"}}\n\n'
+            except Exception as e:
+                product[theme_field] = f"(Gemini error: {e})"
+                yield f'data: {{"progress": {idx+1}, "total": {total}, "status": "error"}}\n\n'
+
+            # Wait at least 4.1-4.5 seconds to stay under 15 RPM
+            time.sleep(4.2 + random.uniform(0, 0.3))
+
+        save_products(products)
+        yield f'data: {{"progress": {total}, "total": {total}, "status": "complete"}}\n\n'
+
+    return Response(stream_with_context(generate()), mimetype='text/event-stream')
+
 def clean_products_csv():
     import ast
     import tempfile
@@ -544,8 +732,6 @@ def fetch_inventory_levels(headers, inventory_item_id):
         return []
     return resp.json().get("inventory_levels", [])
 
-# Instead of calling fetch_inventory_levels for each variant,
-# collect all inventory_item_ids, then fetch in batches.
 def fetch_inventory_levels_batch(headers, inventory_item_ids):
     url = f"https://{SHOP}/admin/api/2024-01/inventory_levels.json"
     levels = []

@@ -1,8 +1,10 @@
 'use client';
+import React from 'react';
+
 export default function DownloadPage() {
-  // This will trigger a download when the page is visited
   React.useEffect(() => {
-    window.location.href = '/download';
+    // Use the full API path if your backend is on a different port or behind /api
+    window.location.href = '/api/download';
   }, []);
   return <div>Downloading CSV...</div>;
 }

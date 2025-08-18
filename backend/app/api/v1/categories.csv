@@ -1,0 +1,28 @@
+field_name,required,description
+id,False,
+test,False,
+published_scope,False,
+template_suffix,False,
+vendor,False,
+Test,False,
+status,False,
+handle,False,
+tags,False,
+images,False,
+product_type,False,
+body_html,False,
+read_inventory,False,
+admin_graphql_api_id,False,
+created_at,False,
+warehouse_stock,False,
+BLA BLA BLA,False,
+published_at,False,
+variants,False,
+options,False,
+image,False,
+title,False,
+updated_at,False,
+prijs,False,
+product_description_halloween,False,SEO HTML description for Halloween
+product_description_sinterklaas,False,SEO HTML description for sinterklaas
+product_description_black friday best gifts,False,SEO HTML description for Black Friday best gifts

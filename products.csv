@@ -1,19 +1,833 @@
-id,title,template_suffix,admin_graphql_api_id,created_at,tags,image,warehouse_stock,published_at,options,updated_at,published_scope,variants,body_html,handle,product_type,status,vendor,images,read_inventory
-10049262649683,Gift Card,,gid://shopify/Product/10049262649683,2025-08-11T11:35:44-04:00,POep,"{'id': 67341014106451, 'alt': 'Gift card that shows text: Generated data gift card', 'position': 1, 'product_id': 10049262649683, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014106451', 'width': 2881, 'height': 2881, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/gift_card.png?v=1754926548', 'variant_ids': []}",{'Shop location': 0},2025-08-11T11:35:45-04:00,"[{'id': 12668637479251, 'product_id': 10049262649683, 'name': 'Denominations', 'position': 1, 'values': ['$10', '$25', '$50', '$100']}]",2025-08-11T11:35:48-04:00,web,"[{'id': 51605102854483, 'product_id': 10049262649683, 'title': '$10', 'price': '10.00', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$10', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437469523, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102854483', 'image_id': None}, {'id': 51605102887251, 'product_id': 10049262649683, 'title': '$25', 'price': '25.00', 'position': 2, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$25', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437502291, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102887251', 'image_id': None}, {'id': 51605102920019, 'product_id': 10049262649683, 'title': '$50', 'price': '50.00', 'position': 3, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$50', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437535059, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102920019', 'image_id': None}, {'id': 51605102952787, 'product_id': 10049262649683, 'title': '$100', 'price': '100.00', 'position': 4, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$100', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437567827, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102952787', 'image_id': None}]",This is a gift card for the store,gift-card,giftcard,active,Snowboard Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/gift_card.png?v=1754926548,0
-10049263010131,maxine ruikt slecht,,gid://shopify/Product/10049263010131,2025-08-11T11:35:44-04:00,POep,"{'id': 67341014303059, 'alt': 'A bar of golden yellow wax', 'position': 1, 'product_id': 10049263010131, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014303059', 'width': 2881, 'height': 2881, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_wax.png?v=1754926548', 'variant_ids': []}",{'Shop location': 30},2025-08-11T11:35:45-04:00,"[{'id': 12668637839699, 'product_id': 10049263010131, 'name': 'Title', 'position': 1, 'values': ['Selling Plans Ski Wax', 'Special Selling Plans Ski Wax', 'Sample Selling Plans Ski Wax']}]",2025-08-11T11:35:48-04:00,web,"[{'id': 51605103444307, 'product_id': 10049263010131, 'title': 'Selling Plans Ski Wax', 'price': '24.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Selling Plans Ski Wax', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 57, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 2.0, 'weight_unit': 'oz', 'inventory_item_id': 53664438059347, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103444307', 'image_id': None}, {'id': 51605103477075, 'product_id': 10049263010131, 'title': 'Special Selling Plans Ski Wax', 'price': '49.95', 'position': 2, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Special Selling Plans Ski Wax', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 71, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 2.5, 'weight_unit': 'oz', 'inventory_item_id': 53664438092115, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103477075', 'image_id': None}, {'id': 51605103509843, 'product_id': 10049263010131, 'title': 'Sample Selling Plans Ski Wax', 'price': '9.95', 'position': 3, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Sample Selling Plans Ski Wax', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 14, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.5, 'weight_unit': 'oz', 'inventory_item_id': 53664438124883, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103509843', 'image_id': None}]",,selling-plans-ski-wax,accessories,active,TEST-WINKEL-PIM,"https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_wax.png?v=1754926548,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/wax-special.png?v=1754926549,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/sample-normal-wax.png?v=1754926548",30
-10049263239507,The 3p Fulfilled Snowboard,,gid://shopify/Product/10049263239507,2025-08-11T11:35:46-04:00,POep,"{'id': 67341014630739, 'alt': 'Top and bottom view of a snowboard. The top view shows 7 stacked hexagons and the bottom view\n          shows a small, centred hexagonal logo for Hydrogen.', 'position': 1, 'product_id': 10049263239507, 'created_at': '2025-08-11T11:35:46-04:00', 'updated_at': '2025-08-11T11:35:48-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014630739', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b9e0da7f-db89-4d41-83f0-7f417b02831d.jpg?v=1754926548', 'variant_ids': []}",{'Snow City Warehouse': 20},2025-08-11T11:35:46-04:00,"[{'id': 12668638069075, 'product_id': 10049263239507, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:51-04:00,web,"[{'id': 51605103739219, 'product_id': 10049263239507, 'title': 'Default Title', 'price': '2629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:46-04:00', 'updated_at': '2025-08-11T11:35:51-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': 'sku-hosted-1', 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438354259, 'inventory_quantity': 20, 'old_inventory_quantity': 20, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103739219', 'image_id': None}]",,the-3p-fulfilled-snowboard,snowboard,active,TEST-WINKEL-PIM,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b9e0da7f-db89-4d41-83f0-7f417b02831d.jpg?v=1754926548,20
-10049262715219,The Archived Snowboard,,gid://shopify/Product/10049262715219,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013614931, 'alt': 'The top and bottom view of a snowboard.The top view is a gradient light purple and dark purple\n        with a cube geometric pattern. The bottom view blue with light blue octagon geometric pattern.', 'position': 1, 'product_id': 10049262715219, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013614931', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_52f8e304-92d9-4a36-82af-50df8fe31c69.jpg?v=1754926547', 'variant_ids': []}",{'Shop location': 50},,"[{'id': 12668637544787, 'product_id': 10049262715219, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:47-04:00,web,"[{'id': 51605103116627, 'product_id': 10049262715219, 'title': 'Default Title', 'price': '629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437698899, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103116627', 'image_id': None}]",,the-archived-snowboard,snowboard,archived,Snowboard Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_52f8e304-92d9-4a36-82af-50df8fe31c69.jpg?v=1754926547,50
-10049262944595,The Collection Snowboard: Hydrogen,,gid://shopify/Product/10049262944595,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013680467, 'alt': 'Top and bottom view of a snowboard. The top view shows stylized hydrogen bonds and the bottom view\n        shows “H2” in a brush script typeface.', 'position': 1, 'product_id': 10049262944595, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013680467', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1754926547', 'variant_ids': []}",{'Shop location': 50},2025-08-11T11:35:46-04:00,"[{'id': 12668637806931, 'product_id': 10049262944595, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:53-04:00,web,"[{'id': 51605103378771, 'product_id': 10049262944595, 'title': 'Default Title', 'price': '600.00', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437993811, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103378771', 'image_id': None}]",,the-collection-snowboard-hydrogen,snowboard,active,Hydrogen Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1754926547,50
-10049263173971,The Collection Snowboard: Liquid,,gid://shopify/Product/10049263173971,2025-08-11T11:35:45-04:00,POep,"{'id': 67341014565203, 'alt': 'Top and bottom view of a snowboard. The top view shows a stylized scene of water, trees, mountains,\n        sky and a moon in blue colours. The bottom view has a blue liquid, drippy background with the text “liquid” in\n        a stylized script typeface.', 'position': 1, 'product_id': 10049263173971, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014565203', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b13ad453-477c-4ed1-9b43-81f3345adfd6.jpg?v=1754926548', 'variant_ids': []}",{'Shop location': 50},2025-08-11T11:35:46-04:00,"[{'id': 12668638003539, 'product_id': 10049263173971, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:50-04:00,web,"[{'id': 51605103673683, 'product_id': 10049263173971, 'title': 'Default Title', 'price': '749.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:45-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438288723, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103673683', 'image_id': None}]",,the-collection-snowboard-liquid,snowboard,active,Hydrogen Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b13ad453-477c-4ed1-9b43-81f3345adfd6.jpg?v=1754926548,50
-10049263108435,The Collection Snowboard: Oxygen,,gid://shopify/Product/10049263108435,2025-08-11T11:35:45-04:00,POep,"{'id': 67341014237523, 'alt': 'Top and bottom view of a snowboard. The top view shows a stylized scene of trees, mountains, sky and\n        a sun in red colours. The bottom view has blue wavy lines in the background with the text “Oxygen” in a\n        stylized script typeface.', 'position': 1, 'product_id': 10049263108435, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014237523', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_d624f226-0a89-4fe1-b333-0d1548b43c06.jpg?v=1754926548', 'variant_ids': []}",{'Shop location': 50},2025-08-11T11:35:46-04:00,"[{'id': 12668637938003, 'product_id': 10049263108435, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:48-04:00,web,"[{'id': 51605103608147, 'product_id': 10049263108435, 'title': 'Default Title', 'price': '1025.00', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:45-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438223187, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103608147', 'image_id': None}]",,the-collection-snowboard-oxygen,snowboard,active,Hydrogen Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_d624f226-0a89-4fe1-b333-0d1548b43c06.jpg?v=1754926548,50
-10049262780755,The Compare at Price Snowboard,,gid://shopify/Product/10049262780755,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013778771, 'alt': 'Top and bottom view of a snowboard. The top view shows pixelated clouds, with the top-most one being\n        the shape of the Shopify bag logo. The bottom view has a pixelated cloudy sky with blue, pink and purple\n        colours.', 'position': 1, 'product_id': 10049262780755, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013778771', 'width': 3097, 'height': 3908, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_sky.png?v=1754926548', 'variant_ids': []}",{'Shop location': 10},2025-08-11T11:35:45-04:00,"[{'id': 12668637610323, 'product_id': 10049262780755, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:48-04:00,web,"[{'id': 51605103051091, 'product_id': 10049262780755, 'title': 'Default Title', 'price': '785.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': '885.95', 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437666131, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103051091', 'image_id': None}]",,the-compare-at-price-snowboard,snowboard,active,TEST-WINKEL-PIM,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_sky.png?v=1754926548,10
-10049262879059,The Complete Snowboard,,gid://shopify/Product/10049262879059,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013713235, 'alt': 'Top and bottom view of a snowboard. The top view shows abstract circles and lines in shades of\n          teal. The bottom view shows abstract circles and lines in shades of purple and blue with the text “SHOPIFY”\n          in a sans serif typeface on top.', 'position': 1, 'product_id': 10049262879059, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013713235', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1754926547', 'variant_ids': []}",{'Shop location': 50},2025-08-11T11:35:45-04:00,"[{'product_id': 10049262879059, 'id': 12668637708627, 'name': 'Color', 'position': 1, 'values': ['Ice', 'Dawn', 'Powder', 'Electric', 'Sunset']}]",2025-08-11T11:35:55-04:00,web,"[{'product_id': 10049262879059, 'id': 51605103214931, 'title': 'Ice', 'price': '699.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Ice', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437829971, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103214931', 'image_id': None}, {'product_id': 10049262879059, 'id': 51605103247699, 'title': 'Dawn', 'price': '699.95', 'position': 2, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Dawn', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437862739, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103247699', 'image_id': None}, {'product_id': 10049262879059, 'id': 51605103280467, 'title': 'Powder', 'price': '699.95', 'position': 3, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Powder', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437895507, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103280467', 'image_id': None}, {'product_id': 10049262879059, 'id': 51605103313235, 'title': 'Electric', 'price': '699.95', 'position': 4, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Electric', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437928275, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103313235', 'image_id': None}, {'product_id': 10049262879059, 'id': 51605103346003, 'title': 'Sunset', 'price': '699.95', 'position': 5, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Sunset', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437961043, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103346003', 'image_id': None}]",This <b>PREMIUM</b> <i>snowboard</i> is so <b>SUPER</b><i>DUPER</i> awesome!,the-complete-snowboard,snowboard,active,Snowboard Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1754926547,50
-10049262747987,The Draft Snowboard,,gid://shopify/Product/10049262747987,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013811539, 'alt': 'Top and bottom view of a snowboard.The top view shows the text “hydrogen” in overlapping blue,\n          pink and black font. The bottom view is a purple to blue gradient with white geometric pattern overlay.', 'position': 1, 'product_id': 10049262747987, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013811539', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_5127218a-8f6c-498f-b489-09242c0fab0a.jpg?v=1754926547', 'variant_ids': []}",{'Shop location': 20},,"[{'id': 12668637577555, 'product_id': 10049262747987, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:48-04:00,web,"[{'id': 51605103018323, 'product_id': 10049262747987, 'title': 'Default Title', 'price': '2629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437633363, 'inventory_quantity': 20, 'old_inventory_quantity': 20, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103018323', 'image_id': None}]",,the-draft-snowboard,snowboard,draft,Snowboard Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_5127218a-8f6c-498f-b489-09242c0fab0a.jpg?v=1754926547,20
-10049262813523,The Hidden Snowboard,,gid://shopify/Product/10049262813523,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013647699, 'alt': 'The top view and bottom view of a snowboard. The top view is black with a singular peach cube.\n        The bottom view has a graphic of a stack of blocks in a gradient from light blue, to pink to peach.', 'position': 1, 'product_id': 10049262813523, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013647699', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_c8ff0b5d-c712-429a-be00-b29bd55cbc9d.jpg?v=1754926547', 'variant_ids': []}",{'Shop location': 50},,"[{'id': 12668637643091, 'product_id': 10049262813523, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:54-04:00,web,"[{'id': 51605103149395, 'product_id': 10049262813523, 'title': 'Default Title', 'price': '749.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437764435, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103149395', 'image_id': None}]",,the-hidden-snowboard,snowboard,active,Snowboard Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_c8ff0b5d-c712-429a-be00-b29bd55cbc9d.jpg?v=1754926547,50
-10049262682451,The Inventory Not Tracked Snowboard,,gid://shopify/Product/10049262682451,2025-08-11T11:35:44-04:00,POep,"{'id': 67341014499667, 'alt': 'Top and bottom view of a snowboard. The top view shows a centred hexagonal logo for Hydrogen that\n          appears to radiate outwards, as well as some overlapping hexagons at the bottom. The bottom view shows an\n          abstract angular grid in purples.', 'position': 1, 'product_id': 10049262682451, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014499667', 'width': 3097, 'height': 3908, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_purple_hydrogen.png?v=1754926549', 'variant_ids': []}",{'Shop location': 0},2025-08-11T11:35:45-04:00,"[{'id': 12668637512019, 'product_id': 10049262682451, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:58-04:00,web,"[{'id': 51605102985555, 'product_id': 10049262682451, 'title': 'Default Title', 'price': '949.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': None, 'requires_shipping': True, 'sku': 'sku-untracked-1', 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437600595, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102985555', 'image_id': None}]",,the-inventory-not-tracked-snowboard,snowboard,active,TEST-WINKEL-PIM,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_purple_hydrogen.png?v=1754926549,0
-10049262846291,The Minimal Snowboard,,gid://shopify/Product/10049262846291,2025-08-11T11:35:44-04:00,POep,,{'Shop location': 50},,"[{'id': 12668637675859, 'product_id': 10049262846291, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:36:41-04:00,web,"[{'id': 51605103083859, 'product_id': 10049262846291, 'title': 'Default Title', 'price': '885.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437731667, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103083859', 'image_id': None}]",,the-minimal-snowboard,,active,TEST-WINKEL-PIM,,50
-10049263141203,The Multi-location Snowboard,,gid://shopify/Product/10049263141203,2025-08-11T11:35:45-04:00,POep,"{'id': 67341014532435, 'alt': 'Top and bottom view of a snowboard. The top view shows a pixelated Shopify bag logo and a\n        pixelated character reviewing a clipboard with a questioning expression with a bright green-blue background.\n        The bottom view is a pattern of many pixel characters with a bright green-blue background.', 'position': 1, 'product_id': 10049263141203, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014532435', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a4e9096-021a-4c1e-8750-24b233166a12.jpg?v=1754926548', 'variant_ids': []}","{'Shop location': 50, 'My Custom Location': 50}",2025-08-11T11:35:46-04:00,"[{'id': 12668637970771, 'product_id': 10049263141203, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:51-04:00,web,"[{'id': 51605103640915, 'product_id': 10049263141203, 'title': 'Default Title', 'price': '729.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:45-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438255955, 'inventory_quantity': 100, 'old_inventory_quantity': 100, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103640915', 'image_id': None}]",,the-multi-location-snowboard,snowboard,active,TEST-WINKEL-PIM,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a4e9096-021a-4c1e-8750-24b233166a12.jpg?v=1754926548,100
-10049263206739,The Multi-managed Snowboard,,gid://shopify/Product/10049263206739,2025-08-11T11:35:45-04:00,POep,"{'id': 67341014401363, 'alt': 'Top and bottom view of a snowboard. The top view shows an illustration with varied outlined shapes\n        in black. The bottom view shows a black box character with an H pointing, and surrounded by black outlined\n        illustrative elements.', 'position': 1, 'product_id': 10049263206739, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014401363', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_9129b69a-0c7b-4f66-b6cf-c4222f18028a.jpg?v=1754926548', 'variant_ids': []}","{'Shop location': 50, 'Snow City Warehouse': 50}",2025-08-11T11:35:46-04:00,"[{'id': 12668638036307, 'product_id': 10049263206739, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:50-04:00,web,"[{'id': 51605103706451, 'product_id': 10049263206739, 'title': 'Default Title', 'price': '629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:50-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': 'sku-managed-1', 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438321491, 'inventory_quantity': 100, 'old_inventory_quantity': 100, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103706451', 'image_id': None}]",,the-multi-managed-snowboard,snowboard,active,Multi-managed Vendor,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_9129b69a-0c7b-4f66-b6cf-c4222f18028a.jpg?v=1754926548,100
-10049262911827,The Out of Stock Snowboard,,gid://shopify/Product/10049262911827,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013746003, 'alt': 'Top and bottom view of a snowboard. The top view shows a toggle at the top in shades of blue and\n        yellow. The bottom view shows an abstract illustration of toggles in blues and yellows.', 'position': 1, 'product_id': 10049262911827, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013746003', 'width': 3908, 'height': 3908, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_f44a9605-cd62-464d-b095-d45cdaa0d0d7.jpg?v=1754926547', 'variant_ids': []}",{'Shop location': 0},2025-08-11T11:35:45-04:00,"[{'id': 12668637741395, 'product_id': 10049262911827, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:53-04:00,web,"[{'id': 51605103182163, 'product_id': 10049262911827, 'title': 'Default Title', 'price': '885.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437797203, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103182163', 'image_id': None}]",,the-out-of-stock-snowboard,snowboard,active,TEST-WINKEL-PIM,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_f44a9605-cd62-464d-b095-d45cdaa0d0d7.jpg?v=1754926547,0
-10049262977363,The Videographer Snowboard,,gid://shopify/Product/10049262977363,2025-08-11T11:35:44-04:00,POep,"{'id': 67341013582163, 'alt': 'The top and bottom view of a snowboard. The top has view is turquoise and black with graphics of\n        trees. The bottom view is turquoise with the word hydrogen written in cursive.', 'position': 1, 'product_id': 10049262977363, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013582163', 'width': 1024, 'height': 1024, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main.jpg?v=1754926547', 'variant_ids': []}",{'Shop location': 50},2025-08-11T11:35:45-04:00,"[{'id': 12668637774163, 'product_id': 10049262977363, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",2025-08-11T11:35:47-04:00,web,"[{'id': 51605103411539, 'product_id': 10049262977363, 'title': 'Default Title', 'price': '885.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438026579, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103411539', 'image_id': None}]",,the-videographer-snowboard,snowboard,active,TEST-WINKEL-PIM,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main.jpg?v=1754926547,50
-active,10049338016083,test,test,test,POep,test,test,test,test,test,test,test,test,test,test,test,test,test,test
+test,product_type,Test,variants,read_inventory,warehouse_stock,BLA BLA BLA,image,images,product_description_halloween,status,prijs,tags,created_at,updated_at,vendor,options,template_suffix,body_html,published_scope,title,id,handle,admin_graphql_api_id,product_description_black friday best gifts,product_description_sinterklaas,published_at
+15,giftcard,sjdfhjasdfsdfsdf,"[{'id': 51605102854483, 'product_id': 10049262649683, 'title': '$10', 'price': '10.00', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$10', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437469523, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102854483', 'image_id': None}, {'id': 51605102887251, 'product_id': 10049262649683, 'title': '$25', 'price': '25.00', 'position': 2, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$25', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437502291, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102887251', 'image_id': None}, {'id': 51605102920019, 'product_id': 10049262649683, 'title': '$50', 'price': '50.00', 'position': 3, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$50', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437535059, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102920019', 'image_id': None}, {'id': 51605102952787, 'product_id': 10049262649683, 'title': '$100', 'price': '100.00', 'position': 4, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': '$100', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': False, 'barcode': None, 'fulfillment_service': 'gift_card', 'grams': 0, 'inventory_management': None, 'requires_shipping': False, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437567827, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102952787', 'image_id': None}]",0,{'Shop location': 0},sjdfhjasdf,"{'id': 67341014106451, 'alt': 'Gift card that shows text: Generated data gift card', 'position': 1, 'product_id': 10049262649683, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014106451', 'width': 2881, 'height': 2881, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/gift_card.png?v=1754926548', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/gift_card.png?v=1754926548,"```html
+<h2>Gift Card - The Perfect Halloween Treat (No Tricks!)</h2>
+
+<p>Looking for a spooky-good gift this Halloween? Ditch the candy corn and give the gift of choice with our Gift Card! It's the perfect way to let your favorite ghoul or goblin pick out exactly what they want.</p>
+
+<p><strong>Why a Gift Card is the Best Halloween Treat:</strong></p>
+<ul>
+  <li><strong>No Spooky Surprises:</strong> They get exactly what they desire!</li>
+  <li><strong>Perfect for Everyone:</strong> From little monsters to seasoned witches, everyone loves a gift card.</li>
+  <li><strong>Lasts Longer Than Candy:</strong> A truly enduring gift (and better for their teeth!).</li>
+  <li><strong>Easy to Send:</strong> No need to wrap a ghost – send instantly!</li>
+</ul>
+
+<p>Whether they're looking to upgrade their costume, deck out their haunted house, or just treat themselves to something special, our Gift Card is the perfect spooky solution.</p>
+
+<p><strong>Give the Gift of Halloween Delight!</strong> <br> Order your Gift Card today and make this Halloween unforgettable. No tricks, just treats!</p>
+```",active,15,,2025-08-11T11:35:44-04:00,2025-08-11T23:35:56-04:00,Snowboard Vendor,"[{'id': 12668637479251, 'product_id': 10049262649683, 'name': 'Denominations', 'position': 1, 'values': ['$10', '$25', '$50', '$100']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,Gift Card,10049262649683,gift-card,gid://shopify/Product/10049262649683,"```html
+<p><strong>Gift Card: The Perfect Black Friday Gift - Guaranteed!</strong></p>
+<p>Struggling to find the right gift this Black Friday? Give the gift of choice with a Gift Card! Let your loved ones choose exactly what they want from our incredible selection. <br><br>Perfect for:</p>
+<ul>
+  <li><strong>The Snowboard Enthusiast:</strong> Dreaming of new gear for the slopes? A Gift Card allows them to pick out the perfect snowboard, boots, or accessories.</li>
+  <li><strong>Hard-to-Shop-For Family Members:</strong> Eliminate the guesswork! A Gift Card is a surefire win for even the pickiest recipients.</li>
+  <li><strong>Last-Minute Shoppers:</strong> Need a quick and thoughtful gift? Our Gift Cards are delivered instantly, making them the ideal last-minute Black Friday solution.</li>
+</ul>
+<p>Don't miss out on the best Black Friday gift - a Gift Card! Give the gift of endless possibilities.</p>
+```","```html
+<h2>Sinterklaas Gift Card - The Perfect Surprise!</h2>
+
+<p>Struggling to find the perfect present for Pakjesavond? Give the gift of choice with a Sinterklaas Gift Card! Let them choose their own treasure from our wide selection of toys, games, books, and festive decorations.</p>
+
+<p><strong>Why choose a Sinterklaas Gift Card?</strong></p>
+
+<ul>
+    <li><strong>Ideal for picky recipients:</strong> Guarantee a happy face on December 5th!</li>
+    <li><strong>Perfect for last-minute shoppers:</strong> No more stressing over what to buy!</li>
+    <li><strong>Flexible and convenient:</strong> Available in various amounts to suit your budget.</li>
+    <li><strong>Lets them pick their own Sinterklaas gift:</strong> Ensures they get something they truly want!</li>
+</ul>
+
+<p>Make this Sinterklaas extra special with a Gift Card they'll truly appreciate!  It's the perfect solution for anyone who wants to spread the holiday cheer without the guesswork.<br><br><strong>Ho, Ho, Ho! Happy Sinterklaas!</strong></p>
+```",2025-08-11T11:35:45-04:00
+15,accessories,sjdfhjasdfsdfsdf,"[{'id': 51605103444307, 'product_id': 10049263010131, 'title': 'Selling Plans Ski Wax', 'price': '24.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Selling Plans Ski Wax', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 57, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 2.0, 'weight_unit': 'oz', 'inventory_item_id': 53664438059347, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103444307', 'image_id': None}, {'id': 51605103477075, 'product_id': 10049263010131, 'title': 'Special Selling Plans Ski Wax', 'price': '49.95', 'position': 2, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Special Selling Plans Ski Wax', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 71, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 2.5, 'weight_unit': 'oz', 'inventory_item_id': 53664438092115, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103477075', 'image_id': None}, {'id': 51605103509843, 'product_id': 10049263010131, 'title': 'Sample Selling Plans Ski Wax', 'price': '9.95', 'position': 3, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Sample Selling Plans Ski Wax', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 14, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.5, 'weight_unit': 'oz', 'inventory_item_id': 53664438124883, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103509843', 'image_id': None}]",30,{'Shop location': 30},sjdfhjasdf,"{'id': 67341014303059, 'alt': 'A bar of golden yellow wax', 'position': 1, 'product_id': 10049263010131, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014303059', 'width': 2881, 'height': 2881, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_wax.png?v=1754926548', 'variant_ids': []}","https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_wax.png?v=1754926548,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/wax-special.png?v=1754926549,https://cdn.shopify.com/s/files/1/0981/5713/4163/files/sample-normal-wax.png?v=1754926548","```html
+<h2>Maxine Ruikt Slecht: Haunt the Slopes this Halloween!</h2>
+
+<p>Unleash your inner snow monster with the <strong>Maxine Ruikt Slecht Snowboard</strong>, guaranteed to make even the gnarliest ghosts shiver! This isn't your average trick-or-treat ride; it's built for serious shredding, even if your blood runs cold.</p>
+
+<p>Prepare for a chillingly good time with features that will have you carving through the snow like a banshee:</p>
+
+<ul>
+  <li><strong>Premium Materials:</strong> Crafted with otherworldly materials for ultimate durability and performance. This board can withstand even the most bone-rattling conditions.</li>
+  <li><strong>Conquer Any Terrain:</strong> Perfect for family frights or solo slay sessions on the slopes. Shred powder, carve groomers, and dominate the park – if you dare!</li>
+  <li><strong>Unleash Your Inner Ghoul:</strong> Ideal for snowboarders who are dead serious about their riding. Take your skills from spooky to spectacular this Halloween season.</li>
+</ul>
+
+<p>Don't be a scaredy-cat! Get your <strong>Maxine Ruikt Slecht</strong> snowboard today and make this Halloween the most epic ride of your afterlife! <br> <strong>Limited quantities available, so grab yours before it vanishes into the night!</strong></p>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:35:57-04:00,TEST-WINKEL-PIM,"[{'id': 12668637839699, 'product_id': 10049263010131, 'name': 'Title', 'position': 1, 'values': ['Selling Plans Ski Wax', 'Special Selling Plans Ski Wax', 'Sample Selling Plans Ski Wax']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,maxine ruikt slecht,10049263010131,selling-plans-ski-wax,gid://shopify/Product/10049263010131,"```html
+<h2>Maxine Ruikt Slecht: The Ultimate Black Friday Snowboard Deal!</h2>
+<p>Dominate the slopes this winter with the Maxine Ruikt Slecht snowboard, <strong>now at its lowest price of the year for Black Friday!</strong><br><br>This isn't just a snowboard; it's your gateway to unforgettable family memories and epic shred sessions. Crafted with <strong>premium materials</strong>, the Maxine Ruikt Slecht offers unparalleled performance and durability.</p>
+
+<ul>
+  <li><strong>Pro-Level Performance:</strong> Engineered for responsiveness and control.</li>
+  <li><strong>Family Fun:</strong> Perfect for riders of all skill levels.</li>
+  <li><strong>Built to Last:</strong> Premium construction ensures years of enjoyment.</li>
+</ul>
+
+<p><strong>Don't miss out on this incredible Black Friday opportunity!</strong> Level up your snowboarding game and make this winter one to remember. This snowboard is the <strong>perfect gift for the snowboarding enthusiast</strong> in your life (or for yourself!). Get yours before they're gone!</p>
+
+<p><strong>Limited quantities available!</strong> Act fast and secure your Maxine Ruikt Slecht snowboard today!</p>
+```","```html
+<h2>Maxine Ruikt Slecht - Speciaal voor Sinterklaas!</h2>
+
+<p>Verras de ondeugende (of juist extra lieve!) Sinterklaasvierder met deze... bijzondere verrassing! We durven te wedden dat ze dit niet hadden verwacht.</p>
+
+<p><strong>Let op:</strong> Dit is een grappig cadeautje, perfect voor een surprise of als vulmiddel voor de zak van Sinterklaas. Een gegarandeerde lach is inbegrepen!</p>
+
+<p>Nog op zoek naar meer Sinterklaas inspiratie? Bekijk dan onze:</p>
+
+<ul>
+<li><strong>Sinterklaas surprises:</strong> Maak er een onvergetelijke avond van.</li>
+<li><strong>Kadootjes voor pakjesavond:</strong> Voor jong en oud!</li>
+<li><strong>Sinterklaas gedichten:</strong> Inspiratie voor je rijm.</li>
+</ul>
+
+<p>Bestel snel, want Sinterklaas komt eraan! <br>Maak van pakjesavond een avond om nooit te vergeten. </p>
+```",2025-08-11T11:35:45-04:00
+15,test,sjdfhjasdfsdfsdf,"[{'id': 51605341503827, 'product_id': 10049338016083, 'title': 'Default Title', 'price': '0.00', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T12:14:23-04:00', 'updated_at': '2025-08-11T12:14:23-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': None, 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664673857875, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605341503827', 'image_id': None}]",0,{'Shop location': 0},sjdfhjasdf,,,"```html
+<h2>Test - Shred the Spooky Slopes!</h2>
+<p>Get ready to carve up some Halloween chills with the Test snowboard! While it might not fly on a broomstick, this board is <strong>guaranteed to be a scream</strong> on the mountain.</p>
+
+<p>Forget ghosts and goblins, face the real thrills with this top-of-the-line board built for serious shredding, even under a full moon! Okay, maybe not *under* a full moon, but definitely *during* Halloween weekend!</p>
+
+<p>Made with the most <strong>premium materials from beyond the grave</strong> (okay, they're earthly, but still super premium!), this snowboard will help you conquer any hill, from beginner bunny slopes to the scariest black diamonds. Perfect for adding a touch of terror to your family ski trip!</p>
+
+<p><strong>Why choose the Test this Halloween?</strong></p>
+<ul>
+    <li><strong>Unleash Your Inner Monster:</strong> Designed for peak performance and spooky style.</li>
+    <li><strong>Premium Materials:</strong> Built to last longer than a vampire's lifespan.</li>
+    <li><strong>Conquer Any Hill:</strong> From pumpkin patch slopes to spine-chilling steeps.</li>
+    <li><strong>The Perfect Halloween Treat:</strong> Treat yourself (or a lucky ghoul!) to the ultimate snowboarding experience.</li>
+</ul>
+
+<p>Don't let this Halloween pass you by without experiencing the ultimate in snowboarding terror! <strong>Order your Test snowboard today!</strong></p>
+```",active,15,test,2025-08-11T12:14:23-04:00,2025-08-11T12:14:28-04:00,test,"[{'id': 12668721267027, 'product_id': 10049338016083, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",global,test,10049338016083,test,gid://shopify/Product/10049338016083,"```html
+<h3><strong>Test Snowboard: Your Black Friday Ticket to Shredding!</strong></h3>
+
+<p>Dominate the slopes this winter with the Test Snowboard, the <strong>perfect gift for any serious snowboarder</strong>. This Black Friday, give the gift of unparalleled performance and unforgettable shred sessions!</p>
+
+<p>Crafted from <strong>premium materials</strong>, this top-of-the-line snowboard offers:</p>
+
+<ul>
+  <li><strong>Superior Handling:</strong> Carve with precision and confidence.</li>
+  <li><strong>Ultimate Durability:</strong> Built to withstand the toughest conditions.</li>
+  <li><strong>Family Fun:</strong> Perfect for shredding hills with loved ones of all skill levels.</li>
+</ul>
+
+<p>Don't miss out on this <strong>Black Friday exclusive deal</strong>! Give the gift of adventure and upgrade their snowboarding game today.<br><strong>Limited quantities available!</strong></p>
+```","```html
+<h2>De Perfecte Sinterklaas Verrassing voor de Snowboard Liefhebber: Test!</h2>
+
+<p>Zoek je het ultieme Sinterklaascadeau voor een echte snowboard fanaat? Kijk niet verder! De <strong>Test</strong> is de top-of-the-line snowboard waar elk snowboardend hart sneller van gaat kloppen. Verras jouw kind, partner, of vriend met een cadeau dat gegarandeerd voor enthousiasme zorgt!</p>
+
+<p>Deze snowboard is niet zomaar een plank; het is gemaakt van de <strong>meest premium materialen</strong>, waardoor hij perfect is voor zowel beginners die hun skills willen verbeteren, als gevorderde snowboarders die de pistes willen domineren. Stel je voor: samen met de hele familie de berg af, met deze fantastische snowboard onder je voeten.</p>
+
+<strong>Waarom kiezen voor de Test als Sinterklaascadeau?</strong>
+
+<ul>
+  <li><strong>Ultiem Plezier:</strong> Gegarandeerd urenlang snowboardplezier voor jong en oud.</li>
+  <li><strong>Topkwaliteit:</strong> Gemaakt van premium materialen voor optimale prestaties en duurzaamheid.</li>
+  <li><strong>Het Perfecte Cadeau:</strong> Een uniek en onvergetelijk Sinterklaascadeau.</li>
+  <li><strong>Geschikt voor Iedereen:</strong> Ideaal voor beginners en gevorderden.</li>
+</ul>
+
+<p>Maak van Sinterklaas een onvergetelijke ervaring met de <strong>Test</strong> snowboard! Bestel vandaag nog en verras jouw dierbaren met het beste snowboard cadeau ooit! <br><br><strong>Wacht niet langer, de Sint komt eraan!</strong></p>
+```",2025-08-11T12:14:23-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103739219, 'product_id': 10049263239507, 'title': 'Default Title', 'price': '2629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:46-04:00', 'updated_at': '2025-08-11T11:35:51-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': 'sku-hosted-1', 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438354259, 'inventory_quantity': 20, 'old_inventory_quantity': 20, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103739219', 'image_id': None}]",20,{'Snow City Warehouse': 20},sjdfhjasdf,"{'id': 67341014630739, 'alt': 'Top and bottom view of a snowboard. The top view shows 7 stacked hexagons and the bottom view\n          shows a small, centred hexagonal logo for Hydrogen.', 'position': 1, 'product_id': 10049263239507, 'created_at': '2025-08-11T11:35:46-04:00', 'updated_at': '2025-08-11T11:35:48-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014630739', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b9e0da7f-db89-4d41-83f0-7f417b02831d.jpg?v=1754926548', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b9e0da7f-db89-4d41-83f0-7f417b02831d.jpg?v=1754926548,"```html
+<h2>The 3p Fulfilled Snowboard - Conquer the Halloween Haunts on the Slopes!</h2>
+<p><strong>Get ready to carve up the mountain this Halloween season with The 3p Fulfilled Snowboard!</strong> This isn't your average ride; it's a spine-chillingly awesome machine built for epic snow shredding. Forget tricks, treats, and monsters...your thrill is on the snow!</p>
+
+<p><strong>Why this snowboard is perfect for Halloween:</strong></p>
+<ul>
+  <li><strong>Premium Performance:</strong> Crafted from top-of-the-line materials, ensuring ultimate control and stability for navigating any ghoulishly good run.</li>
+  <li><strong>Family Fun:</strong> Scare up some family memories on the slopes! This board is perfect for riders of all skill levels, from beginner zombies to seasoned shredders.</li>
+  <li><strong>Dominate the Darkness:</strong> Turn heads with this uniquely designed snowboard. Perfect for Halloween slope events and nighttime expeditions!</li>
+</ul>
+
+<p><strong>Don't be a scaredy cat!</strong> This Halloween, take your snowboarding to the next level. The 3p Fulfilled Snowboard will have you carving like a pro through haunted trails and winter wonderlands. Order yours today and prepare for an unforgettable, adrenaline-pumping experience!</p>
+
+<p><strong>Keywords:</strong> Halloween Snowboard, Snowboard, Snowboarding, Winter Sports, Halloween, Family Fun, The 3p Fulfilled Snowboard, Premium Snowboard</p>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:46-04:00,2025-08-11T23:35:52-04:00,TEST-WINKEL-PIM,"[{'id': 12668638069075, 'product_id': 10049263239507, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The 3p Fulfilled Snowboard,10049263239507,the-3p-fulfilled-snowboard,gid://shopify/Product/10049263239507,"```html
+<h3><strong>The 3p Fulfilled Snowboard: Your Black Friday Shred Sled!</strong></h3>
+<p>Dominate the slopes this winter with the 3p Fulfilled Snowboard, <strong>a Black Friday best gift guaranteed to thrill!</strong> This top-of-the-line board is built for ultimate performance and family fun. <br><br>
+<strong>Why it's the perfect Black Friday gift:</strong>
+<ul>
+<li><strong>Premium Construction:</strong> Crafted with the highest-quality materials for superior durability and responsiveness. <br> Get more seasons of shredding!</li>
+<li><strong>Family-Friendly Fun:</strong> Perfect for carving up the hills with your loved ones. <br>Create memories that last a lifetime.</li>
+<li><strong>Serious Performance:</strong> If you're passionate about snowboarding, this is the board you need to take your riding to the next level. <br> Unleash your inner shredder!</li>
+</ul>
+Don't miss out on this <strong>exclusive Black Friday deal</strong>! Give the gift of adventure with the 3p Fulfilled Snowboard.</p>
+```","```html
+<h2>The 3p Fulfilled Snowboard: A Sinterklaas Gift for Winter Fun!</h2>
+
+<p>Looking for the perfect <strong>Sinterklaas cadeau</strong> for the aspiring snowboarder in your family? Look no further! This snowboard will bring joy and excitement to winter adventures, just like Sinterklaas brings joy on December 5th.</p>
+
+<p>Imagine the smiles as they conquer the slopes, feeling the wind in their hair and the thrill of the ride. This board is built for fun and performance, making it an excellent choice for families and individuals alike. It's the gift that keeps on giving throughout the winter season!</p>
+
+<ul>
+  <li><strong>Guaranteed Winter Fun:</strong> Ideal for creating lasting memories with family and friends during the Sinterklaas season and beyond.</li>
+  <li><strong>Durable & Reliable:</strong> This snowboard can handle all your winter adventures, year after year. Perfect for getting the most out of the winter season!</li>
+  <li><strong>The Perfect Sinterklaas Surprise:</strong> Surprise your loved ones with a gift that inspires outdoor activity and winter cheer. A Sinterklaas night to remember!</li>
+</ul>
+
+<p>Give the gift of adventure this <strong>Sinterklaas</strong>. Order the <strong>3p Fulfilled Snowboard</strong> today and make this winter the most exciting one yet! Perfect for under the tree or in a big ""zak"" (sack)!</p>
+```",2025-08-11T11:35:46-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103116627, 'product_id': 10049262715219, 'title': 'Default Title', 'price': '629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437698899, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103116627', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,"{'id': 67341013614931, 'alt': 'The top and bottom view of a snowboard.The top view is a gradient light purple and dark purple\n        with a cube geometric pattern. The bottom view blue with light blue octagon geometric pattern.', 'position': 1, 'product_id': 10049262715219, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013614931', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_52f8e304-92d9-4a36-82af-50df8fe31c69.jpg?v=1754926547', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_52f8e304-92d9-4a36-82af-50df8fe31c69.jpg?v=1754926547,"```html
+<h2>The Archived Snowboard - Unleash Your Inner Ghoul on the Slopes!</h2>
+
+<p>Prepare to haunt the hills this Halloween season with <strong>The Archived Snowboard!</strong> Ditch the pumpkin carving and embrace the thrill of shredding snow-covered peaks under the eerie moonlight. This isn't your average family-friendly board; it's built for serious riders who want to carve, jump, and terrify the competition!</p>
+
+<p>Crafted with wickedly premium materials, <strong>The Archived Snowboard</strong> offers:</p>
+<ul>
+    <li><strong>Unmatched Performance:</strong> Experience superior control and responsiveness, perfect for navigating spooky slopes and landing monster tricks.</li>
+    <li><strong>Premium Construction:</strong> Built to withstand the most chilling conditions, ensuring years of hauntingly good rides.</li>
+    <li><strong>Head-Turning Style:</strong> Make a statement on the mountain with a design that screams Halloween spirit! (Check out available color options and limited edition Halloween-themed graphics!)</li>
+</ul>
+
+<p>Don't just trick-or-treat; shred or treat! Order <strong>The Archived Snowboard</strong> today and make this Halloween one to remember on the slopes. <br><br> <strong>Warning:</strong> May cause excessive stoke and envy from other riders. Ride at your own risk!</p>
+```",archived,15,"Archived, Premium, Snow, Snowboard, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:35:51-04:00,Snowboard Vendor,"[{'id': 12668637544787, 'product_id': 10049262715219, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Archived Snowboard,10049262715219,the-archived-snowboard,gid://shopify/Product/10049262715219,"```html
+<h2>The Archived Snowboard: Black Friday's Best Gift for Snowboarders!</h2>
+
+<p>Dominate the slopes this winter with <strong>The Archived Snowboard</strong>! This Black Friday, give the gift of unparalleled performance and experience snowboarding like never before. Made with premium materials, this board is designed for serious riders who demand the best.</p>
+
+<p><strong>Why The Archived Snowboard is the Perfect Black Friday Gift:</strong></p>
+<ul>
+  <li><strong>Unleash Your Potential:</strong> Experience superior control and responsiveness for carving, jumps, and all-mountain riding.</li>
+  <li><strong>Premium Construction:</strong> Built to last with top-of-the-line materials ensuring durability and longevity.</li>
+  <li><strong>Family Fun:</strong> Perfect for shredding hills with your family and creating lasting memories.</li>
+  <li><strong>Black Friday Savings:</strong> Get the ultimate snowboard at an unbeatable price - only for a limited time!</li>
+</ul>
+
+<p>Don't miss out on this incredible Black Friday deal! Give the gift of <strong>The Archived Snowboard</strong> and make this winter one to remember.<br><br> <strong>Limited quantities available! Order yours today!</strong></p>
+```","```html
+<h2>The Archived Snowboard - A Sinterklaas Gift for Snowy Adventures!</h2>
+
+<p>Looking for the perfect <strong>Sinterklaas gift</strong> for the snowboard enthusiast in your life? This <strong>Archived Snowboard</strong> is sure to bring joy and excitement to the slopes this winter! Forget coal in their shoe, this is a present they'll cherish all season long!</p>
+
+<p>Imagine the thrill of gliding down the hills, leaving crisp tracks in the fresh powder! This snowboard, while 'archived' in name, offers top-tier performance and is perfect for family outings and carving up the mountains. It's built to last and inspire countless snowy adventures.</p>
+
+<ul>
+  <li><strong>Perfect for the whole family:</strong> Enjoy unforgettable moments together on the slopes.</li>
+  <li><strong>Built for fun:</strong> Designed for maximum enjoyment and smooth rides.</li>
+  <li><strong>The ultimate Sinterklaas surprise:</strong> Give the gift of winter excitement this year!</li>
+</ul>
+
+<p>Don't miss out! Make this Sinterklaas unforgettable with the gift of the <strong>Archived Snowboard</strong>! Ho Ho Ho!</p>
+
+```",
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103378771, 'product_id': 10049262944595, 'title': 'Default Title', 'price': '600.00', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437993811, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103378771', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,"{'id': 67341013680467, 'alt': 'Top and bottom view of a snowboard. The top view shows stylized hydrogen bonds and the bottom view\n        shows “H2” in a brush script typeface.', 'position': 1, 'product_id': 10049262944595, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013680467', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1754926547', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a40b01b-5021-48c1-80d1-aa8ab4876d3d.jpg?v=1754926547,"```html
+<h2>The Collection Snowboard: Hydrogen - Conquer the Spooky Slopes!</h2>
+<p>Prepare for a frightfully fun ride this Halloween season with <strong>The Collection Snowboard: Hydrogen!</strong> Get ready to shred the gnar and terrify the trails with this top-of-the-line board designed for ultimate performance.</p>
+
+<p>This isn't just any snowboard; it's a monster crafted from the most <strong>premium materials</strong> to ensure a hauntingly good experience. Whether you're carving through ghostly powder or navigating treacherous terrain, the Hydrogen will have you screaming with delight (not fear!).</p>
+
+<p><strong>Why choose The Collection Snowboard: Hydrogen this Halloween?</strong></p>
+<ul>
+  <li><strong>Unleash Your Inner Ghoul:</strong> Perfect for riders of all skill levels looking to embrace the spooky spirit of snowboarding.</li>
+  <li><strong>Premium Performance:</strong> Experience superior control and responsiveness on any terrain.</li>
+  <li><strong>Spooktacular Durability:</strong> Built to withstand even the most chilling conditions.</li>
+  <li><strong>Trick or Treat Yourself:</strong> Invest in a board that will last for many Halloween seasons to come!</li>
+</ul>
+
+<p>Don't be a scaredy-cat! This Halloween, take your snowboarding to the next level with The Collection Snowboard: Hydrogen. <strong>Order yours today and get ready to carve some creepy curves!</strong><br>Happy Haunting!</p>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:37:27-04:00,Hydrogen Vendor,"[{'id': 12668637806931, 'product_id': 10049262944595, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Collection Snowboard: Hydrogen,10049262944595,the-collection-snowboard-hydrogen,gid://shopify/Product/10049262944595,"```html
+<h2>Black Friday Deal: The Collection Snowboard: Hydrogen</h2>
+<p> Dominate the slopes this winter with <strong>The Collection Snowboard: Hydrogen!</strong> Snag this top-of-the-line snowboard at a <strong>Black Friday price you won't believe!</strong> <br><br>
+
+Perfect for shredding with family or hitting the backcountry, the Hydrogen is built with <strong>premium materials for ultimate performance and durability.</strong> This isn't just a snowboard; it's an investment in your passion. <br><br>
+
+<strong>Why choose The Collection Snowboard: Hydrogen this Black Friday?</strong>
+<ul>
+ <li><strong>Unbeatable Black Friday Discount:</strong> Save big on this premium board!</li>
+ <li><strong>Superior Performance:</strong> Engineered for all skill levels, from beginner to expert.</li>
+ <li><strong>Premium Construction:</strong> Built to last with the finest materials.</li>
+ <li><strong>The Perfect Gift:</strong> Surprise the snowboarder in your life with the ultimate present.</li>
+</ul>
+
+Don't miss out on this <strong>limited-time Black Friday offer!</strong> Upgrade your ride and experience snowboarding like never before. Get your <strong>The Collection Snowboard: Hydrogen</strong> before it's gone!
+</p>
+```","```html
+<h2>The Collection Snowboard: Hydrogen - Perfect for Sinterklaas!</h2>
+
+<p>Looking for the ultimate <strong>Sinterklaas gift</strong> for the snowboarding enthusiast in your family? Look no further than The Collection Snowboard: Hydrogen! This top-of-the-line snowboard is built for exhilarating adventures on the slopes, making it a gift they'll truly treasure. Imagine their joy on Pakjesavond!</p>
+
+<p>Prepare for thrilling descents and unforgettable family fun. This board offers:</p>
+
+<ul>
+    <li><strong>Superior Performance:</strong> Designed for both seasoned shredders and those looking to improve their skills.</li>
+    <li><strong>Premium Materials:</strong> Crafted from the highest quality materials for durability and optimal control.</li>
+    <li><strong>The Ideal Sinterklaas Surprise:</strong> A gift that screams excitement and adventure, perfect for under the tree!</li>
+</ul>
+
+<p>Make this Sinterklaas extra special. Order The Collection Snowboard: Hydrogen today and give the gift of snowy thrills! <br><strong>Don't wait, because the Pieten are packing fast!</strong></p>
+```",2025-08-11T11:35:46-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103673683, 'product_id': 10049263173971, 'title': 'Default Title', 'price': '749.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:45-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438288723, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103673683', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,"{'id': 67341014565203, 'alt': 'Top and bottom view of a snowboard. The top view shows a stylized scene of water, trees, mountains,\n        sky and a moon in blue colours. The bottom view has a blue liquid, drippy background with the text “liquid” in\n        a stylized script typeface.', 'position': 1, 'product_id': 10049263173971, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014565203', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b13ad453-477c-4ed1-9b43-81f3345adfd6.jpg?v=1754926548', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_b13ad453-477c-4ed1-9b43-81f3345adfd6.jpg?v=1754926548,"```html
+<h2>The Collection Snowboard: Liquid - Unleash Your Inner Ghoul on the Slopes!</h2>
+
+<p>Prepare for a terrifyingly good time on the mountain this Halloween with The Collection Snowboard: Liquid! Forget trick-or-treating, it's time for <strong>shredding the gnar</strong> like a snow-loving monster!</p>
+
+<p>This isn't your average board; it's crafted with premium materials from the depths of the earth (we're kidding...mostly!) to provide unmatched performance and durability. Whether you're a seasoned snow beast or a beginner boo-rider, this snowboard will have you carving through the snow like a possessed phantom.</p>
+
+<p><strong>Why The Collection Snowboard is Perfect for Halloween:</strong></p>
+<ul>
+  <li><strong>Spooktacular Performance:</strong> Dominate the slopes with superior control and responsiveness.</li>
+  <li><strong>Durable as a Tombstone:</strong> Built to withstand the harshest winter conditions.</li>
+  <li><strong>Head-Turning Design:</strong> Make a statement as you ride by with its sleek, mysterious look.</li>
+  <li><strong>Perfect for All Skill Levels:</strong> From beginner ghosts to expert goblins, everyone can enjoy the ride.</li>
+</ul>
+
+<p>Don't be a scaredy cat! Grab The Collection Snowboard: Liquid and make this Halloween the most epic snow day ever. <br> Get yours today and prepare to <strong>carve up some killer turns!</strong></p>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:45-04:00,2025-08-11T23:35:54-04:00,Hydrogen Vendor,"[{'id': 12668638003539, 'product_id': 10049263173971, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Collection Snowboard: Liquid,10049263173971,the-collection-snowboard-liquid,gid://shopify/Product/10049263173971,"```html
+<h2>The Collection Snowboard: Liquid - Black Friday Deal!</h2>
+<p>Unleash your inner shredder this <strong>Black Friday</strong> with the <strong>The Collection Snowboard: Liquid!</strong> This isn't just any snowboard; it's your ticket to dominating the slopes with style and performance.</p>
+
+<ul>
+    <li><strong>Premium Performance:</strong> Crafted with the highest quality materials for unmatched durability and responsiveness.</li>
+    <li><strong>Family Fun:</strong> Perfect for riders of all skill levels, making it ideal for hitting the hills with your family. Create lasting memories this winter!</li>
+    <li><strong>Shred in Style:</strong> Turn heads with its sleek design and superior performance.</li>
+    <li><strong>Serious Snowboarding:</strong> If you're passionate about snowboarding, this is the only board you'll ever need.</li>
+</ul>
+
+<p>Don't miss out on this <strong>limited-time Black Friday deal!</strong> Upgrade your winter experience with <strong>The Collection Snowboard: Liquid</strong>. Quantities are limited, so grab yours before they're gone!</p>
+
+<p><strong>Get ready to shred!</strong><br>
+<strong>#BlackFriday #Snowboard #LiquidSnowboard #Deals #WinterSports #GiftsForHim #GiftsForHer #SnowboardingGear #BestGifts #HolidayDeals</strong></p>
+```","```html
+<h2>The Collection Snowboard: Liquid - The Perfect Sinterklaas Gift for Snowboarders!</h2>
+
+<p>Looking for the ultimate <strong>Sinterklaas cadeau</strong> for the snowboarding enthusiast in your family? This year, surprise them with the <strong>The Collection Snowboard: Liquid</strong> – a top-of-the-line board built for unforgettable rides!</p>
+
+<p>Imagine the joy on their face when they unwrap this amazing snowboard on Pakjesavond! It's perfect for:</p>
+
+<ul>
+  <li><strong>Shredding the slopes with family and friends</strong> during the winter holiday.</li>
+  <li><strong>Experiencing unparalleled performance</strong> thanks to its premium construction.</li>
+  <li><strong>Taking their snowboarding to the next level.</strong> This board is designed for serious riders!</li>
+</ul>
+
+<p>Crafted with the most <strong>high-quality materials</strong>, the <strong>The Collection Snowboard: Liquid</strong> is built to last and deliver an exceptional experience. Don't settle for less – give the gift of adventure this Sinterklaas! Order yours today and make this Pakjesavond one to remember!</p>
+
+<p><strong>Perfect as a Sinterklaas surprise!</strong></p>
+```",2025-08-11T11:35:46-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103608147, 'product_id': 10049263108435, 'title': 'Default Title', 'price': '1025.00', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:45-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438223187, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103608147', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,"{'id': 67341014237523, 'alt': 'Top and bottom view of a snowboard. The top view shows a stylized scene of trees, mountains, sky and\n        a sun in red colours. The bottom view has blue wavy lines in the background with the text “Oxygen” in a\n        stylized script typeface.', 'position': 1, 'product_id': 10049263108435, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014237523', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_d624f226-0a89-4fe1-b333-0d1548b43c06.jpg?v=1754926548', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_d624f226-0a89-4fe1-b333-0d1548b43c06.jpg?v=1754926548,"```html
+<h2>The Collection Snowboard: Oxygen - Unleash Your Inner Ghoul on the Slopes!</h2>
+
+<p>Prepare for a frightfully fun ride this Halloween season with The Collection Snowboard: Oxygen! <br>
+This isn't your average board; it's a <strong>top-of-the-line shred stick</strong> built to conquer any mountain – or haunted hill – you dare to descend.</p>
+
+<p>Made with <strong>premium materials from beyond the grave</strong> (okay, maybe not, but they're still seriously high quality!), this snowboard is perfect for:</p>
+
+<ul>
+  <li><strong>Trick-or-treating... on the slopes!</strong> Carve through fresh powder like a phantom through the night.</li>
+  <li><strong>Family fright night adventures!</strong> Get the whole ghoulish gang together for some shredding fun.</li>
+  <li><strong>Conquering spooky steeps!</strong> Tackle any terrain with confidence and control.</li>
+</ul>
+
+<p>If you're <strong>serious about snowboarding and Halloween</strong>, The Collection Snowboard: Oxygen is the only choice. <br>
+Don't be a scaredy-cat! Grab yours today and make this Halloween one to remember!</p>
+
+<p><strong>#HalloweenSnowboard #ShredTheSpook #Snowboarding #OxygenSnowboard #HalloweenFun #WinterSports</strong></p>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:45-04:00,2025-08-11T23:35:54-04:00,Hydrogen Vendor,"[{'id': 12668637938003, 'product_id': 10049263108435, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Collection Snowboard: Oxygen,10049263108435,the-collection-snowboard-oxygen,gid://shopify/Product/10049263108435,"```html
+<p><strong>The Collection Snowboard: Oxygen - Your Black Friday Ride to Shredding Bliss!</strong></p>
+<p>Looking for the <strong>best Black Friday gift</strong> for the snowboarder in your life (or maybe yourself!)? Look no further! The Collection Snowboard: Oxygen is the premium snowboard designed for unforgettable family adventures and serious shredding sessions.</p>
+<p>This top-of-the-line board features:</p>
+<ul>
+  <li><strong>Premium Materials:</strong> Crafted with the finest materials for ultimate performance and durability.</li>
+  <li><strong>All-Mountain Versatility:</strong> Perfect for carving groomers, hitting the park, or exploring untouched powder.</li>
+  <li><strong>Family Fun Approved:</strong> Designed to be accessible and enjoyable for riders of all skill levels.</li>
+</ul>
+<p>Don't miss out on this <strong>Black Friday exclusive</strong>. Get The Collection Snowboard: Oxygen and experience the difference a truly exceptional board can make! Make this <strong>the best Black Friday gift</strong> they'll receive!</p>
+<br>
+<small>#BlackFridayDeals #Snowboard #Snowboarding #GiftIdeas #BestGifts #WinterSports #TheCollection #Oxygen</small>
+```","```html
+<h3>The Collection Snowboard: Oxygen - Sinterklaas Edition!</h3>
+
+<p>Looking for the perfect gift to put in that Sinterklaas shoe? This year, surprise your little shredder with <strong>The Collection Snowboard: Oxygen!</strong></p>
+
+<p>This isn't just any snowboard; it's a <strong>top-of-the-line board</strong> designed for creating unforgettable family memories on the slopes. Imagine the joy on their face as they conquer the hills with this amazing snowboard!</p>
+
+<p><strong>Why is The Collection Snowboard: Oxygen the perfect Sinterklaas present?</strong></p>
+
+<ul>
+  <li><strong>Premium Quality:</strong> Crafted with the finest materials, ensuring durability and peak performance for years to come.</li>
+  <li><strong>Family Fun:</strong> Perfect for shredding with the whole family, creating lasting memories and shared experiences.</li>
+  <li><strong>Level Up Their Skills:</strong> Ideal for kids who are serious about snowboarding and want to take their skills to the next level.</li>
+  <li><strong>A Gift They'll Never Forget:</strong> More exciting than chocolate letters and pepernoten (though those are delicious too!).</li>
+</ul>
+
+<p>Make this Sinterklaas extra special. Order <strong>The Collection Snowboard: Oxygen</strong> today and prepare for a winter filled with snowy adventures! This board is sure to be a hit – even better than a visit from Sinterklaas himself! (Maybe...)</p>
+```",2025-08-11T11:35:46-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103051091, 'product_id': 10049262780755, 'title': 'Default Title', 'price': '785.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': '885.95', 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437666131, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103051091', 'image_id': None}]",10,{'Shop location': 10},sjdfhjasdf,"{'id': 67341013778771, 'alt': 'Top and bottom view of a snowboard. The top view shows pixelated clouds, with the top-most one being\n        the shape of the Shopify bag logo. The bottom view has a pixelated cloudy sky with blue, pink and purple\n        colours.', 'position': 1, 'product_id': 10049262780755, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013778771', 'width': 3097, 'height': 3908, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_sky.png?v=1754926548', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_sky.png?v=1754926548,"```html
+<h2>The Compare at Price Snowboard - Haunt the Slopes This Halloween!</h2>
+
+<p>Unleash your inner snow demon this Halloween season with <strong>The Compare at Price Snowboard!</strong> Don't just trick-or-treat, shred! This isn't your average board; it's a top-of-the-line beast ready to conquer any mountain, no matter how chilling.</p>
+
+<p>Imagine gliding down the slopes like a ghostly apparition, leaving a trail of powder in your wake. Made with only the most <strong>premium, otherworldly materials</strong>, this snowboard offers unmatched performance and durability. Whether you're a seasoned shredder or a budding snow spirit, this board will elevate your Halloween adventures.</p>
+
+<p><strong>Why choose The Compare at Price Snowboard this Halloween?</strong></p>
+
+<ul>
+  <li><strong>Unmatched Performance:</strong> Dominate the slopes with precision and control.</li>
+  <li><strong>Premium Materials:</strong> Built to withstand even the most haunting conditions.</li>
+  <li><strong>Head-Turning Design:</strong> Make a statement as you carve through the snow.</li>
+  <li><strong>Perfect for All Skill Levels:</strong> From beginner ghouls to expert monsters, everyone can enjoy the ride.</li>
+</ul>
+
+<p>Don't be a scaredy cat! Grab <strong>The Compare at Price Snowboard</strong> and make this Halloween the most epic snow season yet! Prepare to shred...or be shredded!</p>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:35:52-04:00,TEST-WINKEL-PIM,"[{'id': 12668637610323, 'product_id': 10049262780755, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Compare at Price Snowboard,10049262780755,the-compare-at-price-snowboard,gid://shopify/Product/10049262780755,"```html
+<h3>The Compare at Price Snowboard: Black Friday Steal!</h3>
+<p>Dominate the slopes this winter with <strong>The Compare at Price Snowboard</strong>, the ultimate gift for the snowboarder in your life! This Black Friday, snag this top-of-the-line board at an unbeatable price.</p>
+
+<ul>
+    <li><strong>Premium Performance:</strong> Crafted with the highest quality materials for maximum durability and performance.</li>
+    <li><strong>Family Fun:</strong> Perfect for carving up the mountain with your loved ones. Get ready to shred!</li>
+    <li><strong>Pro-Level Design:</strong> Designed for serious snowboarders who demand the best. Experience unparalleled control and responsiveness.</li>
+    <li><strong>Black Friday Deal:</strong> Don't miss out on this limited-time offer. The perfect gift at the perfect price!</li>
+</ul>
+
+<p>Upgrade your snowboarding game or surprise someone special with <strong>The Compare at Price Snowboard</strong>. This Black Friday, it's the gift that keeps on giving - powder days all season long! <br><br><strong>Limited quantities available!</strong></p>
+```","```html
+<h2>The Compare at Price Snowboard - Sinterklaas Edition!</h2>
+<p>Ho ho ho! Looking for a <strong>fantastic Sint gift</strong> for a snowboard enthusiast? This top-of-the-line ""The Compare at Price"" Snowboard is the perfect surprise for under the tree!</p>
+
+<p>Imagine the joy on their face as they unwrap this premium snowboard, ready to conquer the slopes after Sinterklaas is gone! Made with the highest quality materials, this board is built for serious shredding and family fun. It's perfect for:</p>
+
+<ul>
+  <li><strong>Taking on challenging hills:</strong> This snowboard provides exceptional control and stability.</li>
+  <li><strong>Creating lasting memories with family:</strong> Enjoy winter adventures together.</li>
+  <li><strong>Showing off your skills:</strong> Crafted for performance, it's the ultimate snowboard for showing off!</li>
+</ul>
+
+<p>Don't delay! Make this Sinterklaas truly unforgettable with ""The Compare at Price"" Snowboard. It's the gift that keeps on giving all winter long! <br><br><strong>A fantastic Sinterklaas surprise that’s guaranteed to bring a smile!</strong></p>
+```",2025-08-11T11:35:45-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103214931, 'product_id': 10049262879059, 'title': 'Ice', 'price': '699.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Ice', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437829971, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103214931', 'image_id': None}, {'id': 51605103247699, 'product_id': 10049262879059, 'title': 'Dawn', 'price': '699.95', 'position': 2, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Dawn', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437862739, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103247699', 'image_id': None}, {'id': 51605103280467, 'product_id': 10049262879059, 'title': 'Powder', 'price': '699.95', 'position': 3, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Powder', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437895507, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103280467', 'image_id': None}, {'id': 51605103313235, 'product_id': 10049262879059, 'title': 'Electric', 'price': '699.95', 'position': 4, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Electric', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437928275, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103313235', 'image_id': None}, {'id': 51605103346003, 'product_id': 10049262879059, 'title': 'Sunset', 'price': '699.95', 'position': 5, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Sunset', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 4536, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 10.0, 'weight_unit': 'lb', 'inventory_item_id': 53664437961043, 'inventory_quantity': 10, 'old_inventory_quantity': 10, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103346003', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,"{'id': 67341013713235, 'alt': 'Top and bottom view of a snowboard. The top view shows abstract circles and lines in shades of\n          teal. The bottom view shows abstract circles and lines in shades of purple and blue with the text “SHOPIFY”\n          in a sans serif typeface on top.', 'position': 1, 'product_id': 10049262879059, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013713235', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1754926547', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_589fc064-24a2-4236-9eaf-13b2bd35d21d.jpg?v=1754926547,"```html
+<h2>The Complete Snowboard: Shred the Gnarliest Halloween Hills!</h2>
+
+<p>Prepare for a hauntingly good time on the slopes this Halloween season with <strong>The Complete Snowboard!</strong> This isn't your average board; it's built to conquer any mountain and turn heads while you're doing it.</p>
+
+<p>Imagine carving through fresh powder dressed as your favorite monster, leaving a trail of thrills and chills! <br><br><strong>Why Choose The Complete Snowboard for Halloween?</strong></p>
+
+<ul>
+  <li><strong>Premium Performance:</strong> Built with top-tier materials for ultimate control and speed. Perfect for shredding, whether you're a seasoned pro or a beginning ghoul.</li>
+  <li><strong>Durable Construction:</strong> Withstands even the most wicked winter conditions, ensuring you can haunt the hills all season long.</li>
+  <li><strong>Head-Turning Style:</strong> (While we don't provide spooky graphics <em>yet</em>), customize your ride with Halloween-themed stickers and decorations for a truly terrifying look!</li>
+  <li><strong>Family Fun:</strong> Get the whole family involved in some spooky snowboarding adventures! Create lasting memories (and maybe a few ghostly wipeouts).</li>
+</ul>
+
+<p>Don't let this Halloween pass without experiencing the thrill of snowboarding! <br><strong>Order The Complete Snowboard today and get ready to unleash your inner snow demon!</strong></p>
+```",active,15,"Premium, Snow, Snowboard, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:35:52-04:00,Snowboard Vendor,"[{'id': 12668637708627, 'product_id': 10049262879059, 'name': 'Color', 'position': 1, 'values': ['Ice', 'Dawn', 'Powder', 'Electric', 'Sunset']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Complete Snowboard,10049262879059,the-complete-snowboard,gid://shopify/Product/10049262879059,"```html
+<h2>The Complete Snowboard: Your Black Friday Shred Sesh Starts Here!</h2>
+<p>Looking for the <strong>perfect gift for the snowboarder in your life</strong> this Black Friday? Look no further! The Complete Snowboard is engineered for performance and built to last. Get ready to <strong>dominate the slopes</strong> and create unforgettable memories.</p>
+
+<ul>
+    <li><strong>Premium Materials:</strong> Crafted with the highest quality materials for unmatched durability and responsiveness.</li>
+    <li><strong>Family Fun:</strong> Perfect for taking out with the whole family – from beginners to seasoned shredders.</li>
+    <li><strong>Shred the Hills:</strong> Designed to handle any terrain, ensuring a smooth and exhilarating ride.</li>
+    <li><strong>The Ultimate Upgrade:</strong> If you're serious about snowboarding, this is the upgrade you've been waiting for.</li>
+</ul>
+
+<p>Don't miss out on this <strong>limited-time Black Friday deal</strong>! Give the gift of adventure and unparalleled snowboarding experience this holiday season. <strong>Grab The Complete Snowboard now!</strong></p>
+<br>
+#BlackFriday #Snowboard #GiftIdeas #Snowboarding #HolidayGifts #Deals #LimitedTimeOffer #Shred #WinterSports #FamilyFun
+```","```html
+<h2>The Complete Snowboard - Perfect for Sinterklaas Fun!</h2>
+
+<p>Prepare for winter adventures with <strong>The Complete Snowboard</strong>, the ultimate gift this Sinterklaas! Imagine zipping down the ""sugar hills"" with your family, just like Pieten on rooftops!<br><br>
+
+This snowboard isn't just any board; it's built to make memories that last longer than pepernoten. Featuring premium construction, it's tough enough to handle anything Sinterklaas's helpers throw at it (or *on* it!).<br><br>
+
+<strong>Why this is the perfect Sinterklaas gift:</strong></p>
+
+<ul>
+  <li><strong>Top-of-the-line quality:</strong> Crafted with durable materials for years of winter fun.</li>
+  <li><strong>Family-friendly:</strong> Perfect for riders of all skill levels, from beginner Pieten to seasoned Sinterklaas snowboarders!</li>
+  <li><strong>Adventure awaits:</strong> Get ready to explore the snowy landscape and create unforgettable moments.</li>
+</ul>
+
+<p>Give the gift of adventure and winter excitement this Sinterklaas. <strong>The Complete Snowboard</strong> is the perfect way to celebrate the season!</p>
+```",2025-08-11T11:35:45-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103018323, 'product_id': 10049262747987, 'title': 'Default Title', 'price': '2629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437633363, 'inventory_quantity': 20, 'old_inventory_quantity': 20, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103018323', 'image_id': None}]",20,{'Shop location': 20},sjdfhjasdf,"{'id': 67341013811539, 'alt': 'Top and bottom view of a snowboard.The top view shows the text “hydrogen” in overlapping blue,\n          pink and black font. The bottom view is a purple to blue gradient with white geometric pattern overlay.', 'position': 1, 'product_id': 10049262747987, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013811539', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_5127218a-8f6c-498f-b489-09242c0fab0a.jpg?v=1754926547', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_5127218a-8f6c-498f-b489-09242c0fab0a.jpg?v=1754926547,"```html
+<h2>The Draft Snowboard - Shred the Gnarliest Graveyard (Or Mountain!)</h2>
+
+<p>This Halloween, ditch the trick-or-treating (or, you know, do both!) and prepare for a terrifyingly good time on <strong>The Draft Snowboard!</strong> Forget flimsy costumes; this board is built from premium materials to conquer any hill, making you the king or queen of the snowy slopes.</p>
+
+<p><strong>Why The Draft Snowboard is Perfect for Your Halloween Adventure:</strong></p>
+
+<ul>
+  <li><strong>Premium Construction:</strong> Made with materials tougher than a zombie horde, ensuring a smooth and stable ride all season long.</li>
+  <li><strong>Shred the Gnar:</strong> Perfect for carving through fresh powder like a phantom through walls. Get ready to unleash your inner snow beast!</li>
+  <li><strong>Family Fright Night (on the Slopes!):</strong> This board is great for experienced riders, so bring your family and scare up some fun on the mountain!</li>
+  <li><strong>More Treats Than Tricks:</strong> Durable and reliable, this board will provide you with countless days of epic rides, more valuable than any candy corn.</li>
+</ul>
+
+<p>Don't be a scaredy-cat! Get <strong>The Draft Snowboard</strong> and make this Halloween a bone-chillingly awesome one! <br>Order yours today and prepare for some serious shredding!</p>
+```",draft,15,,2025-08-11T11:35:44-04:00,2025-08-11T23:35:52-04:00,Snowboard Vendor,"[{'id': 12668637577555, 'product_id': 10049262747987, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Draft Snowboard,10049262747987,the-draft-snowboard,gid://shopify/Product/10049262747987,"```html
+<h2>Black Friday Deal: The Draft Snowboard - Shred the Slopes!</h2>
+<p>Looking for the <strong>perfect gift</strong> for the snowboarder in your life this Black Friday? Look no further than <strong>The Draft Snowboard</strong>! <br><br> This isn't just any snowboard; it's a <strong>high-performance machine</strong> built for ultimate shredding. Imagine their face when they unwrap this on Christmas morning!<br><br><strong>Why The Draft Snowboard is the Best Gift:</strong></p>
+<ul>
+<li><strong>Top-of-the-Line Performance:</strong> Built to conquer any mountain, from family-friendly hills to challenging slopes.</li>
+<li><strong>Premium Materials:</strong> Crafted with the finest materials for durability and responsiveness. This board is built to last.</li>
+<li><strong>Perfect for All Skill Levels:</strong> Whether they're a beginner or a seasoned pro, The Draft will elevate their riding experience.</li>
+<li><strong>The Ultimate Snowboarding Gift:</strong> Show them you care with a gift that will keep them stoked all winter long.</li>
+</ul>
+<p>Don't miss out on this <strong>amazing Black Friday deal!</strong> Get The Draft Snowboard now and give the gift of epic snowboarding this holiday season. <br><br> <strong>Limited quantities available!</strong></p>
+```","```html
+<h2>The Draft Snowboard: Sinterklaas Gift for Serious Snowboarders!</h2>
+
+<p>Looking for the perfect Sinterklaas gift for the snowboard enthusiast in your life? Look no further than <strong>The Draft Snowboard</strong>! This top-of-the-line board is built for performance and ready to conquer any hill this winter season.</p>
+
+<p>Imagine the joy on their face when they unwrap this on pakjesavond! They'll be dreaming of fresh powder and effortless carving as they prepare for snowy adventures with family and friends.</p>
+
+<p><strong>Why The Draft Snowboard is the Ideal Sinterklaas Surprise:</strong></p>
+
+<ul>
+  <li><strong>Premium Materials:</strong> Crafted from only the finest materials, ensuring durability and exceptional performance. <br> Ideal for enduring the toughest winter conditions.</li>
+  <li><strong>Family Fun:</strong> Perfect for enjoying winter days shredding the slopes with loved ones. Create lasting memories!</li>
+  <li><strong>Serious Snowboarding:</strong> Designed for riders who demand the best. Take their snowboarding to the next level.</li>
+  <li><strong>The Ultimate Pakjesavond Gift:</strong> Surprise them with a gift they'll truly appreciate and use all winter long.</li>
+</ul>
+
+<p>Don't miss out! Make this Sinterklaas unforgettable with <strong>The Draft Snowboard</strong>. Order now and secure the perfect gift for your favorite snowboarder!</p>
+```",
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103149395, 'product_id': 10049262813523, 'title': 'Default Title', 'price': '749.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437764435, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103149395', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,"{'id': 67341013647699, 'alt': 'The top view and bottom view of a snowboard. The top view is black with a singular peach cube.\n        The bottom view has a graphic of a stack of blocks in a gradient from light blue, to pink to peach.', 'position': 1, 'product_id': 10049262813523, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013647699', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_c8ff0b5d-c712-429a-be00-b29bd55cbc9d.jpg?v=1754926547', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_c8ff0b5d-c712-429a-be00-b29bd55cbc9d.jpg?v=1754926547,"```html
+<h2>The Hidden Snowboard: Unleash Your Inner Ghoul on the Slopes!</h2>
+<p>Get ready to carve through the snow this Halloween season with <strong>The Hidden Snowboard!</strong> This isn't your average board; it's a chillingly awesome ride crafted for thrill-seekers who dare to conquer the mountain.</p>
+
+<ul>
+  <li><strong>Premium Materials:</strong> Forged from materials stronger than Dracula's grip, ensuring durability and performance all season long.</li>
+  <li><strong>Unleash the Shred:</strong> Perfect for ripping through the powder with family and friends, or haunting the slopes solo.</li>
+  <li><strong>Top-of-the-Line Performance:</strong> Experience unparalleled control and responsiveness, like a werewolf's heightened senses.</li>
+  <li><strong>Spooktacular Design:</strong> The sleek, mysterious design will make you the envy of every ghost and goblin on the mountain.</li>
+</ul>
+
+<p>Don't be a scaredy cat! <br> Grab <strong>The Hidden Snowboard</strong> this Halloween and shred like you've never shredded before! <br> Beware: May cause extreme levels of fun and envy.</p>
+```",active,15,"Premium, Snow, Snowboard, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:35:52-04:00,Snowboard Vendor,"[{'id': 12668637643091, 'product_id': 10049262813523, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Hidden Snowboard,10049262813523,the-hidden-snowboard,gid://shopify/Product/10049262813523,"```html
+<p><strong>The Hidden Snowboard: Your Black Friday Ticket to Shredding!</strong></p>
+
+<p>Looking for the <strong>best Black Friday gift</strong> for the snowboard enthusiast in your life? Look no further! The Hidden Snowboard is a <strong>top-of-the-line</strong> board crafted from the most premium materials, ensuring peak performance on the slopes. <br><br>Imagine carving through fresh powder with family and friends – this snowboard makes it possible. It's the <strong>perfect gift</strong> for both seasoned shredders and those looking to take their skills to the next level. <br><br> Don't miss out on this <strong>amazing Black Friday deal!</strong> Get ready to experience:</p>
+
+<ul>
+  <li><strong>Unrivaled Performance:</strong> Dominate the slopes with superior control and responsiveness.</li>
+  <li><strong>Premium Materials:</strong> Built to last, season after season.</li>
+  <li><strong>The Ultimate Family Fun:</strong> Create unforgettable memories on the mountain.</li>
+</ul>
+
+<p><strong>Limited quantities available!</strong> Grab The Hidden Snowboard at its <strong>lowest price of the year</strong> this Black Friday! This is the gift they'll truly appreciate.</p>
+```","```html
+<h2>The Hidden Snowboard: Sinterklaas' Secret Stash!</h2>
+
+<p>Looking for the perfect gift for a shredder who's been <strong>really</strong> good this year? Sinterklaas might just bring <strong>The Hidden Snowboard</strong> down the chimney!</p>
+
+<p>This isn't just any snowboard; it's a top-of-the-line board built for amazing family days on the slopes. Imagine the joy on their face as they carve through the snow, thanks to pakjesavond!</p>
+
+<p>Crafted with premium materials, The Hidden Snowboard is perfect for serious snowboarders who demand the best. This board will bring joy for years to come.</p>
+
+<strong>Features that make it a perfect Sinterklaas Surprise:</strong>
+
+<ul>
+  <li>Premium Construction: Built to last through many winters.</li>
+  <li>Ideal for Family Fun: Perfect for all skill levels to enjoy together.</li>
+  <li>The Ultimate Sinterklaas Gift: A present they'll truly cherish.</li>
+</ul>
+
+<p>Don't delay! Order <strong>The Hidden Snowboard</strong> now and make this Sinterklaas unforgettable!<br><strong>Ho Ho Ho and Happy Shredding!</strong></p>
+```",
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605102985555, 'product_id': 10049262682451, 'title': 'Default Title', 'price': '949.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': None, 'requires_shipping': True, 'sku': 'sku-untracked-1', 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437600595, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605102985555', 'image_id': None}]",0,{'Shop location': 0},sjdfhjasdf,"{'id': 67341014499667, 'alt': 'Top and bottom view of a snowboard. The top view shows a centred hexagonal logo for Hydrogen that\n          appears to radiate outwards, as well as some overlapping hexagons at the bottom. The bottom view shows an\n          abstract angular grid in purples.', 'position': 1, 'product_id': 10049262682451, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014499667', 'width': 3097, 'height': 3908, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_purple_hydrogen.png?v=1754926549', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/snowboard_purple_hydrogen.png?v=1754926549,"```html
+<h2>The Inventory Not Tracked Snowboard: Shred the Slopes This Halloween!</h2>
+
+<p>Unleash your inner ghoul this Halloween season with <strong>The Inventory Not Tracked Snowboard</strong>! Forget trick-or-treating; terrorize the terrain with this top-of-the-line board, built for serious shredding.</p>
+
+<p>Imagine carving through the snow on Halloween night, bathed in moonlight... or, you know, hitting the slopes the next day. This board's premium construction ensures unparalleled performance:</p>
+
+<ul>
+  <li><strong>Superior Stability:</strong> Dominate any hill, no matter how spooky the conditions.</li>
+  <li><strong>Precision Handling:</strong> Navigate treacherous terrain with ease, outmaneuvering any monster.</li>
+  <li><strong>Durable Design:</strong> Made with otherworldly materials, this board will withstand even the most extreme Halloween adventures.</li>
+</ul>
+
+<p>Don't just dress up <em>as</em> a shredder; <em>be</em> a shredder. <br>Get <strong>The Inventory Not Tracked Snowboard</strong> and make this Halloween unforgettable!</p>
+
+<p><strong>Perfect for:</strong></p>
+<ul>
+  <li>Halloween-themed snowboarding trips</li>
+  <li>Impressing your friends with your killer skills</li>
+  <li>Dominating the slopes all winter long</li>
+</ul>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:37:42-04:00,TEST-WINKEL-PIM,"[{'id': 12668637512019, 'product_id': 10049262682451, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Inventory Not Tracked Snowboard,10049262682451,the-inventory-not-tracked-snowboard,gid://shopify/Product/10049262682451,"```html
+<p><strong>The Inventory Not Tracked Snowboard: Your Black Friday Shred Sesh Starts Here!</strong></p>
+
+<p>Don't miss out on the <strong>hottest Black Friday deal</strong> for snowboarders! This top-of-the-line snowboard is your ticket to epic family outings and conquering any hill. Made with <strong>premium, high-performance materials</strong>, it's built for serious riders who demand the best.</p>
+
+<p><strong>Why this snowboard is the perfect Black Friday gift:</strong></p>
+
+<ul>
+  <li><strong>Unleash Your Inner Shredder:</strong> Experience unmatched control and responsiveness.</li>
+  <li><strong>Premium Quality:</strong> Built to last season after season with durable construction.</li>
+  <li><strong>Perfect for All Levels:</strong> Whether you're a beginner or a seasoned pro, this board will elevate your ride.</li>
+  <li><strong>Amazing Black Friday Price:</strong> Get top-tier performance without breaking the bank!</li>
+</ul>
+
+<p>This Black Friday, treat yourself or a loved one to the ultimate snowboarding experience. Supplies are limited, so grab The Inventory Not Tracked Snowboard before it's gone! This <strong>Black Friday best gift</strong> is sure to please any snowboard enthusiast!</p>
+```","```html
+<h2>The Inventory Not Tracked Snowboard: Sinterklaas Edition!</h2>
+
+<p>Are you ready to brave the frosty Dutch slopes with <strong>Sinterklaas</strong> and his Pieten? This top-of-the-line snowboard will have you gliding like a pro, even if you're just a brave beginner! Forget carrots, this year you deserve an amazing gift!</p>
+
+<p>Crafted from premium materials tougher than pepernoten, this board is built to last through countless Sinterklaas adventures. Imagine yourself:</p>
+
+<ul>
+    <li><strong>Conquering snowy hills</strong> faster than Amerigo can gallop!</li>
+    <li><strong>Showing off your skills</strong> to the entire family on Pakjesavond!</li>
+    <li><strong>Having more fun than ever before</strong> this Sinterklaas season!</li>
+</ul>
+
+<p>This snowboard is the perfect gift for any snowboarding enthusiast ready to take their skills to the next level. <strong>Don't miss out – order yours today before Sinterklaas heads back to Spain!</strong> He might just bring an extra surprise if you're lucky!</p>
+```",2025-08-11T11:35:45-04:00
+15,,sjdfhjasdfsdfsdf,"[{'id': 51605103083859, 'product_id': 10049262846291, 'title': 'Default Title', 'price': '885.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437731667, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103083859', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,,,"```html
+<h2>The Minimal Snowboard: Conquer the Halloween Haunts!</h2>
+<p>Prepare for a monstrously good time on the slopes this Halloween with <strong>The Minimal Snowboard!</strong> Ditch the tricks, embrace the treats, and carve your way through the frosty graveyard of the mountain.</p>
+
+<p>This board isn't just for show; it's crafted with <strong>premium materials</strong> that are tough enough to withstand even the most chilling conditions. Whether you're a seasoned shredder or a budding banshee on the board, The Minimal Snowboard will have you howling with delight.</p>
+
+<p>Here's why The Minimal Snowboard is your perfect Halloween ride:</p>
+<ul>
+  <li><strong>Spooktacular Performance:</strong> Designed for optimal control and agility, letting you navigate any terrain with eerie ease.</li>
+  <li><strong>Built to Last:</strong> Made with durable materials to withstand even the roughest zombie apocalypse...or a regular powder day.</li>
+  <li><strong>Trick-or-Treat Approved:</strong> Impress your fellow ghouls and goblins with this stylish and high-performing board.</li>
+</ul>
+
+<p>Don't be a scaredy-cat! <br> Level up your Halloween snowboarding adventure. Order <strong>The Minimal Snowboard</strong> today and prepare for a frightfully fun ride!</p>
+```",active,15,,2025-08-11T11:35:44-04:00,2025-08-11T11:36:41-04:00,TEST-WINKEL-PIM,"[{'id': 12668637675859, 'product_id': 10049262846291, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Minimal Snowboard,10049262846291,the-minimal-snowboard,gid://shopify/Product/10049262846291,"```html
+<h3>The Minimal Snowboard: Your Black Friday Shred Essential!</h3>
+
+<p>Dominate the slopes this winter with <strong>The Minimal Snowboard</strong>! This Black Friday, grab the ultimate snowboard for peak performance and unbelievable value. Crafted with premium materials, this board is built to last and designed for serious shredding.</p>
+
+<p><strong>Why The Minimal Snowboard is the Perfect Black Friday Gift:</strong></p>
+<ul>
+  <li><strong>Top-of-the-Line Quality:</strong> Experience superior control and responsiveness.</li>
+  <li><strong>Premium Materials:</strong> Built for durability and longevity.</li>
+  <li><strong>Perfect for All Skill Levels:</strong> From carving with the family to tackling challenging terrain, this board can handle it all.</li>
+  <li><strong>Unbeatable Black Friday Deal:</strong> Get yours now at a price you won't believe!</li>
+</ul>
+
+<p>Don't miss out! This Black Friday, <strong>The Minimal Snowboard</strong> is the gift that keeps on giving - season after season of thrilling snowboarding adventures. <br> Secure yours before they're gone!</p>
+```","```html
+<h2>The Minimal Snowboard: Sinterklaas' Choice for Shredding the Slopes!</h2>
+
+<p>Looking for the perfect gift from Sinterklaas for your little daredevil? <br> <strong>The Minimal Snowboard</strong> is ready to conquer any snowy hill!</p>
+
+<p>Imagine the joy on their face as they race down the slopes, inspired by the legendary Sinterklaas himself. This snowboard isn't just a toy; it's an invitation to adventure!</p>
+
+<p><strong>Why choose The Minimal Snowboard for Sinterklaas?</strong></p>
+<ul>
+  <li><strong>Perfect for Family Fun:</strong> Spend quality time together on the slopes this winter!</li>
+  <li><strong>Premium Quality:</strong> Built to last and withstand even the most enthusiastic shredders (and maybe even a tumble or two!).</li>
+  <li><strong>Ideal Sinterklaas Gift:</strong> Give the gift of excitement and unforgettable memories.</li>
+  <li><strong>Ready for Adventure:</strong> From beginner runs to more challenging hills, this board is up for anything.</li>
+</ul>
+
+<p>Don't let Sinterklaas pass by without this incredible gift! Order <strong>The Minimal Snowboard</strong> today and make this Sinterklaas the most memorable yet!</p>
+
+```",
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103640915, 'product_id': 10049263141203, 'title': 'Default Title', 'price': '729.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:45-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438255955, 'inventory_quantity': 100, 'old_inventory_quantity': 100, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103640915', 'image_id': None}]",100,"{'Shop location': 50, 'My Custom Location': 50}",sjdfhjasdf,"{'id': 67341014532435, 'alt': 'Top and bottom view of a snowboard. The top view shows a pixelated Shopify bag logo and a\n        pixelated character reviewing a clipboard with a questioning expression with a bright green-blue background.\n        The bottom view is a pattern of many pixel characters with a bright green-blue background.', 'position': 1, 'product_id': 10049263141203, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014532435', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a4e9096-021a-4c1e-8750-24b233166a12.jpg?v=1754926548', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_0a4e9096-021a-4c1e-8750-24b233166a12.jpg?v=1754926548,(Gemini error: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCMTdfEtSgP0qatnNHTrmQaJjElVvES-3Y),active,15,"Premium, Snow, Snowboard, Sport, Winter",2025-08-11T11:35:45-04:00,2025-08-11T23:35:59-04:00,TEST-WINKEL-PIM,"[{'id': 12668637970771, 'product_id': 10049263141203, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Multi-location Snowboard,10049263141203,the-multi-location-snowboard,gid://shopify/Product/10049263141203,"```html
+<h2>The Multi-location Snowboard: Your Black Friday Shred-Ready Deal!</h2>
+
+<p><strong>Don't miss out on the Black Friday deal of the year!</strong> The Multi-location Snowboard is the ultimate gift for snowboarders of all levels, from beginners hitting the bunny slopes with family to seasoned pros conquering challenging terrain. <br><br>
+
+This board is crafted with premium materials, ensuring unmatched durability and performance. <strong>Get ready to experience snowboarding like never before!</strong></p>
+
+<ul>
+  <li><strong>Perfect for Family Fun:</strong> Easy to control and stable, ideal for teaching the next generation.</li>
+  <li><strong>Shred the Gnar:</strong> Responsive and agile for advanced riders seeking thrilling runs.</li>
+  <li><strong>Premium Materials:</strong> Built to last, season after season.</li>
+</ul>
+
+<p><strong>Looking for the best Black Friday gift for the snowboarder in your life?</strong> Look no further! This board offers exceptional value and unparalleled performance. Secure your Multi-location Snowboard now before this incredible deal disappears! Limited quantities available.</p>
+```","```html
+<h2>The Multi-location Snowboard: A Sint's Surprise!</h2>
+
+<p><strong>Surprise your little daredevil this Sinterklaas with the Multi-location Snowboard!</strong> This isn't just <em>any</em> snowboard; it's built to withstand even the wildest stunts on the imagined slopes of your living room (and maybe even a real hill or two later!).</p>
+
+<p>Imagine the joy on their faces as they ""shred"" the couch cushions, ""carve"" around the coffee table, and ""catch air"" off the beanbag. This board is perfect for:</p>
+
+<ul>
+  <li><strong>Indoor Snowboarding Adventures:</strong> Let their imaginations run wild!</li>
+  <li><strong>Practicing Balance and Coordination:</strong> Building skills for future snow adventures.</li>
+  <li><strong>A Memorable Sinterklaas Gift:</strong> Something they'll remember for years to come!</li>
+</ul>
+
+<p>While not made of materials from other planets, it is sturdy, durable, and ready for countless hours of Sinterklaas fun. <strong>Order yours now and make this Sinterklaas truly unforgettable!</strong> <br> Don't forget to include a bag of pepernoten for extra snow-shredding power!</p>
+```",2025-08-11T11:35:46-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103706451, 'product_id': 10049263206739, 'title': 'Default Title', 'price': '629.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:50-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': 'sku-managed-1', 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438321491, 'inventory_quantity': 100, 'old_inventory_quantity': 100, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103706451', 'image_id': None}]",100,"{'Shop location': 50, 'Snow City Warehouse': 50}",sjdfhjasdf,"{'id': 67341014401363, 'alt': 'Top and bottom view of a snowboard. The top view shows an illustration with varied outlined shapes\n        in black. The bottom view shows a black box character with an H pointing, and surrounded by black outlined\n        illustrative elements.', 'position': 1, 'product_id': 10049263206739, 'created_at': '2025-08-11T11:35:45-04:00', 'updated_at': '2025-08-11T11:35:47-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341014401363', 'width': 1600, 'height': 1600, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_9129b69a-0c7b-4f66-b6cf-c4222f18028a.jpg?v=1754926548', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_9129b69a-0c7b-4f66-b6cf-c4222f18028a.jpg?v=1754926548,(Gemini error: 503 Server Error: Service Unavailable for url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCMTdfEtSgP0qatnNHTrmQaJjElVvES-3Y),active,15,"Premium, Snow, Snowboard, Sport, Winter",2025-08-11T11:35:45-04:00,2025-08-11T23:35:54-04:00,Multi-managed Vendor,"[{'id': 12668638036307, 'product_id': 10049263206739, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Multi-managed Snowboard,10049263206739,the-multi-managed-snowboard,gid://shopify/Product/10049263206739,"```html
+<h3>The Multi-managed Snowboard: Your Ultimate Black Friday Ride!</h3>
+
+<p><strong>Dominate the slopes this winter with The Multi-managed Snowboard!</strong> Score the best Black Friday deal on this top-of-the-line snowboard, perfect for family fun and serious shredding. <br><br>
+
+Built with <strong>premium, durable materials</strong>, this board is designed to last season after season. Whether you're a beginner or an experienced rider, The Multi-managed Snowboard offers exceptional control and performance.</p>
+
+<ul>
+  <li><strong>Unbeatable Black Friday Price!</strong> (Limited Time Offer)</li>
+  <li><strong>Premium Construction:</strong> For lasting performance and durability.</li>
+  <li><strong>Perfect for All Skill Levels:</strong> From beginners to seasoned pros.</li>
+  <li><strong>Family Fun Guaranteed:</strong> Create lasting memories on the mountain.</li>
+</ul>
+
+<p>Don't miss out on the <strong>best Black Friday gift</strong> for the snowboarder in your life (or yourself!). Grab The Multi-managed Snowboard before it's gone! <br> <strong>Limited quantities available!</strong></p>
+```","```html
+<h3>The Multi-managed Snowboard: Sinterklaas's Gift for Thrilling Adventures!</h3>
+
+<p><strong>Looking for the perfect Sinterklaas surprise for the snowboarding enthusiast in your life?</strong> Look no further! The Multi-managed Snowboard is the ultimate gift for carving up the slopes and creating unforgettable family memories this winter.<br><br>
+
+This isn't just any snowboard; it's a ticket to snowy fun, designed for both beginners and experienced riders. Imagine the joy on their face when they unwrap this amazing gift on Pakjesavond!</p>
+
+<ul>
+    <li><strong>Premium Quality:</strong> Crafted from top-tier materials to withstand even the chilliest Sinterklaas adventures.</li>
+    <li><strong>Family Fun:</strong> Perfect for shredding hills with the whole family, making it a gift that keeps on giving.</li>
+    <li><strong>SEO Keyword:</strong> Snowboard Sinterklaas, Sinterklaas Gift, Snowboard Gift, Best Snowboard</li>
+    <li><strong>Durable & Reliable:</strong> Built to last, ensuring years of snowy enjoyment, from Sinterklaas celebrations to winter vacations.</li>
+</ul>
+
+<p>Make this Sinterklaas extra special with The Multi-managed Snowboard! Order yours today and prepare for a winter filled with laughter and exhilarating rides. <strong>Don't let Sinterklaas pass you by without the perfect gift!</strong></p>
+```",2025-08-11T11:35:46-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103182163, 'product_id': 10049262911827, 'title': 'Default Title', 'price': '885.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664437797203, 'inventory_quantity': 0, 'old_inventory_quantity': 0, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103182163', 'image_id': None}]",0,{'Shop location': 0},sjdfhjasdf,"{'id': 67341013746003, 'alt': 'Top and bottom view of a snowboard. The top view shows a toggle at the top in shades of blue and\n        yellow. The bottom view shows an abstract illustration of toggles in blues and yellows.', 'position': 1, 'product_id': 10049262911827, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013746003', 'width': 3908, 'height': 3908, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_f44a9605-cd62-464d-b095-d45cdaa0d0d7.jpg?v=1754926547', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main_f44a9605-cd62-464d-b095-d45cdaa0d0d7.jpg?v=1754926547,"```html
+<h2>The Out of Stock Snowboard - Ride into the Afterlife!</h2>
+
+<p>Unleash your inner ghoul on the slopes this Halloween season with the <strong>Out of Stock Snowboard!</strong> Forget pumpkins and candy corn; carve up the mountain like you're escaping the undead!</p>
+
+<p>This isn't your average snowboard; it's built with premium, otherworldly materials, perfect for tackling even the spookiest terrain. Prepare for a ride that's smoother than a vampire's glide and more responsive than a banshee's wail.</p>
+
+<p><strong>Why choose the Out of Stock Snowboard for your Halloween shred session?</strong></p>
+<ul>
+ <li><strong>Premium Materials:</strong> Crafted with dark magic (and superior engineering, of course!) for ultimate durability and performance.</li>
+ <li><strong>Unleash Your Inner Monster:</strong> Perfect for intermediate to advanced riders looking to dominate the mountain like a true legend.</li>
+ <li><strong>Spooktacular Style:</strong> Stand out from the crowd with a design that's both menacing and magnificent.</li>
+ </ul>
+
+<p>Don't be caught dead on the slopes with anything less. Get the <strong>Out of Stock Snowboard</strong> and make this Halloween one to remember!</p>
+<br>
+<small><em>Warning: May attract werewolves and snow-loving specters. Ride at your own risk!</em></small>
+```",active,15,"Accessory, Sport, Winter",2025-08-11T11:35:44-04:00,2025-08-11T23:35:51-04:00,TEST-WINKEL-PIM,"[{'id': 12668637741395, 'product_id': 10049262911827, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Out of Stock Snowboard,10049262911827,the-out-of-stock-snowboard,gid://shopify/Product/10049262911827,"```html
+<h2>The Out of Stock Snowboard: Black Friday's Hottest Gift!</h2>
+<p>Dominate the slopes this winter with <strong>The Out of Stock Snowboard</strong>, guaranteed to be the best gift for the snowboarder in your life! Prepare to shred like never before with this top-of-the-line board, crafted from the most premium materials for ultimate performance and durability.</p>
+<br>
+<p><strong>Why The Out of Stock Snowboard is the Perfect Black Friday Gift:</strong></p>
+<ul>
+  <li><strong>Unleash Your Potential:</strong> Experience unparalleled control and responsiveness, perfect for both beginners and seasoned riders.</li>
+  <li><strong>Premium Quality:</strong> Built to last using only the finest materials, ensuring years of thrilling rides.</li>
+  <li><strong>Family Fun:</strong> Create unforgettable memories hitting the hills with family and friends. This board is built for fun!</li>
+  <li><strong>Limited Availability:</strong> Don't miss out! Secure your <strong>Out of Stock Snowboard</strong> this Black Friday before it's gone!</li>
+</ul>
+<br>
+<p>This Black Friday, give the gift of adventure and excitement. <strong>The Out of Stock Snowboard</strong> is more than just a board; it's an experience. But hurry, quantities are limited! Get yours before it's out of stock!</p>
+```","```html
+<h2>The Out of Stock Snowboard - Sinterklaas Edition!</h2>
+
+<p>Looking for the perfect gift to leave in a shoe this Sinterklaas? Even though this snowboard is currently ""Out of Stock"", imagine the joy on their face when they receive a <strong>Sinterklaas poem</strong> promising thrilling adventures on the slopes! <br><br>
+
+This isn't just any snowboard; it's built for future <strong>""shredders""</strong> and families ready to conquer snowy hills (once it's back in stock, of course!). While you can't actually wrap it up for Pakjesavond just yet, you can print out a beautiful Sinterklaas-themed voucher showing a picture of it.
+
+<br><br>
+
+<strong>Why this snowboard is perfect for Sinterklaas (a voucher for it anyway!):</strong>
+
+<ul>
+    <li><strong>Premium Quality Promise:</strong> Crafted with the finest (future) materials!</li>
+    <li><strong>Family Fun Guaranteed:</strong> Picture them gliding down the slopes together!</li>
+    <li><strong>Ultimate Sinterklaas Surprise:</strong> More exciting than pepernoten (almost)!</li>
+</ul>
+
+<p>This Sinterklaas, give the gift of anticipation and excitement!  Print out a voucher or create a personalized Sinterklaas poem mentioning ""The Out of Stock Snowboard"" and let the winter adventures begin (when available). Psst... Keep checking back for restocks!</p>
+```",2025-08-11T11:35:45-04:00
+15,snowboard,sjdfhjasdfsdfsdf,"[{'id': 51605103411539, 'product_id': 10049262977363, 'title': 'Default Title', 'price': '885.95', 'position': 1, 'inventory_policy': 'deny', 'compare_at_price': None, 'option1': 'Default Title', 'option2': None, 'option3': None, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:44-04:00', 'taxable': True, 'barcode': None, 'fulfillment_service': 'manual', 'grams': 0, 'inventory_management': 'shopify', 'requires_shipping': True, 'sku': None, 'weight': 0.0, 'weight_unit': 'kg', 'inventory_item_id': 53664438026579, 'inventory_quantity': 50, 'old_inventory_quantity': 50, 'admin_graphql_api_id': 'gid://shopify/ProductVariant/51605103411539', 'image_id': None}]",50,{'Shop location': 50},sjdfhjasdf,"{'id': 67341013582163, 'alt': 'The top and bottom view of a snowboard. The top has view is turquoise and black with graphics of\n        trees. The bottom view is turquoise with the word hydrogen written in cursive.', 'position': 1, 'product_id': 10049262977363, 'created_at': '2025-08-11T11:35:44-04:00', 'updated_at': '2025-08-11T11:35:46-04:00', 'admin_graphql_api_id': 'gid://shopify/ProductImage/67341013582163', 'width': 1024, 'height': 1024, 'src': 'https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main.jpg?v=1754926547', 'variant_ids': []}",https://cdn.shopify.com/s/files/1/0981/5713/4163/files/Main.jpg?v=1754926547,"```html
+<h2>The Videographer Snowboard: Shred the Gnar... in Costume!</h2>
+
+<p>This Halloween, ditch the pumpkin carving and hit the slopes! The <strong>Videographer Snowboard</strong> isn't just top-of-the-line; it's your ultimate monster mashing machine. Imagine carving through fresh powder dressed as a zombie, ghost, or even a snow-shredding werewolf! <br><br>
+
+Crafted with <strong>premium materials</strong>, this board is built to withstand even the most terrifying terrain. Whether you're a seasoned pro or a beginner ghoul, the Videographer delivers a smooth and responsive ride. <br><br>
+
+<strong>Why Choose the Videographer Snowboard for Halloween?</strong></p>
+
+<ul>
+  <li><strong>Durable Construction:</strong> Built to last through countless haunted hills.</li>
+  <li><strong>Superior Performance:</strong> Effortlessly carve, jump, and glide through any conditions, even spooky ones!</li>
+  <li><strong>Head-Turning Style:</strong> Make a statement on the mountain (especially with your Halloween costume!).</li>
+  <li><strong>Perfect for All Skill Levels:</strong> From beginner boos to expert screamers, everyone can enjoy the ride.</li>
+</ul>
+
+<p>Don't just hand out candy this year. Give yourself the gift of shredding this Halloween. Get your <strong>Videographer Snowboard</strong> today and make some monstrous memories!</p>
+```",active,15,,2025-08-11T11:35:44-04:00,2025-08-11T23:35:51-04:00,TEST-WINKEL-PIM,"[{'id': 12668637774163, 'product_id': 10049262977363, 'name': 'Title', 'position': 1, 'values': ['Default Title']}]",,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",web,The Videographer Snowboard,10049262977363,the-videographer-snowboard,gid://shopify/Product/10049262977363,"```html
+<p><strong>The Videographer Snowboard: Your Ultimate Black Friday Shred Sled!</strong></p>
+
+<p>Dominate the slopes this winter with The Videographer Snowboard! This Black Friday, grab the best gift for the serious snowboarder in your life (or treat yourself!). Built with premium materials for unmatched performance and durability, The Videographer isn't just a snowboard; it's an experience.</p>
+
+<ul>
+  <li><strong>Top-of-the-Line Construction:</strong> Crafted with the finest materials for peak performance and longevity.</li>
+  <li><strong>Family Fun Approved:</strong> Perfect for shredding the hills with loved ones, creating unforgettable memories.</li>
+  <li><strong>The Ultimate Gift:</strong> Surprise the snowboard enthusiast in your life with a gift they'll cherish for years to come.</li>
+  <li><strong>Black Friday Deal:</strong> Don't miss out on this incredible discount! Get yours before they're gone.</li>
+</ul>
+
+<p>Level up your snowboarding game this Black Friday. Get The Videographer Snowboard and experience the difference!</p>
+```","```html
+<h3>The Videographer Snowboard: Sinterklaas Edition!</h3>
+
+<p>This year, surprise your little snowboarder with the <strong>perfect Sint gift:</strong> The Videographer Snowboard! Imagine the joy on their face as they unwrap this top-of-the-line board, ready to conquer the snowy hills.</p>
+
+<p>Perfect for fun family days out, this snowboard is built to last and provide hours of <em>sneeuwpret</em>! Made with durable materials, it's ready for all the winter adventures Sinterklaas has planned. </p>
+
+<p><strong>Why choose The Videographer Snowboard for Sinterklaas?</strong></p>
+<ul>
+  <li><strong>Guaranteed fun for the whole family:</strong> Shred the slopes together!</li>
+  <li><strong>Durable construction:</strong> Built to withstand even the most enthusiastic snowboarders.</li>
+  <li><strong>The perfect Sinterklaas surprise:</strong> A gift they'll remember for years to come!</li>
+</ul>
+
+<p>Don't miss out! Make this Sinterklaas extra special with The Videographer Snowboard. Order now and get ready for unforgettable winter memories!</p>
+```",2025-08-11T11:35:45-04:00
+,,,,,,,,,"```html
+<h2>Shred the Slopes this Halloween... If You Dare!</h2>
+<p>This ain't your grandma's pumpkin carving kit! This top-of-the-line snowboard is ready to <strong>carve up the mountain</strong> this Halloween season. Forget tricks, prepare for <strong>treats of epic powder</strong> and exhilarating speed!</p>
+
+<p>Crafted from the most premium materials this side of the haunted forest, this board is built for serious riders who demand peak performance. Think your snowboarding skills are spooky good? Then you need this board.</p>
+
+<p><strong>Why this snowboard is a Halloween essential:</strong></p>
+<ul>
+  <li><strong>Ghastly Grip:</strong> Superior edge hold for icy conditions and treacherous turns.</li>
+  <li><strong>Bone-Chilling Speed:</strong> Unleash unearthly speeds with our streamlined design.</li>
+  <li><strong>Undead Durability:</strong> Built to withstand even the most brutal Halloween storms.</li>
+  <li><strong>Spooktacular Style:</strong> Turn heads (and maybe even raise the dead) with its sleek design.</li>
+</ul>
+
+<p>Don't be a scaredy cat! <br><strong>Order yours today and get ready to haunt the slopes!</strong> <br>Perfect for carving up some fresh powder with your family or riding solo, you'll be a snowboarding monster this Halloween! </p>
+```",,,,,,,,,"This new snowboard is top of the line, it is amazing for taking out with your family and shredding some hills. It is made of the most premium materials on earth, if you are serious about snowboarding this is the product to purchase!",,,,,,"```html
+<h2>Black Friday Best Gift: The Ultimate Snowboard</h2>
+
+<p>Dominate the slopes this winter with the ultimate snowboard! Looking for the <strong>best Black Friday gift</strong> for the snowboarder in your life (or maybe yourself?) This top-of-the-line board is engineered for performance and built to last.</p>
+
+<ul>
+    <li><strong>Premium Materials:</strong> Crafted with the finest materials for unmatched durability and responsiveness.</li>
+    <li><strong>Family Fun:</strong> Perfect for shredding hills with family and friends. Create lasting memories on the mountain!</li>
+    <li><strong>Pro-Level Performance:</strong> Serious about snowboarding? This board delivers the edge control and stability you need to push your limits.</li>
+    <li><strong>The Perfect Gift:</strong> Surprise your loved one with a gift that will keep them stoked all season long.</li>
+</ul>
+
+<p>Don't miss out on this <strong>Black Friday deal!</strong> Get the best snowboard at an unbeatable price. <br> Upgrade your ride and conquer the mountain today! This is the <strong>best gift</strong> for any snowboard enthusiast.</p>
+```","```html
+<h2>Sinterklaas' Top Secret Snowboard for Snowy Adventures!</h2>
+
+<p>Ho ho ho! Sinterklaas has a special surprise for all the adventurous <em>stoute kindjes</em> this year! This is no ordinary snowboard, it's a magical sleigh... for the slopes! Imagine gliding down the snowy hills, feeling the wind in your beard (even if you don't have one yet!), just like Pakjesboot on its way to Nederland!</p>
+
+<p><strong>This top-of-the-line snowboard is perfect for family fun during the Sinterklaas holiday.</strong> Forget sitting by the fire, get outside and build some snowy memories! Made with super-strong, premium materials, this board is ready to withstand even the most enthusiastic Sinterklaas celebrations on the mountain.</p>
+
+<ul>
+  <li><strong>Top-Tier Quality:</strong> Designed for smooth rides and maximum fun.</li>
+  <li><strong>Perfect for Family Adventures:</strong> Create lasting memories with loved ones.</li>
+  <li><strong>Durable Construction:</strong> Made with premium materials to withstand all the snowy action.</li>
+</ul>
+
+<p>Is your child dreaming of becoming the ultimate snowboarder, just like Sinterklaas on his rooftop adventures? Then <strong>this is the perfect gift to find in their shoe this December 5th!</strong> Get ready to shred those hills and celebrate Sinterklaas in style!</p>
+
+<br>
+
+<small>Pssst... Sinterklaas says supplies are limited, so order yours now before the Pieten pack them all up!</small>
+```",

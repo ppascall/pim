@@ -1,16 +1,134 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import AddProduct from '../';
+import React, { useState } from 'react';
 
-export default function AddProductPage() {
-  const [fields, setFields] = useState([]);
+export default function AddFieldPage() {
+  const [fieldName, setFieldName] = useState('');
+  const [required, setRequired] = useState('No');
+  const [description, setDescription] = useState('');
+  const [status, setStatus] = useState({ message: '', color: '' });
 
-  useEffect(() => {
-    fetch('/api/fields')
-      .then(res => res.json())
-      .then(data => setFields(data.fields || []));
-  }, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus({ message: '', color: '' });
+    if (!fieldName.trim()) {
+      setStatus({ message: 'Field name is required.', color: 'red' });
+      return;
+    }
+    try {
+      const res = await fetch('/api/add_field', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          field_name: fieldName,
+          required,
+          description,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus({ message: 'Field added!', color: 'green' });
+        setFieldName('');
+        setRequired('No');
+        setDescription('');
+      } else {
+        setStatus({ message: data.message || 'Failed to add field.', color: 'red' });
+      }
+    } catch {
+      setStatus({ message: 'Error adding field.', color: 'red' });
+    }
+  };
 
-  if (!fields.length) return <div>Loading...</div>;
-  return <AddProduct fields={fields} />;
+  return (
+    <div style={{
+      maxWidth: 500,
+      margin: '40px auto',
+      background: '#f8fafc',
+      borderRadius: 12,
+      boxShadow: '0 4px 24px rgba(0,0,0,0.09)',
+      padding: 32,
+    }}>
+      <h1 style={{
+        textAlign: 'center',
+        fontWeight: 800,
+        fontSize: '2rem',
+        marginBottom: 28,
+        color: '#1a2233'
+      }}>
+        Add New Field
+      </h1>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+        <div>
+          <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>Field Name</label>
+          <input
+            type="text"
+            value={fieldName}
+            onChange={e => setFieldName(e.target.value)}
+            style={{
+              padding: '10px 14px',
+              borderRadius: 6,
+              border: '1px solid #d1d5db',
+              fontSize: 16,
+              background: '#f9fafd',
+              width: '100%',
+            }}
+            required
+          />
+        </div>
+        <div>
+          <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>Required</label>
+          <select
+            value={required}
+            onChange={e => setRequired(e.target.value)}
+            style={{
+              padding: '10px 14px',
+              borderRadius: 6,
+              border: '1px solid #d1d5db',
+              fontSize: 16,
+              background: '#f9fafd',
+              width: '100%',
+            }}
+          >
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+        <div>
+          <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>Description</label>
+          <textarea
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            style={{
+              padding: '10px 14px',
+              borderRadius: 6,
+              border: '1px solid #d1d5db',
+              fontSize: 16,
+              background: '#f9fafd',
+              width: '100%',
+              minHeight: 60,
+              resize: 'vertical'
+            }}
+          />
+        </div>
+        {status.message && (
+          <div style={{ color: status.color, fontWeight: 600, marginBottom: 8 }}>{status.message}</div>
+        )}
+        <button
+          type="submit"
+          style={{
+            background: '#1976d2',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 5,
+            padding: '10px 0',
+            fontSize: 16,
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginTop: 10
+          }}
+        >
+          Add Field
+        </button>
+      </form>
+    </div>
+  );
 }
