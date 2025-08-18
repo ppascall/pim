@@ -4,7 +4,9 @@ import requests
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from dotenv import load_dotenv
-load_dotenv()
+
+# Correct .env path (three levels up from this file)
+load_dotenv(dotenv_path=os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../.env')))
 
 app = Flask(__name__)
 CORS(app)
@@ -13,10 +15,14 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 CATEGORY_FILE = 'categories.csv'
 PRODUCT_FILE = 'products.csv'
+USER_FILE = os.path.join(os.path.dirname(__file__), '../../db/users.csv')
 
 # --- Shopify Integration ---
 SHOP = os.environ.get("SHOPIFY_SHOP")  # e.g. 'nextime-clocks.myshopify.com'
 TOKEN = os.environ.get("SHOPIFY_ADMIN_TOKEN")  # your Admin API access token
+
+print("SHOPIFY_SHOP:", SHOP)
+print("SHOPIFY_ADMIN_TOKEN:", TOKEN)
 
 def fetch_shopify_products():
     if not SHOP or not TOKEN:
@@ -73,7 +79,8 @@ def fetch_shopify_products():
             # Add to product's warehouse_stock
             if 'warehouse_stock' not in product:
                 product['warehouse_stock'] = {}
-            product['warehouse_stock'][warehouse_name] = product['warehouse_stock'].get(warehouse_name, 0) + available
+            # FIX: Prevent TypeError if available is None
+            product['warehouse_stock'][warehouse_name] = product['warehouse_stock'].get(warehouse_name, 0) + (available if available is not None else 0)
 
         all_products.extend(products)
         if len(products) < params['limit']:
@@ -147,6 +154,20 @@ def save_product(product):
         if not file_exists:
             writer.writeheader()
         writer.writerow(product)
+
+def load_users():
+    if not os.path.exists(USER_FILE):
+        return []
+    with open(USER_FILE, newline='', encoding='utf-8') as f:
+        return list(csv.DictReader(f))
+
+def save_users(users):
+    if not users:
+        return
+    with open(USER_FILE, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=['email', 'hashed_password', 'role'])
+        writer.writeheader()
+        writer.writerows(users)
 
 # --- API Endpoints ---
 
@@ -256,8 +277,30 @@ def add_product():
     data = request.form or request.json
     fields = load_fields()
     product = {field['field_name']: data.get(field['field_name'], '') for field in fields}
+
+    # --- Shopify create logic ---
+    shopify_id = None
+    if SHOP and TOKEN:
+        url = f"https://{SHOP}/admin/api/2024-01/products.json"
+        headers = {
+            "X-Shopify-Access-Token": TOKEN,
+            "Content-Type": "application/json"
+        }
+        # Only send allowed fields to Shopify
+        allowed_fields = ["title", "body_html", "vendor", "product_type", "tags", "status"]
+        shopify_fields = {k: v for k, v in product.items() if k in allowed_fields}
+        payload = {"product": shopify_fields}
+        resp = requests.post(url, headers=headers, json=payload)
+        if resp.status_code == 201:
+            shopify_product = resp.json().get("product")
+            if shopify_product and "id" in shopify_product:
+                shopify_id = shopify_product["id"]
+                product["id"] = str(shopify_id)  # Save Shopify ID in local CSV
+        else:
+            return jsonify({'success': False, 'message': f"Shopify create failed: {resp.text}"}), 500
+
     save_product(product)
-    return jsonify({'success': True})
+    return jsonify({'success': True, 'shopify_id': shopify_id})
 
 @app.route('/update_product', methods=['POST'])
 def update_product():
@@ -268,10 +311,30 @@ def update_product():
     products = load_products()
     if not (0 <= index < len(products)):
         return jsonify({'success': False, 'message': 'Invalid index'}), 400
+
+    # Update local product
     for key in data:
         if key != 'index':
             products[index][key] = data[key]
     save_products(products)
+
+    # --- Shopify update logic ---
+    shopify_id = products[index].get('id') or products[index].get('shopify_id')
+    if shopify_id and SHOP and TOKEN:
+        url = f"https://{SHOP}/admin/api/2024-01/products/{shopify_id}.json"
+        headers = {
+            "X-Shopify-Access-Token": TOKEN,
+            "Content-Type": "application/json"
+        }
+        # Only send fields that are allowed by Shopify API
+        allowed_fields = ["title", "body_html", "vendor", "product_type", "tags", "status"]
+        update_fields = {k: v for k, v in data.items() if k in allowed_fields}
+        if update_fields:
+            payload = {"product": {"id": int(shopify_id), **update_fields}}
+            resp = requests.put(url, headers=headers, json=payload)
+            if resp.status_code != 200:
+                return jsonify({'success': False, 'message': f"Local updated, but Shopify update failed: {resp.text}"}), 500
+
     return jsonify({'success': True})
 
 @app.route('/delete_product', methods=['POST'])
@@ -374,6 +437,71 @@ def bulk_edit_products():
             products[idx][field] = value
     save_products(products)
     return jsonify({'success': True})
+
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    users = load_users()
+    # Don't send hashed_password to frontend
+    return jsonify({'users': [
+        {'email': u['email'], 'role': u['role']} for u in users
+    ]})
+
+@app.route('/api/users/<email>', methods=['PATCH'])
+def update_user_role(email):
+    users = load_users()
+    data = request.get_json()
+    new_role = data.get('role')
+    updated = False
+    for user in users:
+        if user['email'] == email:
+            user['role'] = new_role
+            updated = True
+            break
+    if updated:
+        save_users(users)
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+
+@app.route('/api/users/<email>', methods=['DELETE'])
+def delete_user(email):
+    users = load_users()
+    new_users = [u for u in users if u['email'] != email]
+    if len(new_users) == len(users):
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+    save_users(new_users)
+    return jsonify({'success': True})
+
+@app.route('/shopify-update-product/<product_id>', methods=['PUT'])
+def shopify_update_product(product_id):
+    """
+    Update a product on Shopify using the Admin API.
+    Expects JSON body with fields to update, e.g.:
+    {
+      "title": "New Title",
+      "body_html": "<strong>New Description</strong>",
+      ...
+    }
+    """
+    if not SHOP or not TOKEN:
+        return jsonify({'success': False, 'message': 'Shopify credentials not set'}), 500
+
+    update_fields = request.json
+    if not update_fields:
+        return jsonify({'success': False, 'message': 'No update fields provided'}), 400
+
+    url = f"https://{SHOP}/admin/api/2024-01/products/{product_id}.json"
+    headers = {
+        "X-Shopify-Access-Token": TOKEN,
+        "Content-Type": "application/json"
+    }
+    payload = {"product": {"id": int(product_id), **update_fields}}
+
+    resp = requests.put(url, headers=headers, json=payload)
+    if resp.status_code == 200:
+        return jsonify({'success': True, 'product': resp.json().get('product')})
+    else:
+        return jsonify({'success': False, 'message': resp.text}), resp.status_code
 
 def clean_products_csv():
     import ast

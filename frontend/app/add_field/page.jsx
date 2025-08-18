@@ -1,6 +1,16 @@
-"use client";
-import AddField from '../components/AddFile';
+'use client';
+import React, { useEffect, useState } from 'react';
+import AddProduct from '../';
 
-export default function AddFieldPage() {
-  return <AddField />;
-} 
+export default function AddProductPage() {
+  const [fields, setFields] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/fields')
+      .then(res => res.json())
+      .then(data => setFields(data.fields || []));
+  }, []);
+
+  if (!fields.length) return <div>Loading...</div>;
+  return <AddProduct fields={fields} />;
+}

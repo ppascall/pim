@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 const API_BASE = "http://localhost:3000/api";
 const PAGE_SIZE = 5;
+const PRODUCTS_PER_PAGE = 15;
 
 export default function UserDashboard() {
   // Search state
@@ -22,6 +23,9 @@ export default function UserDashboard() {
   const [addForm, setAddForm] = useState({});
   const [addStatus, setAddStatus] = useState("");
   const [addAnim, setAddAnim] = useState(false);
+
+  // Pagination state
+  const [productPage, setProductPage] = useState(0);
 
   // Fetch fields and products on mount
   useEffect(() => {
@@ -127,6 +131,13 @@ export default function UserDashboard() {
     setTimeout(() => setAddStatus(""), 2000);
   };
 
+  // Pagination logic for products
+  const paginatedProducts = products.slice(
+    productPage * PRODUCTS_PER_PAGE,
+    (productPage + 1) * PRODUCTS_PER_PAGE
+  );
+  const totalProductPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
+
   return (
     <div style={styles.bg}>
       <div style={styles.container}>
@@ -161,7 +172,7 @@ export default function UserDashboard() {
           </button>
         </form>
 
-        {/* Product Names List */}
+        {/* Product Names List with Pagination */}
         <div style={styles.tableWrap}>
           <table style={styles.table}>
             <thead>
@@ -171,7 +182,20 @@ export default function UserDashboard() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product, idx) => {
+              {paginatedProducts.map((product, idx) => {
+                // Try to get the first image URL from possible fields
+                let imageUrl = "";
+                if (Array.isArray(product.images) && product.images.length > 0) {
+                  imageUrl = product.images[0];
+                } else if (product.image_url) {
+                  imageUrl = product.image_url;
+                } else if (product["Image URL"]) {
+                  imageUrl = product["Image URL"];
+                } else if (typeof product.images === "string") {
+                  // If images is a comma-separated string
+                  imageUrl = product.images.split(",")[0];
+                }
+
                 const productName =
                   product["Product Description EN"] ||
                   product.product_name ||
@@ -179,17 +203,15 @@ export default function UserDashboard() {
                   "Unnamed Product";
                 return (
                   <tr key={idx}>
-                    <td
-                      style={{
-                        ...styles.td,
-                        cursor: "pointer",
-                        color: "#007BFF",
-                        fontWeight: 700,
-                        fontSize: 16,
-                      }}
-                      onClick={() => openEditModal(product)}
-                    >
-                      {productName}
+                    <td style={styles.td}>
+                      {imageUrl && (
+                        <img
+                          src={imageUrl}
+                          alt="Product"
+                          style={{ width: 48, height: 48, objectFit: "cover", borderRadius: 6, marginRight: 10, verticalAlign: "middle" }}
+                        />
+                      )}
+                      <span>{productName}</span>
                     </td>
                     <td style={styles.td}>
                       <button
@@ -210,6 +232,30 @@ export default function UserDashboard() {
               No results found.
             </p>
           )}
+          {/* Pagination controls */}
+          {products.length > PRODUCTS_PER_PAGE && (
+            <div style={{ display: "flex", justifyContent: "center", gap: 12, margin: "18px 0" }}>
+              <button
+                className="button"
+                style={{ ...styles.button, minWidth: 70 }}
+                disabled={productPage === 0}
+                onClick={() => setProductPage(p => Math.max(0, p - 1))}
+              >
+                Prev
+              </button>
+              <span style={{ alignSelf: "center", color: "#444", fontSize: 15 }}>
+                Page {productPage + 1} of {totalProductPages}
+              </span>
+              <button
+                className="button"
+                style={{ ...styles.button, minWidth: 70 }}
+                disabled={productPage + 1 >= totalProductPages}
+                onClick={() => setProductPage(p => Math.min(totalProductPages - 1, p + 1))}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Edit Modal */}
@@ -221,8 +267,12 @@ export default function UserDashboard() {
             display: "flex", alignItems: "center", justifyContent: "center"
           }}>
             <div style={{
-              background: "#fff", borderRadius: 10, padding: 32, minWidth: 340,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.18)"
+              background: "#fff",
+              borderRadius: 10,
+              padding: 24,
+              minWidth: 260,
+              width: 340,
+              boxShadow: "0 8px 32px rgba(0,0,0,0.18)",
             }}>
               <h2 style={{ marginBottom: 18, fontWeight: 700, fontSize: 20 }}>Edit Product</h2>
               <form
@@ -231,19 +281,30 @@ export default function UserDashboard() {
                   handleEditSave();
                 }}
               >
-                {fields
-                  .slice(editFieldPage * PAGE_SIZE, (editFieldPage + 1) * PAGE_SIZE)
-                  .map(field => (
-                    <div key={field} style={{ marginBottom: 14 }}>
-                      <label style={{ fontWeight: 600, marginBottom: 6, display: "block" }}>{field}</label>
-                      <input
-                        type="text"
-                        value={editFields[field] ?? ""}
-                        onChange={e => setEditFields(f => ({ ...f, [field]: e.target.value }))}
-                        style={styles.input}
-                      />
-                    </div>
-                  ))}
+                {/* Fixed height for fields area */}
+                <div style={{
+                  minHeight: PAGE_SIZE * 60, // enough for 5 fields
+                  maxHeight: PAGE_SIZE * 60,
+                  overflow: "hidden",
+                  marginBottom: 10,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start"
+                }}>
+                  {fields
+                    .slice(editFieldPage * PAGE_SIZE, (editFieldPage + 1) * PAGE_SIZE)
+                    .map(field => (
+                      <div key={field} style={{ marginBottom: 14 }}>
+                        <label style={{ fontWeight: 600, marginBottom: 6, display: "block" }}>{field}</label>
+                        <input
+                          type="text"
+                          value={editFields[field] ?? ""}
+                          onChange={e => setEditFields(f => ({ ...f, [field]: e.target.value }))}
+                          style={styles.input}
+                        />
+                      </div>
+                    ))}
+                </div>
                 <div style={{ display: "flex", gap: 8, justifyContent: "space-between", margin: "10px 0 18px 0" }}>
                   <button
                     type="button"
