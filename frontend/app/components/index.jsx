@@ -84,6 +84,11 @@ const InventoryManager = () => {
           </Link>
         </li>
         <li>
+          <Link href="/lang" className="button">
+            Translate All Products
+          </Link>
+        </li>
+        <li>
           <button
             onClick={handleRefresh}
             className="button"

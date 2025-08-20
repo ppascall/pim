@@ -258,8 +258,9 @@ def delete_field():
 
 @app.route('/products', methods=['GET'])
 def get_products():
-    # Just return local products
-    return jsonify({'products': load_products()})
+    products = load_products()
+    products = [clean_dict_keys(p) for p in products]
+    return jsonify({'products': products})
 
 @app.route('/shopify-products', methods=['GET'])
 def get_shopify_products():
@@ -309,50 +310,6 @@ def add_product():
     data = request.form or request.json
     fields = load_fields()
     product = {field['field_name']: data.get(field['field_name'], '') for field in fields}
-
-    # --- Generate SEO translations for description ---
-    base_desc = product.get('body_html', '')
-    title = product.get('title', '')
-
-    GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY'
-    GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}'
-    headers = {'Content-Type': 'application/json'}
-
-    def get_translation(prompt):
-        payload = {
-            "contents": [
-                {"parts": [{"text": prompt}]}
-            ]
-        }
-        try:
-            resp = requests.post(GEMINI_API_URL, headers=headers, json=payload, timeout=30)
-            resp.raise_for_status()
-            gemini_data = resp.json()
-            return gemini_data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
-        except Exception as e:
-            return f"(Gemini error: {e})"
-
-    # English SEO description
-    if base_desc:
-        prompt_en = (
-            f"Rewrite the following product description in English, SEO-optimized and engaging, as valid HTML. "
-            f"Include the product title if possible. "
-            f"Product title: {title}\n"
-            f"Original description (HTML): {base_desc}\n"
-            f"Return only the new HTML description."
-        )
-        product['product_description_english'] = get_translation(prompt_en)
-
-        # Dutch SEO description
-        prompt_nl = (
-            f"Vertaal en herschrijf de volgende productbeschrijving naar het Nederlands, SEO-geoptimaliseerd en aantrekkelijk, als geldige HTML. "
-            f"Voeg indien mogelijk de producttitel toe. "
-            f"Producttitel: {title}\n"
-            f"Oorspronkelijke beschrijving (HTML): {base_desc}\n"
-            f"Geef alleen de nieuwe HTML-beschrijving terug."
-        )
-        product['product_description_dutch'] = get_translation(prompt_nl)
-
     # --- Shopify create logic ---
     shopify_id = None
     if SHOP and TOKEN:
@@ -642,7 +599,7 @@ def theme_descriptions():
         fields.append({'field_name': theme_field, 'required': 'False', 'description': f'SEO HTML description for {theme}'})
         save_fields(fields)
 
-    GEMINI_API_KEY = 'AIzaSyCMTdfEtSgP0qatnNHTrmQaJjElVvES-3Y'
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
     GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}'
     headers = {'Content-Type': 'application/json'}
 
@@ -685,6 +642,72 @@ def theme_descriptions():
 
             # Wait at least 4.1-4.5 seconds to stay under 15 RPM
             time.sleep(4.2 + random.uniform(0, 0.3))
+
+        save_products(products)
+        yield f'data: {{"progress": {total}, "total": {total}, "status": "complete"}}\n\n'
+
+    return Response(stream_with_context(generate()), mimetype='text/event-stream')
+
+@app.route('/translate_products', methods=['GET'])
+def translate_products():
+    language = request.args.get('language', '').strip().lower()
+    if not language:
+        return jsonify({'success': False, 'message': 'Language is required'}), 400
+
+    products = load_products()
+    if not products:
+        return jsonify({'success': False, 'message': 'No products found'}), 404
+
+    field_name = f'product_description_{language}'
+    fields = load_fields()
+    if not any(f['field_name'] == field_name for f in fields):
+        fields.append({'field_name': field_name, 'required': 'False', 'description': f'SEO HTML description in {language}'})
+        save_fields(fields)
+
+    GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+    GEMINI_API_URL = f'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_API_KEY}'
+    headers = {'Content-Type': 'application/json'}
+
+    def generate():
+        total = len(products)
+        for idx, product in enumerate(products):
+            base_desc = product.get('body_html', '')
+            title = product.get('title', '')
+            # Skip if translation already exists and is non-empty
+            if product.get(field_name):
+                yield f'data: {{"progress": {idx+1}, "total": {total}, "status": "skipped_existing"}}\n\n'
+                continue
+            if not base_desc:
+                product[field_name] = ''
+                yield f'data: {{"progress": {idx+1}, "total": {total}, "status": "skipped"}}\n\n'
+                continue
+
+            prompt = (
+                f"Translate and rewrite the following product description to {language}, SEO-optimized and engaging, as valid HTML. "
+                f"Include the product title if possible. "
+                f"Product title: {title}\n"
+                f"Original description (HTML): {base_desc}\n"
+                f"Return only the new HTML description."
+            )
+
+            payload = {
+                "contents": [
+                    {"parts": [{"text": prompt}]}
+                ]
+            }
+
+            try:
+                resp = requests.post(GEMINI_API_URL, headers=headers, json=payload, timeout=30)
+                resp.raise_for_status()
+                gemini_data = resp.json()
+                new_desc = gemini_data.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+                product[field_name] = new_desc if new_desc else f"(No Gemini response for {language})"
+                yield f'data: {{"progress": {idx+1}, "total": {total}, "status": "done"}}\n\n'
+            except Exception as e:
+                product[field_name] = f"(Gemini error: {e})"
+                yield f'data: {{"progress": {idx+1}, "total": {total}, "status": "error"}}\n\n'
+
+            time.sleep(4.2 + random.uniform(0, 0.3))  # Stay under 15 RPM
 
         save_products(products)
         yield f'data: {{"progress": {total}, "total": {total}, "status": "complete"}}\n\n'
@@ -742,6 +765,14 @@ def fetch_inventory_levels_batch(headers, inventory_item_ids):
         if resp.status_code == 200:
             levels.extend(resp.json().get("inventory_levels", []))
     return levels
+
+def clean_dict_keys(obj):
+    if isinstance(obj, dict):
+        return {str(k) if k is not None else '' : clean_dict_keys(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_dict_keys(i) for i in obj]
+    else:
+        return obj
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

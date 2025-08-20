@@ -2,8 +2,8 @@
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function AIThemePage() {
-  const [theme, setTheme] = useState('');
+export default function TranslateProductsPage() {
+  const [language, setLanguage] = useState('');
   const [status, setStatus] = useState('');
   const [progress, setProgress] = useState(0);
   const [total, setTotal] = useState(0);
@@ -11,10 +11,10 @@ export default function AIThemePage() {
   const eventSourceRef = useRef(null);
   const router = useRouter();
 
-  const handleTheme = (e) => {
+  const handleTranslate = (e) => {
     e.preventDefault();
-    if (!theme.trim()) {
-      setStatus('Please enter a theme.');
+    if (!language.trim()) {
+      setStatus('Please enter a language.');
       return;
     }
     setLoading(true);
@@ -26,8 +26,8 @@ export default function AIThemePage() {
       eventSourceRef.current.close();
     }
 
-    // Use GET with query param
-    eventSourceRef.current = new window.EventSource(`/api/theme_descriptions?theme=${encodeURIComponent(theme)}`);
+    // Use GET with query param for SSE
+    eventSourceRef.current = new window.EventSource(`/api/translate_products?language=${encodeURIComponent(language)}`);
 
     eventSourceRef.current.onmessage = (event) => {
       try {
@@ -75,17 +75,17 @@ export default function AIThemePage() {
         marginBottom: 28,
         color: '#1a2233'
       }}>
-        AI Theme Product Descriptions
+        Translate All Products
       </h1>
-      <form onSubmit={handleTheme} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <form onSubmit={handleTranslate} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
         <div>
           <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>
-            Theme (e.g. Christmas, Summer, Black Friday)
+            Language (e.g. french, german, spanish, dutch)
           </label>
           <input
             type="text"
-            value={theme}
-            onChange={e => setTheme(e.target.value)}
+            value={language}
+            onChange={e => setLanguage(e.target.value)}
             style={{
               padding: '10px 14px',
               borderRadius: 6,
@@ -113,7 +113,24 @@ export default function AIThemePage() {
             marginTop: 10
           }}
         >
-          {loading ? 'Generating...' : 'Generate Themed Descriptions'}
+          {loading ? 'Translating...' : 'Translate All Products'}
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          style={{
+            background: '#e0e0e0',
+            color: '#333',
+            border: 'none',
+            borderRadius: 5,
+            padding: '10px 0',
+            fontSize: 16,
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginTop: 10
+          }}
+        >
+          Back
         </button>
       </form>
       {loading && (
@@ -148,23 +165,6 @@ export default function AIThemePage() {
           {status}
         </div>
       )}
-      <button
-        type="button"
-        onClick={() => router.back()}
-        style={{
-          background: '#e0e0e0',
-          color: '#333',
-          border: 'none',
-          borderRadius: 5,
-          padding: '10px 0',
-          fontSize: 16,
-          fontWeight: 700,
-          cursor: 'pointer',
-          marginTop: 10
-        }}
-      >
-        Back
-      </button>
     </div>
   );
 }

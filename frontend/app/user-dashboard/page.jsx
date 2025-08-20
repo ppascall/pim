@@ -283,9 +283,9 @@ export default function UserDashboard() {
               >
                 {/* Fixed height for fields area */}
                 <div style={{
-                  minHeight: PAGE_SIZE * 60, // enough for 5 fields
-                  maxHeight: PAGE_SIZE * 60,
-                  overflow: "hidden",
+                  maxHeight: '70vh',
+                  overflowY: 'auto',
+                  paddingRight: 12,
                   marginBottom: 10,
                   display: "flex",
                   flexDirection: "column",

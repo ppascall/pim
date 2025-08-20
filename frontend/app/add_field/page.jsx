@@ -1,11 +1,13 @@
 'use client';
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AddFieldPage() {
   const [fieldName, setFieldName] = useState('');
   const [required, setRequired] = useState('No');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState({ message: '', color: '' });
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -127,6 +129,23 @@ export default function AddFieldPage() {
           }}
         >
           Add Field
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          style={{
+            background: '#e0e0e0',
+            color: '#333',
+            border: 'none',
+            borderRadius: 5,
+            padding: '10px 0',
+            fontSize: 16,
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginTop: 10
+          }}
+        >
+          Back
         </button>
       </form>
     </div>
