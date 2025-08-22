@@ -10,8 +10,9 @@ const ManageFields = ({
   const [searchField, setSearchField] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedField, setSelectedField] = useState(null);
-  const [editData, setEditData] = useState({ field_name: '', description: '', required: 'False' });
+  const [editData, setEditData] = useState({ field_name: '', description: '', required: 'False', options: '', group: '' }); // <-- add group
   const [status, setStatus] = useState({ message: '', color: '' });
+  const [existingGroups, setExistingGroups] = useState([]); // <-- add state for groups
 
   // Fetch fields and parse them like in Search.jsx
   useEffect(() => {
@@ -27,14 +28,26 @@ const ManageFields = ({
                 field_name: f.field_name || '',
                 description: f.description || '',
                 required: f.required || 'False',
-                options: f.options || '', // <-- Add options support
+                options: f.options || '',
+                group: f.group || '', // <-- add group
               }))
           );
+          // Extract unique groups for dropdown
+          const groups = Array.from(
+            new Set(
+              data.fields
+                .map(f => (f.group || '').trim())
+                .filter(g => g)
+            )
+          );
+          setExistingGroups(groups);
         } else {
           setFields([]);
+          setExistingGroups([]);
         }
       } catch {
         setStatus({ message: 'Failed to fetch fields.', color: 'red' });
+        setExistingGroups([]);
       }
     };
     fetchFields();
@@ -48,11 +61,12 @@ const ManageFields = ({
         field_name: f.field_name,
         description: f.description || '',
         required: f.required || 'False',
-        options: f.options || '', // <-- Add options support
+        options: f.options || '',
+        group: f.group || '', // <-- add group
       });
     } else {
       setSelectedField(null);
-      setEditData({ field_name: '', description: '', required: 'False', options: '' });
+      setEditData({ field_name: '', description: '', required: 'False', options: '', group: '' });
     }
   }, [selectedIndex, fields]);
 
@@ -211,6 +225,24 @@ const ManageFields = ({
                 onChange={handleInputChange}
                 placeholder="e.g. red,blue,green"
               />
+
+              <label htmlFor="group">
+                Group <span style={{ fontWeight: 400, color: '#888', fontSize: 13 }}>(optional, e.g. Appearance, Logistics)</span>
+              </label>
+              <input
+                id="group"
+                name="group"
+                type="text"
+                list="group-list"
+                value={editData.group}
+                onChange={handleInputChange}
+                placeholder="e.g. Appearance"
+              />
+              <datalist id="group-list">
+                {existingGroups.map(g => (
+                  <option key={g} value={g} />
+                ))}
+              </datalist>
 
               <button type="submit" className="button" style={{ marginTop: 10 }}>
                 Update Field

@@ -1,4 +1,4 @@
-field_name,required,description,options
+field_name,required,description,options,group
 status,False,
 id,False,
 tags,False,

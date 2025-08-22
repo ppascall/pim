@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 const PAGE_SIZE = 5;
 const CATEGORY_PAGE_SIZE = 4;
@@ -172,8 +173,14 @@ const SearchProducts = ({
   const [editFields, setEditFields] = useState({});
   const [editStatus, setEditStatus] = useState({ message: '', color: '' });
 
-  // Add this state for modal paging
-  const [editFieldPage, setEditFieldPage] = useState(0);
+  // Remove old modal paging state
+  // const [editFieldPage, setEditFieldPage] = useState(0);
+  const [expandedGroups, setExpandedGroups] = useState({});
+  const [groupPages, setGroupPages] = useState({}); // { groupName: pageNumber }
+
+  const searchParams = useSearchParams();
+  const highlightProductId = searchParams.get('edit');
+  const highlightField = searchParams.get('field');
 
   // Fetch fields and products on mount
   useEffect(() => {
@@ -181,7 +188,6 @@ const SearchProducts = ({
       try {
         const res = await fetch(fetchFieldsEndpoint);
         const data = await res.json();
-        // Store full field objects, not just field names
         setFields(data.fields ? data.fields : []);
       } catch {
         setStatus({ message: 'Failed to fetch fields.', color: 'red' });
@@ -204,6 +210,19 @@ const SearchProducts = ({
     fetchFields();
     fetchProducts();
   }, [fetchFieldsEndpoint, fetchProductsEndpoint]);
+
+  // Add after products are loaded
+  useEffect(() => {
+    if (!products.length || !highlightProductId) return;
+    const found = products.find(
+      p =>
+        String(p.data.id) === String(highlightProductId) ||
+        String(p.data.shopify_id) === String(highlightProductId)
+    );
+    if (found) {
+      openEditModal(found);
+    }
+  }, [products, highlightProductId]);
 
   const toggleDetails = (index) => {
     setExpandedIndex(prev => (prev === index ? null : index));
@@ -287,7 +306,8 @@ const SearchProducts = ({
       setProducts(
         (data.products || []).map((p, idx) => ({
           index: idx,
-          data: p
+          data: p,
+          originalIndex: idx // store original index
         }))
       );
     } catch {
@@ -320,7 +340,8 @@ const SearchProducts = ({
     setEditProduct(product);
     setEditFields({ ...product.data });
     setEditStatus({ message: '', color: '' });
-    setEditFieldPage(0); // Reset to first page of fields
+    setExpandedGroups({}); // Reset group expansion
+    setGroupPages({}); // Reset group pages
     setEditModalOpen(true);
   };
 
@@ -329,14 +350,16 @@ const SearchProducts = ({
     setEditProduct(null);
     setEditFields({});
     setEditStatus({ message: '', color: '' });
-    setEditFieldPage(0);
+    setExpandedGroups({});
+    setGroupPages({});
   };
 
   // Save all edited fields for the product
   const handleEditSave = async () => {
     if (!editProduct) return;
     try {
-      const payload = { index: editProduct.index, ...editFields };
+      // Use originalIndex if available, otherwise fallback to index
+      const payload = { index: editProduct.originalIndex ?? editProduct.index, ...editFields };
       const res = await fetch('/api/update_product', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -353,6 +376,49 @@ const SearchProducts = ({
     } catch {
       setEditStatus({ message: 'Error updating product.', color: 'red' });
     }
+  };
+
+  // Group fields by group property, default to 'Ungrouped'
+  const groupedFields = React.useMemo(() => {
+    const groups = {};
+    fields.forEach((field) => {
+      const group = field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(field);
+    });
+    // Sort group names alphabetically, Ungrouped last
+    const ordered = {};
+    Object.keys(groups)
+      .sort((a, b) => {
+        if (a === "Ungrouped") return 1;
+        if (b === "Ungrouped") return -1;
+        return a.localeCompare(b);
+      })
+      .forEach((g) => (ordered[g] = groups[g]));
+    return ordered;
+  }, [fields]);
+
+  const toggleGroup = (group) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+    setGroupPages((prev) => ({
+      ...prev,
+      [group]: prev[group] || 0,
+    }));
+  };
+
+  const handleGroupPage = (group, direction) => {
+    setGroupPages((prev) => {
+      const current = prev[group] || 0;
+      const total = groupedFields[group]?.length || 0;
+      const maxPage = Math.max(0, Math.ceil(total / CATEGORY_PAGE_SIZE) - 1);
+      let next = current + direction;
+      if (next < 0) next = 0;
+      if (next > maxPage) next = maxPage;
+      return { ...prev, [group]: next };
+    });
   };
 
   return (
@@ -381,11 +447,15 @@ const SearchProducts = ({
             style={styles.select}
           >
             <option value="">Any Field</option>
-            {fields.map(f => (
-              <option key={f.field_name} value={f.field_name}>
-                {f.field_name}
-              </option>
-            ))}\
+            {Object.entries(groupedFields).map(([group, groupFields]) => (
+              <optgroup key={group} label={group}>
+                {groupFields.map(f => (
+                  <option key={f.field_name} value={f.field_name}>
+                    {f.field_name}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
           </select>
         </div>
         <div style={styles.formGroup}>
@@ -526,81 +596,139 @@ const SearchProducts = ({
                 handleEditSave();
               }}
             >
-              {fields
-                .slice(editFieldPage * CATEGORY_PAGE_SIZE, (editFieldPage + 1) * CATEGORY_PAGE_SIZE)
-                .map(field => (
-                  <div key={field.field_name} style={{ marginBottom: 14 }}>
-                    <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>
-                      {field.field_name}
-                    </label>
-                    {field.options && field.options.trim() ? (
-                      <select
-                        value={editFields[field.field_name] ?? ''}
-                        onChange={e =>
-                          setEditFields(f => ({
-                            ...f,
-                            [field.field_name]: e.target.value
-                          }))
-                        }
-                        style={styles.input}
-                      >
-                        <option value="">Select...</option>
-                        {field.options.split(',').map(opt => (
-                          <option key={opt.trim()} value={opt.trim()}>
-                            {opt.trim()}
-                          </option>
+              {Object.entries(groupedFields).map(([group, groupFields]) => {
+                const page = groupPages[group] || 0;
+                const totalPages = Math.ceil(groupFields.length / CATEGORY_PAGE_SIZE);
+                const start = page * CATEGORY_PAGE_SIZE;
+                const end = start + CATEGORY_PAGE_SIZE;
+                return (
+                  <div key={group} style={{
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 8,
+                    marginBottom: 18,
+                    background: "#f8fafc",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+                  }}>
+                    <div
+                      style={{
+                        cursor: "pointer",
+                        padding: "12px 18px",
+                        fontWeight: 700,
+                        fontSize: 18,
+                        background: "#e3e9f6",
+                        borderRadius: "8px 8px 0 0",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        userSelect: "none",
+                      }}
+                      onClick={() => toggleGroup(group)}
+                      tabIndex={0}
+                      role="button"
+                      aria-expanded={!!expandedGroups[group]}
+                      onKeyDown={e => {
+                        if (e.key === "Enter" || e.key === " ") toggleGroup(group);
+                      }}
+                    >
+                      <span style={{ fontWeight: 700, color: "#1976d2", fontSize: 17 }}>
+                        {expandedGroups[group] ? "▼" : "▶"} {group}
+                      </span>
+                      <span style={{ fontWeight: 400, color: "#888", fontSize: 15, marginLeft: 8 }}>
+                        ({groupFields.length})
+                      </span>
+                    </div>
+                    {expandedGroups[group] && (
+                      <div style={{ padding: "18px 18px 8px 18px", background: "#fff", borderRadius: "0 0 8px 8px" }}>
+                        {groupFields.slice(start, end).map(field => (
+                          <div key={field.field_name} style={{ marginBottom: 14 }}>
+                            <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>
+                              {field.field_name}
+                            </label>
+                            {field.options && field.options.trim() ? (
+                              <select
+                                value={editFields[field.field_name] ?? ''}
+                                onChange={e =>
+                                  setEditFields(f => ({
+                                    ...f,
+                                    [field.field_name]: e.target.value
+                                  }))
+                                }
+                                style={styles.input}
+                              >
+                                <option value="">Select...</option>
+                                {field.options.split(',').map(opt => (
+                                  <option key={opt.trim()} value={opt.trim()}>
+                                    {opt.trim()}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <input
+                                type="text"
+                                value={editFields[field.field_name] ?? ''}
+                                onChange={e =>
+                                  setEditFields(f => ({
+                                    ...f,
+                                    [field.field_name]: e.target.value
+                                  }))
+                                }
+                                style={{
+                                  ...styles.input,
+                                  ...(
+                                    (String(editProduct?.data?.id) === String(highlightProductId) ||
+                                     String(editProduct?.data?.shopify_id) === String(highlightProductId)) &&
+                                    field.field_name === highlightField
+                                      ? { border: '2px solid red', boxShadow: '0 0 0 2px #ffb3b3' }
+                                      : {}
+                                  )
+                                }}
+                              />
+                            )}
+                          </div>
                         ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        value={editFields[field.field_name] ?? ''}
-                        onChange={e =>
-                          setEditFields(f => ({
-                            ...f,
-                            [field.field_name]: e.target.value
-                          }))
-                        }
-                        style={styles.input}
-                      />
+                        {totalPages > 1 && (
+                          <div style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '10px 0 0 0' }}>
+                            <button
+                              type="button"
+                              className="button"
+                              style={{
+                                ...styles.button,
+                                minWidth: 70,
+                                background: page === 0 ? '#ccc' : styles.button.background,
+                                color: '#fff',
+                                cursor: page === 0 ? 'not-allowed' : 'pointer'
+                              }}
+                              disabled={page === 0}
+                              onClick={() => handleGroupPage(group, -1)}
+                            >
+                              Prev
+                            </button>
+                            <span style={{ alignSelf: 'center', color: '#444', fontSize: 15 }}>
+                              Page {page + 1} of {totalPages}
+                            </span>
+                            <button
+                              type="button"
+                              className="button"
+                              style={{
+                                ...styles.button,
+                                minWidth: 70,
+                                background: page + 1 >= totalPages ? '#ccc' : styles.button.background,
+                                color: '#fff',
+                                cursor: page + 1 >= totalPages ? 'not-allowed' : 'pointer'
+                              }}
+                              disabled={page + 1 >= totalPages}
+                              onClick={() => handleGroupPage(group, 1)}
+                            >
+                              Next
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
-              ))}
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', margin: '10px 0 18px 0' }}>
-                <button
-                  type="button"
-                  className="button"
-                  style={{
-                    ...styles.button,
-                    minWidth: 70,
-                    background: editFieldPage === 0 ? '#ccc' : styles.button.background,
-                    color: '#fff',
-                    cursor: editFieldPage === 0 ? 'not-allowed' : 'pointer'
-                  }}
-                  disabled={editFieldPage === 0}
-                  onClick={() => setEditFieldPage(p => Math.max(0, p - 1))}
-                >
-                  Prev
-                </button>
-                <span style={{ alignSelf: 'center', color: '#444', fontSize: 15 }}>
-                  Page {editFieldPage + 1} of {Math.ceil(fields.length / CATEGORY_PAGE_SIZE)}
-                </span>
-                <button
-                  type="button"
-                  className="button"
-                  style={{
-                    ...styles.button,
-                    minWidth: 70,
-                    background: (editFieldPage + 1) * CATEGORY_PAGE_SIZE >= fields.length ? '#ccc' : styles.button.background,
-                    color: '#fff',
-                    cursor: (editFieldPage + 1) * CATEGORY_PAGE_SIZE >= fields.length ? 'not-allowed' : 'pointer'
-                  }}
-                  disabled={(editFieldPage + 1) * CATEGORY_PAGE_SIZE >= fields.length}
-                  onClick={() => setEditFieldPage(p => Math.min(Math.ceil(fields.length / CATEGORY_PAGE_SIZE) - 1, p + 1))}
-                >
-                  Next
-                </button>
-              </div>
+                );
+              })}
+              {/* Removed the old flat page selector here */}
               {editStatus.message && (
                 <div style={{ color: editStatus.color, marginBottom: 12, fontWeight: 600 }}>{editStatus.message}</div>
               )}

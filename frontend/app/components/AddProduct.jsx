@@ -11,11 +11,10 @@ export default function AddProduct({
   const [loading, setLoading] = useState(
     !initialFields || initialFields.length === 0
   );
-
   const [primaryTitle, setPrimaryTitle] = useState("");
-  const [currentPage, setCurrentPage] = useState(0);
   const [formData, setFormData] = useState({});
   const [status, setStatus] = useState({ message: "", color: "" });
+  const [expandedGroups, setExpandedGroups] = useState({});
 
   // Fetch fields if not provided
   useEffect(() => {
@@ -50,6 +49,26 @@ export default function AddProduct({
     }
   }, [initialFields, fetchFieldsEndpoint]);
 
+  // Group fields by group property, default to 'Ungrouped'
+  const groupedFields = React.useMemo(() => {
+    const groups = {};
+    fields.forEach((field) => {
+      const group = field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(field);
+    });
+    // Sort group names alphabetically, Ungrouped last
+    const ordered = {};
+    Object.keys(groups)
+      .sort((a, b) => {
+        if (a === "Ungrouped") return 1;
+        if (b === "Ungrouped") return -1;
+        return a.localeCompare(b);
+      })
+      .forEach((g) => (ordered[g] = groups[g]));
+    return ordered;
+  }, [fields]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -78,7 +97,7 @@ export default function AddProduct({
         fields.forEach((field) => (resetData[field.field_name] = ""));
         setFormData(resetData);
         setPrimaryTitle("");
-        setCurrentPage(0);
+        setExpandedGroups({});
       } else {
         setStatus({
           message: result.message || "Failed to add product.",
@@ -90,18 +109,12 @@ export default function AddProduct({
     }
   };
 
-  const nextPage = () => {
-    if (currentPage < totalPages - 1) setCurrentPage(currentPage + 1);
+  const toggleGroup = (group) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
   };
-
-  const prevPage = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
-  };
-
-  const pageSize = 5;
-  const totalPages = Math.max(1, Math.ceil(fields.length / pageSize));
-  const startIndex = currentPage * pageSize;
-  const visibleFields = fields.slice(startIndex, startIndex + pageSize);
 
   if (loading) {
     return (
@@ -140,113 +153,108 @@ export default function AddProduct({
           />
         </label>
 
-        {visibleFields.map((field, idx) => (
-          <label key={idx} style={styles.label}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span>
-                {field.field_name}
-                {field.required === "True" && (
-                  <span style={styles.required}>*</span>
-                )}
+        {/* Grouped fields */}
+        {Object.entries(groupedFields).map(([group, groupFields]) => (
+          <div key={group} style={styles.groupBlock}>
+            <div
+              style={styles.groupHeader}
+              onClick={() => toggleGroup(group)}
+              tabIndex={0}
+              role="button"
+              aria-expanded={!!expandedGroups[group]}
+              onKeyDown={e => {
+                if (e.key === "Enter" || e.key === " ") toggleGroup(group);
+              }}
+            >
+              <span style={styles.groupTitle}>
+                {expandedGroups[group] ? "▼" : "▶"} {group}
               </span>
-              <button
-                type="button"
-                title="Not Applicable"
-                style={styles.iconButton}
-                onClick={() =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    [field.field_name]: "NA",
-                  }))
-                }
-              >
-                NA
-              </button>
-              <button
-                type="button"
-                title="Missing Data"
-                style={styles.iconButton}
-                onClick={() =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    [field.field_name]: "MD",
-                  }))
-                }
-              >
-                MD
-              </button>
+              <span style={styles.groupCount}>({groupFields.length})</span>
             </div>
-            {/* Render select if options are present, else input */}
-            {field.options && field.options.trim() ? (
-              <select
-                name={field.field_name}
-                required={field.required === "True"}
-                value={formData[field.field_name] || ""}
-                onChange={handleChange}
-                style={styles.input}
-              >
-                <option value="">Select...</option>
-                {field.options.split(",").map((opt) => (
-                  <option key={opt.trim()} value={opt.trim()}>
-                    {opt.trim()}
-                  </option>
+            {expandedGroups[group] && (
+              <div style={styles.groupFields}>
+                {groupFields.map((field, idx) => (
+                  <label key={field.field_name} style={styles.label}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span>
+                        {field.field_name}
+                        {field.required === "True" && (
+                          <span style={styles.required}>*</span>
+                        )}
+                      </span>
+                      <button
+                        type="button"
+                        title="Not Applicable"
+                        style={styles.iconButton}
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            [field.field_name]: "NA",
+                          }))
+                        }
+                      >
+                        NA
+                      </button>
+                      <button
+                        type="button"
+                        title="Missing Data"
+                        style={styles.iconButton}
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            [field.field_name]: "MD",
+                          }))
+                        }
+                      >
+                        MD
+                      </button>
+                    </div>
+                    {/* Render select if options are present, else input */}
+                    {field.options && field.options.trim() ? (
+                      <select
+                        name={field.field_name}
+                        required={field.required === "True"}
+                        value={formData[field.field_name] || ""}
+                        onChange={handleChange}
+                        style={styles.input}
+                      >
+                        <option value="">Select...</option>
+                        {field.options.split(",").map((opt) => (
+                          <option key={opt.trim()} value={opt.trim()}>
+                            {opt.trim()}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        name={field.field_name}
+                        required={field.required === "True"}
+                        value={formData[field.field_name] || ""}
+                        onChange={handleChange}
+                        style={styles.input}
+                      />
+                    )}
+                    {field.description && (
+                      <div
+                        style={{
+                          color: "#888",
+                          fontSize: 13,
+                          marginTop: 2,
+                        }}
+                      >
+                        {field.description}
+                      </div>
+                    )}
+                  </label>
                 ))}
-              </select>
-            ) : (
-              <input
-                type="text"
-                name={field.field_name}
-                required={field.required === "True"}
-                value={formData[field.field_name] || ""}
-                onChange={handleChange}
-                style={styles.input}
-              />
-            )}
-            {field.description && (
-              <div
-                style={{
-                  color: "#888",
-                  fontSize: 13,
-                  marginTop: 2,
-                }}
-              >
-                {field.description}
               </div>
             )}
-          </label>
+          </div>
         ))}
-
-        <div style={styles.navButtons}>
-          <button
-            type="button"
-            onClick={prevPage}
-            disabled={currentPage === 0}
-            style={{
-              ...styles.navButton,
-              ...(currentPage === 0 ? styles.navButtonDisabled : {}),
-            }}
-          >
-            Previous
-          </button>
-          <button
-            type="button"
-            onClick={nextPage}
-            disabled={currentPage === totalPages - 1}
-            style={{
-              ...styles.navButton,
-              ...(currentPage === totalPages - 1 ? styles.navButtonDisabled : {}),
-            }}
-          >
-            Next
-          </button>
-        </div>
 
         <input type="submit" value="Add Product" style={styles.submit} />
       </form>
-
-      <div style={styles.pageIndicator}>
-        Page {currentPage + 1} of {totalPages}
-      </div>
 
       {status.message && (
         <div style={{ ...styles.status, color: status.color }}>
@@ -287,6 +295,7 @@ const styles = {
     flexDirection: "column",
     fontWeight: "bold",
     color: "#444",
+    marginBottom: 12,
   },
   required: {
     color: "red",
@@ -300,24 +309,6 @@ const styles = {
     fontSize: 14,
     marginTop: 5,
   },
-  navButtons: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  navButton: {
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: "#007BFF",
-    color: "white",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
-    transition: "background-color 0.3s",
-  },
-  navButtonDisabled: {
-    backgroundColor: "#ccc",
-    cursor: "not-allowed",
-  },
   submit: {
     padding: 12,
     fontSize: 16,
@@ -328,12 +319,6 @@ const styles = {
     cursor: "pointer",
     transition: "background-color 0.3s",
     marginTop: 16,
-  },
-  pageIndicator: {
-    textAlign: "center",
-    marginTop: 10,
-    fontSize: 14,
-    color: "#333",
   },
   status: {
     marginTop: 15,
@@ -363,5 +348,40 @@ const styles = {
     height: 22,
     width: 22,
     justifyContent: "center",
+  },
+  groupBlock: {
+    border: "1px solid #e0e0e0",
+    borderRadius: 8,
+    marginBottom: 18,
+    background: "#f8fafc",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+  },
+  groupHeader: {
+    cursor: "pointer",
+    padding: "12px 18px",
+    fontWeight: 700,
+    fontSize: 18,
+    background: "#e3e9f6",
+    borderRadius: "8px 8px 0 0",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    userSelect: "none",
+  },
+  groupTitle: {
+    fontWeight: 700,
+    color: "#1976d2",
+    fontSize: 17,
+  },
+  groupCount: {
+    fontWeight: 400,
+    color: "#888",
+    fontSize: 15,
+    marginLeft: 8,
+  },
+  groupFields: {
+    padding: "18px 18px 8px 18px",
+    background: "#fff",
+    borderRadius: "0 0 8px 8px",
   },
 };

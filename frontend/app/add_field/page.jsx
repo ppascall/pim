@@ -1,14 +1,34 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function AddFieldPage() {
   const [fieldName, setFieldName] = useState('');
   const [required, setRequired] = useState('No');
   const [description, setDescription] = useState('');
-  const [options, setOptions] = useState(''); // <-- NEW
+  const [options, setOptions] = useState('');
+  const [group, setGroup] = useState(''); // <-- NEW
   const [status, setStatus] = useState({ message: '', color: '' });
+  const [existingGroups, setExistingGroups] = useState([]);
   const router = useRouter();
+
+  useEffect(() => {
+    // Fetch all fields to get existing groups
+    fetch('/api/fields')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data.fields)) {
+          const groups = Array.from(
+            new Set(
+              data.fields
+                .map(f => (f.group || '').trim())
+                .filter(g => g)
+            )
+          );
+          setExistingGroups(groups);
+        }
+      });
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +45,8 @@ export default function AddFieldPage() {
           field_name: fieldName,
           required,
           description,
-          options, // <-- NEW
+          options,
+          group, // <-- NEW
         }),
       });
       const data = await res.json();
@@ -34,7 +55,8 @@ export default function AddFieldPage() {
         setFieldName('');
         setRequired('No');
         setDescription('');
-        setOptions(''); // <-- NEW
+        setOptions('');
+        setGroup(''); // <-- NEW
       } else {
         setStatus({ message: data.message || 'Failed to add field.', color: 'red' });
       }
@@ -132,6 +154,31 @@ export default function AddFieldPage() {
             }}
             placeholder="e.g. red,blue,green"
           />
+        </div>
+        <div>
+          <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>
+            Group <span style={{ fontWeight: 400, color: '#888', fontSize: 13 }}>(optional, e.g. Appearance, Logistics)</span>
+          </label>
+          <input
+            list="group-list"
+            type="text"
+            value={group}
+            onChange={e => setGroup(e.target.value)}
+            style={{
+              padding: '10px 14px',
+              borderRadius: 6,
+              border: '1px solid #d1d5db',
+              fontSize: 16,
+              background: '#f9fafd',
+              width: '100%',
+            }}
+            placeholder="e.g. Appearance"
+          />
+          <datalist id="group-list">
+            {existingGroups.map(g => (
+              <option key={g} value={g} />
+            ))}
+          </datalist>
         </div>
         {status.message && (
           <div style={{ color: status.color, fontWeight: 600, marginBottom: 8 }}>{status.message}</div>

@@ -1,11 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function SearchProducts() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [editData, setEditData] = useState({});
+  const [fields, setFields] = useState([]);
+
+  useEffect(() => {
+    fetch("/api/fields")
+      .then(res => res.json())
+      .then(data => setFields(data.fields || []));
+  }, []);
 
   const handleSearch = async () => {
     const res = await fetch("http://localhost:8000/products");
@@ -36,6 +43,25 @@ export default function SearchProducts() {
     setEditingIndex(null);
     handleSearch();
   };
+
+  const groupedFields = React.useMemo(() => {
+    const groups = {};
+    fields.forEach((field) => {
+      const group = field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(field);
+    });
+    // Sort group names alphabetically, Ungrouped last
+    const ordered = {};
+    Object.keys(groups)
+      .sort((a, b) => {
+        if (a === "Ungrouped") return 1;
+        if (b === "Ungrouped") return -1;
+        return a.localeCompare(b);
+      })
+      .forEach((g) => (ordered[g] = groups[g]));
+    return ordered;
+  }, [fields]);
 
   return (
     <div>
@@ -76,6 +102,38 @@ export default function SearchProducts() {
           </li>
         ))}
       </ul>
+      {Object.entries(groupedFields).map(([group, groupFields]) => (
+        <div key={group} style={{ marginBottom: 18 }}>
+          <div style={{ fontWeight: 700, fontSize: 16, margin: "8px 0" }}>{group}</div>
+          {groupFields.map(field => (
+            <div key={field.field_name} style={{ marginBottom: 8 }}>
+              <label>
+                {field.field_name}:
+                {field.options && field.options.trim() ? (
+                  <select
+                    name={field.field_name}
+                    value={editData[field.field_name] || ""}
+                    onChange={handleEditChange}
+                  >
+                    <option value="">Select...</option>
+                    {field.options.split(",").map(opt => (
+                      <option key={opt.trim()} value={opt.trim()}>
+                        {opt.trim()}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name={field.field_name}
+                    value={editData[field.field_name] || ""}
+                    onChange={handleEditChange}
+                  />
+                )}
+              </label>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 const API_BASE = "http://localhost:3000/api";
 const PAGE_SIZE = 5;
 const PRODUCTS_PER_PAGE = 15;
+const CATEGORY_PAGE_SIZE = 4;
 
 export default function UserDashboard() {
   // Search state
@@ -17,12 +18,17 @@ export default function UserDashboard() {
   const [editProduct, setEditProduct] = useState(null);
   const [editFields, setEditFields] = useState({});
   const [editStatus, setEditStatus] = useState({ message: "", color: "" });
-  const [editFieldPage, setEditFieldPage] = useState(0);
+  // Remove old flat paging
+  // const [editFieldPage, setEditFieldPage] = useState(0);
+  const [expandedGroups, setExpandedGroups] = useState({});
+  const [groupPages, setGroupPages] = useState({});
 
   // Add product state (untouched)
   const [addForm, setAddForm] = useState({});
   const [addStatus, setAddStatus] = useState("");
   const [addAnim, setAddAnim] = useState(false);
+  const [addExpandedGroups, setAddExpandedGroups] = useState({});
+  const [addGroupPages, setAddGroupPages] = useState({});
 
   // Pagination state
   const [productPage, setProductPage] = useState(0);
@@ -31,7 +37,7 @@ export default function UserDashboard() {
   useEffect(() => {
     fetch(`${API_BASE}/fields`)
       .then(res => res.json())
-      .then(data => setFields(data.fields ? data.fields : [])); // <-- store full field objects
+      .then(data => setFields(data.fields ? data.fields : []));
     fetchProducts();
   }, []);
 
@@ -67,12 +73,33 @@ export default function UserDashboard() {
     }, 400);
   };
 
+  // Group fields by group property, default to 'Ungrouped'
+  const groupedFields = (() => {
+    const groups = {};
+    fields.forEach((field) => {
+      const group = field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(field);
+    });
+    // Sort group names alphabetically, Ungrouped last
+    const ordered = {};
+    Object.keys(groups)
+      .sort((a, b) => {
+        if (a === "Ungrouped") return 1;
+        if (b === "Ungrouped") return -1;
+        return a.localeCompare(b);
+      })
+      .forEach((g) => (ordered[g] = groups[g]));
+    return ordered;
+  })();
+
   // Edit modal logic
   const openEditModal = (product) => {
     setEditProduct(product);
     setEditFields({ ...product });
     setEditStatus({ message: "", color: "" });
-    setEditFieldPage(0);
+    setExpandedGroups({});
+    setGroupPages({});
     setEditModalOpen(true);
   };
 
@@ -81,7 +108,8 @@ export default function UserDashboard() {
     setEditProduct(null);
     setEditFields({});
     setEditStatus({ message: "", color: "" });
-    setEditFieldPage(0);
+    setExpandedGroups({});
+    setGroupPages({});
   };
 
   const handleEditSave = async () => {
@@ -137,6 +165,52 @@ export default function UserDashboard() {
     (productPage + 1) * PRODUCTS_PER_PAGE
   );
   const totalProductPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
+
+  // Group expand/collapse and paging logic for edit modal
+  const toggleGroup = (group) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+    setGroupPages((prev) => ({
+      ...prev,
+      [group]: prev[group] || 0,
+    }));
+  };
+  const handleGroupPage = (group, direction) => {
+    setGroupPages((prev) => {
+      const current = prev[group] || 0;
+      const total = groupedFields[group]?.length || 0;
+      const maxPage = Math.max(0, Math.ceil(total / CATEGORY_PAGE_SIZE) - 1);
+      let next = current + direction;
+      if (next < 0) next = 0;
+      if (next > maxPage) next = maxPage;
+      return { ...prev, [group]: next };
+    });
+  };
+
+  // Group expand/collapse and paging logic for add product
+  const toggleAddGroup = (group) => {
+    setAddExpandedGroups((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+    setAddGroupPages((prev) => ({
+      ...prev,
+      [group]: prev[group] || 0,
+    }));
+  };
+  const handleAddGroupPage = (group, direction) => {
+    setAddGroupPages((prev) => {
+      const current = prev[group] || 0;
+      const total = groupedFields[group]?.length || 0;
+      const maxPage = Math.max(0, Math.ceil(total / CATEGORY_PAGE_SIZE) - 1);
+      let next = current + direction;
+      if (next < 0) next = 0;
+      if (next > maxPage) next = maxPage;
+      return { ...prev, [group]: next };
+    });
+  };
 
   return (
     <div style={styles.bg}>
@@ -281,7 +355,6 @@ export default function UserDashboard() {
                   handleEditSave();
                 }}
               >
-                {/* Fixed height for fields area */}
                 <div style={{
                   maxHeight: '70vh',
                   overflowY: 'auto',
@@ -291,81 +364,130 @@ export default function UserDashboard() {
                   flexDirection: "column",
                   justifyContent: "flex-start"
                 }}>
-                  {fields
-                    .slice(editFieldPage * PAGE_SIZE, (editFieldPage + 1) * PAGE_SIZE)
-                    .map(fieldObj => (
-                      <div key={fieldObj.field_name} style={{ marginBottom: 14 }}>
-                        <label style={{ fontWeight: 600, marginBottom: 6, display: "block" }}>
-                          {fieldObj.field_name}
-                        </label>
-                        {fieldObj.options && fieldObj.options.trim() ? (
-                          <select
-                            value={editFields[fieldObj.field_name] ?? ""}
-                            onChange={e =>
-                              setEditFields(f => ({
-                                ...f,
-                                [fieldObj.field_name]: e.target.value
-                              }))
-                            }
-                            style={styles.input}
-                          >
-                            <option value="">Select...</option>
-                            {fieldObj.options.split(",").map(opt => (
-                              <option key={opt.trim()} value={opt.trim()}>
-                                {opt.trim()}
-                              </option>
+                  {Object.entries(groupedFields).map(([group, groupFields]) => {
+                    const page = groupPages[group] || 0;
+                    const totalPages = Math.ceil(groupFields.length / CATEGORY_PAGE_SIZE);
+                    const start = page * CATEGORY_PAGE_SIZE;
+                    const end = start + CATEGORY_PAGE_SIZE;
+                    return (
+                      <div key={group} style={{
+                        border: "1px solid #e0e0e0",
+                        borderRadius: 8,
+                        marginBottom: 18,
+                        background: "#f8fafc",
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+                      }}>
+                        <div
+                          style={{
+                            cursor: "pointer",
+                            padding: "12px 18px",
+                            fontWeight: 700,
+                            fontSize: 18,
+                            background: "#e3e9f6",
+                            borderRadius: "8px 8px 0 0",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            userSelect: "none",
+                          }}
+                          onClick={() => toggleGroup(group)}
+                          tabIndex={0}
+                          role="button"
+                          aria-expanded={!!expandedGroups[group]}
+                          onKeyDown={e => {
+                            if (e.key === "Enter" || e.key === " ") toggleGroup(group);
+                          }}
+                        >
+                          <span style={{ fontWeight: 700, color: "#1976d2", fontSize: 17 }}>
+                            {expandedGroups[group] ? "▼" : "▶"} {group}
+                          </span>
+                          <span style={{ fontWeight: 400, color: "#888", fontSize: 15, marginLeft: 8 }}>
+                            ({groupFields.length})
+                          </span>
+                        </div>
+                        {expandedGroups[group] && (
+                          <div style={{ padding: "18px 18px 8px 18px", background: "#fff", borderRadius: "0 0 8px 8px" }}>
+                            {groupFields.slice(start, end).map(fieldObj => (
+                              <div key={fieldObj.field_name} style={{ marginBottom: 14 }}>
+                                <label style={{ fontWeight: 600, marginBottom: 6, display: "block" }}>
+                                  {fieldObj.field_name}
+                                </label>
+                                {fieldObj.options && fieldObj.options.trim() ? (
+                                  <select
+                                    value={editFields[fieldObj.field_name] ?? ""}
+                                    onChange={e =>
+                                      setEditFields(f => ({
+                                        ...f,
+                                        [fieldObj.field_name]: e.target.value
+                                      }))
+                                    }
+                                    style={styles.input}
+                                  >
+                                    <option value="">Select...</option>
+                                    {fieldObj.options.split(",").map(opt => (
+                                      <option key={opt.trim()} value={opt.trim()}>
+                                        {opt.trim()
+                                        }
+                                      </option>
+                                    ))}
+                                  </select>
+                                ) : (
+                                  <input
+                                    type="text"
+                                    value={editFields[fieldObj.field_name] ?? ""}
+                                    onChange={e =>
+                                      setEditFields(f => ({
+                                        ...f,
+                                        [fieldObj.field_name]: e.target.value
+                                      }))
+                                    }
+                                    style={styles.input}
+                                  />
+                                )}
+                              </div>
                             ))}
-                          </select>
-                        ) : (
-                          <input
-                            type="text"
-                            value={editFields[fieldObj.field_name] ?? ""}
-                            onChange={e =>
-                              setEditFields(f => ({
-                                ...f,
-                                [fieldObj.field_name]: e.target.value
-                              }))
-                            }
-                            style={styles.input}
-                          />
+                            {totalPages > 1 && (
+                              <div style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '10px 0 0 0' }}>
+                                <button
+                                  type="button"
+                                  className="button"
+                                  style={{
+                                    ...styles.button,
+                                    minWidth: 70,
+                                    background: page === 0 ? '#ccc' : styles.button.background,
+                                    color: '#fff',
+                                    cursor: page === 0 ? 'not-allowed' : 'pointer'
+                                  }}
+                                  disabled={page === 0}
+                                  onClick={() => handleGroupPage(group, -1)}
+                                >
+                                  Prev
+                                </button>
+                                <span style={{ alignSelf: 'center', color: '#444', fontSize: 15 }}>
+                                  Page {page + 1} of {totalPages}
+                                </span>
+                                <button
+                                  type="button"
+                                  className="button"
+                                  style={{
+                                    ...styles.button,
+                                    minWidth: 70,
+                                    background: page + 1 >= totalPages ? '#ccc' : styles.button.background,
+                                    color: '#fff',
+                                    cursor: page + 1 >= totalPages ? 'not-allowed' : 'pointer'
+                                  }}
+                                  disabled={page + 1 >= totalPages}
+                                  onClick={() => handleGroupPage(group, 1)}
+                                >
+                                  Next
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
-                    ))}
-                </div>
-                <div style={{ display: "flex", gap: 8, justifyContent: "space-between", margin: "10px 0 18px 0" }}>
-                  <button
-                    type="button"
-                    className="button"
-                    style={{
-                      ...styles.button,
-                      minWidth: 70,
-                      background: editFieldPage === 0 ? "#ccc" : styles.button.background,
-                      color: "#fff",
-                      cursor: editFieldPage === 0 ? "not-allowed" : "pointer"
-                    }}
-                    disabled={editFieldPage === 0}
-                    onClick={() => setEditFieldPage(p => Math.max(0, p - 1))}
-                  >
-                    Prev
-                  </button>
-                  <span style={{ alignSelf: "center", color: "#444", fontSize: 15 }}>
-                    Page {editFieldPage + 1} of {Math.ceil(fields.length / PAGE_SIZE)}
-                  </span>
-                  <button
-                    type="button"
-                    className="button"
-                    style={{
-                      ...styles.button,
-                      minWidth: 70,
-                      background: (editFieldPage + 1) * PAGE_SIZE >= fields.length ? "#ccc" : styles.button.background,
-                      color: "#fff",
-                      cursor: (editFieldPage + 1) * PAGE_SIZE >= fields.length ? "not-allowed" : "pointer"
-                    }}
-                    disabled={(editFieldPage + 1) * PAGE_SIZE >= fields.length}
-                    onClick={() => setEditFieldPage(p => Math.min(Math.ceil(fields.length / PAGE_SIZE) - 1, p + 1))}
-                  >
-                    Next
-                  </button>
+                    );
+                  })}
                 </div>
                 {editStatus.message && (
                   <div style={{ color: editStatus.color, marginBottom: 12, fontWeight: 600 }}>{editStatus.message}</div>
@@ -403,34 +525,119 @@ export default function UserDashboard() {
         >
           <h2 style={styles.subheading}>➕ Add a Product</h2>
           <form onSubmit={handleAddSubmit} style={styles.addForm}>
-            {fields.map(fieldObj => (
-              <div key={fieldObj.field_name} style={styles.addField}>
-                <label style={styles.addLabel}>{fieldObj.field_name}</label>
-                {fieldObj.options && fieldObj.options.trim() ? (
-                  <select
-                    name={fieldObj.field_name}
-                    value={addForm[fieldObj.field_name] || ""}
-                    onChange={handleAddChange}
-                    style={styles.addInput}
+            {Object.entries(groupedFields).map(([group, groupFields]) => {
+              const page = addGroupPages[group] || 0;
+              const totalPages = Math.ceil(groupFields.length / CATEGORY_PAGE_SIZE);
+              const start = page * CATEGORY_PAGE_SIZE;
+              const end = start + CATEGORY_PAGE_SIZE;
+              return (
+                <div key={group} style={{
+                  border: "1px solid #e0e0e0",
+                  borderRadius: 8,
+                  marginBottom: 18,
+                  background: "#f8fafc",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+                }}>
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      padding: "12px 18px",
+                      fontWeight: 700,
+                      fontSize: 18,
+                      background: "#e3e9f6",
+                      borderRadius: "8px 8px 0 0",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      userSelect: "none",
+                    }}
+                    onClick={() => toggleAddGroup(group)}
+                    tabIndex={0}
+                    role="button"
+                    aria-expanded={!!addExpandedGroups[group]}
+                    onKeyDown={e => {
+                      if (e.key === "Enter" || e.key === " ") toggleAddGroup(group);
+                    }}
                   >
-                    <option value="">Select...</option>
-                    {fieldObj.options.split(",").map(opt => (
-                      <option key={opt.trim()} value={opt.trim()}>
-                        {opt.trim()}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    name={fieldObj.field_name}
-                    value={addForm[fieldObj.field_name] || ""}
-                    onChange={handleAddChange}
-                    style={styles.addInput}
-                    autoComplete="off"
-                  />
-                )}
-              </div>
-            ))}
+                    <span style={{ fontWeight: 700, color: "#1976d2", fontSize: 17 }}>
+                      {addExpandedGroups[group] ? "▼" : "▶"} {group}
+                    </span>
+                    <span style={{ fontWeight: 400, color: "#888", fontSize: 15, marginLeft: 8 }}>
+                      ({groupFields.length})
+                    </span>
+                  </div>
+                  {addExpandedGroups[group] && (
+                    <div style={{ padding: "18px 18px 8px 18px", background: "#fff", borderRadius: "0 0 8px 8px" }}>
+                      {groupFields.slice(start, end).map(fieldObj => (
+                        <div key={fieldObj.field_name} style={styles.addField}>
+                          <label style={styles.addLabel}>{fieldObj.field_name}</label>
+                          {fieldObj.options && fieldObj.options.trim() ? (
+                            <select
+                              name={fieldObj.field_name}
+                              value={addForm[fieldObj.field_name] || ""}
+                              onChange={handleAddChange}
+                              style={styles.addInput}
+                            >
+                              <option value="">Select...</option>
+                              {fieldObj.options.split(",").map(opt => (
+                                <option key={opt.trim()} value={opt.trim()}>
+                                  {opt.trim()}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              name={fieldObj.field_name}
+                              value={addForm[fieldObj.field_name] || ""}
+                              onChange={handleAddChange}
+                              style={styles.addInput}
+                              autoComplete="off"
+                            />
+                          )}
+                        </div>
+                      ))}
+                      {totalPages > 1 && (
+                        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '10px 0 0 0' }}>
+                          <button
+                            type="button"
+                            className="button"
+                            style={{
+                              ...styles.button,
+                              minWidth: 70,
+                              background: page === 0 ? '#ccc' : styles.button.background,
+                              color: '#fff',
+                              cursor: page === 0 ? 'not-allowed' : 'pointer'
+                            }}
+                            disabled={page === 0}
+                            onClick={() => handleAddGroupPage(group, -1)}
+                          >
+                            Prev
+                          </button>
+                          <span style={{ alignSelf: 'center', color: '#444', fontSize: 15 }}>
+                            Page {page + 1} of {totalPages}
+                          </span>
+                          <button
+                            type="button"
+                            className="button"
+                            style={{
+                              ...styles.button,
+                              minWidth: 70,
+                              background: page + 1 >= totalPages ? '#ccc' : styles.button.background,
+                              color: '#fff',
+                              cursor: page + 1 >= totalPages ? 'not-allowed' : 'pointer'
+                            }}
+                            disabled={page + 1 >= totalPages}
+                            onClick={() => handleAddGroupPage(group, 1)}
+                          >
+                            Next
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
             <button type="submit" className="button" style={styles.addBtn}>
               Add Product
             </button>
