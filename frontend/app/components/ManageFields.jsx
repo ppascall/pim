@@ -19,8 +19,6 @@ const ManageFields = ({
       try {
         const res = await fetch(fetchEndpoint);
         const data = await res.json();
-        // In Search.jsx, fields are mapped to just field_name strings
-        // Here, we want the full field objects, but ensure they're not empty
         if (Array.isArray(data.fields)) {
           setFields(
             data.fields
@@ -28,7 +26,8 @@ const ManageFields = ({
               .map(f => ({
                 field_name: f.field_name || '',
                 description: f.description || '',
-                required: f.required || 'False'
+                required: f.required || 'False',
+                options: f.options || '', // <-- Add options support
               }))
           );
         } else {
@@ -49,10 +48,11 @@ const ManageFields = ({
         field_name: f.field_name,
         description: f.description || '',
         required: f.required || 'False',
+        options: f.options || '', // <-- Add options support
       });
     } else {
       setSelectedField(null);
-      setEditData({ field_name: '', description: '', required: 'False' });
+      setEditData({ field_name: '', description: '', required: 'False', options: '' });
     }
   }, [selectedIndex, fields]);
 
@@ -199,6 +199,18 @@ const ManageFields = ({
                 <option value="True">Yes</option>
                 <option value="False">No</option>
               </select>
+
+              <label htmlFor="options">
+                Options <span style={{ fontWeight: 400, color: '#888', fontSize: 13 }}>(comma separated, e.g. red,blue,green)</span>
+              </label>
+              <input
+                id="options"
+                name="options"
+                type="text"
+                value={editData.options}
+                onChange={handleInputChange}
+                placeholder="e.g. red,blue,green"
+              />
 
               <button type="submit" className="button" style={{ marginTop: 10 }}>
                 Update Field

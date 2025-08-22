@@ -176,14 +176,32 @@ export default function AddProduct({
                 MD
               </button>
             </div>
-            <input
-              type="text"
-              name={field.field_name}
-              required={field.required === "True"}
-              value={formData[field.field_name] || ""}
-              onChange={handleChange}
-              style={styles.input}
-            />
+            {/* Render select if options are present, else input */}
+            {field.options && field.options.trim() ? (
+              <select
+                name={field.field_name}
+                required={field.required === "True"}
+                value={formData[field.field_name] || ""}
+                onChange={handleChange}
+                style={styles.input}
+              >
+                <option value="">Select...</option>
+                {field.options.split(",").map((opt) => (
+                  <option key={opt.trim()} value={opt.trim()}>
+                    {opt.trim()}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type="text"
+                name={field.field_name}
+                required={field.required === "True"}
+                value={formData[field.field_name] || ""}
+                onChange={handleChange}
+                style={styles.input}
+              />
+            )}
             {field.description && (
               <div
                 style={{

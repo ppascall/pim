@@ -31,7 +31,7 @@ export default function UserDashboard() {
   useEffect(() => {
     fetch(`${API_BASE}/fields`)
       .then(res => res.json())
-      .then(data => setFields(data.fields ? data.fields.map(f => f.field_name) : []));
+      .then(data => setFields(data.fields ? data.fields : [])); // <-- store full field objects
     fetchProducts();
   }, []);
 
@@ -293,15 +293,42 @@ export default function UserDashboard() {
                 }}>
                   {fields
                     .slice(editFieldPage * PAGE_SIZE, (editFieldPage + 1) * PAGE_SIZE)
-                    .map(field => (
-                      <div key={field} style={{ marginBottom: 14 }}>
-                        <label style={{ fontWeight: 600, marginBottom: 6, display: "block" }}>{field}</label>
-                        <input
-                          type="text"
-                          value={editFields[field] ?? ""}
-                          onChange={e => setEditFields(f => ({ ...f, [field]: e.target.value }))}
-                          style={styles.input}
-                        />
+                    .map(fieldObj => (
+                      <div key={fieldObj.field_name} style={{ marginBottom: 14 }}>
+                        <label style={{ fontWeight: 600, marginBottom: 6, display: "block" }}>
+                          {fieldObj.field_name}
+                        </label>
+                        {fieldObj.options && fieldObj.options.trim() ? (
+                          <select
+                            value={editFields[fieldObj.field_name] ?? ""}
+                            onChange={e =>
+                              setEditFields(f => ({
+                                ...f,
+                                [fieldObj.field_name]: e.target.value
+                              }))
+                            }
+                            style={styles.input}
+                          >
+                            <option value="">Select...</option>
+                            {fieldObj.options.split(",").map(opt => (
+                              <option key={opt.trim()} value={opt.trim()}>
+                                {opt.trim()}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            value={editFields[fieldObj.field_name] ?? ""}
+                            onChange={e =>
+                              setEditFields(f => ({
+                                ...f,
+                                [fieldObj.field_name]: e.target.value
+                              }))
+                            }
+                            style={styles.input}
+                          />
+                        )}
                       </div>
                     ))}
                 </div>
@@ -376,16 +403,32 @@ export default function UserDashboard() {
         >
           <h2 style={styles.subheading}>➕ Add a Product</h2>
           <form onSubmit={handleAddSubmit} style={styles.addForm}>
-            {fields.map(field => (
-              <div key={field} style={styles.addField}>
-                <label style={styles.addLabel}>{field}</label>
-                <input
-                  name={field}
-                  value={addForm[field] || ""}
-                  onChange={handleAddChange}
-                  style={styles.addInput}
-                  autoComplete="off"
-                />
+            {fields.map(fieldObj => (
+              <div key={fieldObj.field_name} style={styles.addField}>
+                <label style={styles.addLabel}>{fieldObj.field_name}</label>
+                {fieldObj.options && fieldObj.options.trim() ? (
+                  <select
+                    name={fieldObj.field_name}
+                    value={addForm[fieldObj.field_name] || ""}
+                    onChange={handleAddChange}
+                    style={styles.addInput}
+                  >
+                    <option value="">Select...</option>
+                    {fieldObj.options.split(",").map(opt => (
+                      <option key={opt.trim()} value={opt.trim()}>
+                        {opt.trim()}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name={fieldObj.field_name}
+                    value={addForm[fieldObj.field_name] || ""}
+                    onChange={handleAddChange}
+                    style={styles.addInput}
+                    autoComplete="off"
+                  />
+                )}
               </div>
             ))}
             <button type="submit" className="button" style={styles.addBtn}>

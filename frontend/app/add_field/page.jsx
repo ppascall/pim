@@ -6,6 +6,7 @@ export default function AddFieldPage() {
   const [fieldName, setFieldName] = useState('');
   const [required, setRequired] = useState('No');
   const [description, setDescription] = useState('');
+  const [options, setOptions] = useState(''); // <-- NEW
   const [status, setStatus] = useState({ message: '', color: '' });
   const router = useRouter();
 
@@ -24,6 +25,7 @@ export default function AddFieldPage() {
           field_name: fieldName,
           required,
           description,
+          options, // <-- NEW
         }),
       });
       const data = await res.json();
@@ -32,6 +34,7 @@ export default function AddFieldPage() {
         setFieldName('');
         setRequired('No');
         setDescription('');
+        setOptions(''); // <-- NEW
       } else {
         setStatus({ message: data.message || 'Failed to add field.', color: 'red' });
       }
@@ -109,6 +112,25 @@ export default function AddFieldPage() {
               minHeight: 60,
               resize: 'vertical'
             }}
+          />
+        </div>
+        <div>
+          <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>
+            Options <span style={{ fontWeight: 400, color: '#888', fontSize: 13 }}>(comma separated, e.g. red,blue,green)</span>
+          </label>
+          <input
+            type="text"
+            value={options}
+            onChange={e => setOptions(e.target.value)}
+            style={{
+              padding: '10px 14px',
+              borderRadius: 6,
+              border: '1px solid #d1d5db',
+              fontSize: 16,
+              background: '#f9fafd',
+              width: '100%',
+            }}
+            placeholder="e.g. red,blue,green"
           />
         </div>
         {status.message && (

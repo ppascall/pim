@@ -181,7 +181,8 @@ const SearchProducts = ({
       try {
         const res = await fetch(fetchFieldsEndpoint);
         const data = await res.json();
-        setFields(data.fields ? data.fields.map(f => f.field_name) : []);
+        // Store full field objects, not just field names
+        setFields(data.fields ? data.fields : []);
       } catch {
         setStatus({ message: 'Failed to fetch fields.', color: 'red' });
       }
@@ -381,8 +382,10 @@ const SearchProducts = ({
           >
             <option value="">Any Field</option>
             {fields.map(f => (
-              <option key={f} value={f}>{f}</option>
-            ))}
+              <option key={f.field_name} value={f.field_name}>
+                {f.field_name}
+              </option>
+            ))}\
           </select>
         </div>
         <div style={styles.formGroup}>
@@ -526,14 +529,41 @@ const SearchProducts = ({
               {fields
                 .slice(editFieldPage * CATEGORY_PAGE_SIZE, (editFieldPage + 1) * CATEGORY_PAGE_SIZE)
                 .map(field => (
-                  <div key={field} style={{ marginBottom: 14 }}>
-                    <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>{field}</label>
-                    <input
-                      type="text"
-                      value={editFields[field] ?? ''}
-                      onChange={e => setEditFields(f => ({ ...f, [field]: e.target.value }))}
-                      style={styles.input}
-                    />
+                  <div key={field.field_name} style={{ marginBottom: 14 }}>
+                    <label style={{ fontWeight: 600, marginBottom: 6, display: 'block' }}>
+                      {field.field_name}
+                    </label>
+                    {field.options && field.options.trim() ? (
+                      <select
+                        value={editFields[field.field_name] ?? ''}
+                        onChange={e =>
+                          setEditFields(f => ({
+                            ...f,
+                            [field.field_name]: e.target.value
+                          }))
+                        }
+                        style={styles.input}
+                      >
+                        <option value="">Select...</option>
+                        {field.options.split(',').map(opt => (
+                          <option key={opt.trim()} value={opt.trim()}>
+                            {opt.trim()}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={editFields[field.field_name] ?? ''}
+                        onChange={e =>
+                          setEditFields(f => ({
+                            ...f,
+                            [field.field_name]: e.target.value
+                          }))
+                        }
+                        style={styles.input}
+                      />
+                    )}
                   </div>
               ))}
               <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', margin: '10px 0 18px 0' }}>

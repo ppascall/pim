@@ -129,8 +129,9 @@ def load_fields():
         return list(csv.DictReader(f))
 
 def save_fields(fields):
+    fieldnames = ['field_name', 'required', 'description', 'options', 'group']
     with open(CATEGORY_FILE, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=['field_name', 'required', 'description'])
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(fields)
 
@@ -188,6 +189,7 @@ def add_field():
     field_name = data.get('field_name', '').strip()
     required = data.get('required', 'no').strip().capitalize()
     description = data.get('description', '').strip()
+    options = data.get('options', '').strip()  # <-- Add this line
 
     if not field_name:
         return jsonify({'success': False, 'message': 'Field name is required'}), 400
@@ -199,7 +201,8 @@ def add_field():
     new_field = {
         'field_name': field_name,
         'required': 'True' if required == 'Yes' else 'False',
-        'description': description
+        'description': description,
+        'options': options  # <-- Add this line
     }
 
     fields.append(new_field)
@@ -221,11 +224,13 @@ def update_field():
     new_name = data.get('field_name', old_name)
     updated_desc = data.get('description', fields[index].get('description', ''))
     updated_required = data.get('required', fields[index].get('required', 'False'))
+    updated_options = data.get('options', fields[index].get('options', ''))  # <-- Add this line
 
     fields[index] = {
         'field_name': new_name,
         'description': updated_desc,
-        'required': updated_required
+        'required': updated_required,
+        'options': updated_options  # <-- Add this line
     }
     save_fields(fields)
 
