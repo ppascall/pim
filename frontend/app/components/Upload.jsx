@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const UploadCSV = ({
   uploadEndpoint = '/api/upload_csv', // <-- use /api/ for proxy!
   onBack
 }) => {
+  const router = useRouter();
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState({ message: '', color: '' });
 
@@ -100,7 +102,10 @@ const UploadCSV = ({
         )}
 
         <button
-          onClick={onBack}
+          onClick={() => {
+            if (typeof onBack === 'function') return onBack();
+            router.back();
+          }}
           style={{
             marginTop: 20,
             background: 'none',

@@ -1,19 +1,26 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import BackButton from './BackButton';
 import Link from 'next/link';
 
-export default function AddProduct({ fields: initialFields, endpoint = '/api/add_product', fetchFieldsEndpoint = '/api/fields' }) {
-  const [fields, setFields] = useState(initialFields || []);
-  const [loading, setLoading] = useState(
+export default function AddProduct(props) {
+  const {
+    fields: initialFields,
+    endpoint = '/api/add_product',
+    fetchFieldsEndpoint = '/api/fields'
+  } = props;
+
+  const [fields, setFields] = React.useState(initialFields || []);
+  const [loading, setLoading] = React.useState(
     !initialFields || initialFields.length === 0
   );
-  const [primaryTitle, setPrimaryTitle] = useState("");
-  const [formData, setFormData] = useState({});
-  const [status, setStatus] = useState({ message: "", color: "" });
-  const [expandedGroups, setExpandedGroups] = useState({});
+  const [primaryTitle, setPrimaryTitle] = React.useState("");
+  const [formData, setFormData] = React.useState({});
+  const [status, setStatus] = React.useState({ message: "", color: "" });
+  const [expandedGroups, setExpandedGroups] = React.useState({});
 
   // Fetch fields if not provided
-  useEffect(() => {
+  React.useEffect(() => {
     if (!initialFields || initialFields.length === 0) {
       setLoading(true);
       fetch(fetchFieldsEndpoint)
@@ -120,132 +127,135 @@ export default function AddProduct({ fields: initialFields, endpoint = '/api/add
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Add Product</h1>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <label style={styles.label}>
-          Primary Title <span style={styles.required}>*</span>
-          <input
-            type="text"
-            name="primary_title"
-            required
-            value={primaryTitle}
-            onChange={handlePrimaryTitleChange}
-            style={styles.input}
-            placeholder="Enter main product title"
-          />
-        </label>
+    <div style={{ position: 'relative', paddingTop: 8 }}>
+      <BackButton to="/" />
+      <div style={styles.container}>
+        <h1 style={styles.heading}>Add Product</h1>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <label style={styles.label}>
+            Primary Title <span style={styles.required}>*</span>
+            <input
+              type="text"
+              name="primary_title"
+              required
+              value={primaryTitle}
+              onChange={handlePrimaryTitleChange}
+              style={styles.input}
+              placeholder="Enter main product title"
+            />
+          </label>
 
-        {/* Grouped fields */}
-        {Object.entries(groupedFields).map(([group, groupFields]) => (
-          <div key={group} style={styles.groupBlock}>
-            <div
-              style={styles.groupHeader}
-              onClick={() => toggleGroup(group)}
-              tabIndex={0}
-              role="button"
-              aria-expanded={!!expandedGroups[group]}
-              onKeyDown={e => {
-                if (e.key === "Enter" || e.key === " ") toggleGroup(group);
-              }}
-            >
-              <span style={styles.groupTitle}>
-                {expandedGroups[group] ? "▼" : "▶"} {group}
-              </span>
-              <span style={styles.groupCount}>({groupFields.length})</span>
-            </div>
-            {expandedGroups[group] && (
-              <div style={styles.groupFields}>
-                {groupFields.map((field, idx) => (
-                  <label key={field.field_name} style={styles.label}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span>
-                        {field.field_name}
-                        {field.required === "True" && (
-                          <span style={styles.required}>*</span>
-                        )}
-                      </span>
-                      <button
-                        type="button"
-                        title="Not Applicable"
-                        style={styles.iconButton}
-                        onClick={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            [field.field_name]: "NA",
-                          }))
-                        }
-                      >
-                        NA
-                      </button>
-                      <button
-                        type="button"
-                        title="Missing Data"
-                        style={styles.iconButton}
-                        onClick={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            [field.field_name]: "MD",
-                          }))
-                        }
-                      >
-                        MD
-                      </button>
-                    </div>
-                    {/* Render select if options are present, else input */}
-                    {field.options && field.options.trim() ? (
-                      <select
-                        name={field.field_name}
-                        required={field.required === "True"}
-                        value={formData[field.field_name] || ""}
-                        onChange={handleChange}
-                        style={styles.input}
-                      >
-                        <option value="">Select...</option>
-                        {field.options.split(",").map((opt) => (
-                          <option key={opt.trim()} value={opt.trim()}>
-                            {opt.trim()}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        name={field.field_name}
-                        required={field.required === "True"}
-                        value={formData[field.field_name] || ""}
-                        onChange={handleChange}
-                        style={styles.input}
-                      />
-                    )}
-                    {field.description && (
-                      <div
-                        style={{
-                          color: "#888",
-                          fontSize: 13,
-                          marginTop: 2,
-                        }}
-                      >
-                        {field.description}
-                      </div>
-                    )}
-                  </label>
-                ))}
+          {/* Grouped fields */}
+          {Object.entries(groupedFields).map(([group, groupFields]) => (
+            <div key={group} style={styles.groupBlock}>
+              <div
+                style={styles.groupHeader}
+                onClick={() => toggleGroup(group)}
+                tabIndex={0}
+                role="button"
+                aria-expanded={!!expandedGroups[group]}
+                onKeyDown={e => {
+                  if (e.key === "Enter" || e.key === " ") toggleGroup(group);
+                }}
+              >
+                <span style={styles.groupTitle}>
+                  {expandedGroups[group] ? "▼" : "▶"} {group}
+                </span>
+                <span style={styles.groupCount}>({groupFields.length})</span>
               </div>
-            )}
+              {expandedGroups[group] && (
+                <div style={styles.groupFields}>
+                  {groupFields.map((field, idx) => (
+                    <label key={field.field_name} style={styles.label}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span>
+                          {field.field_name}
+                          {field.required === "True" && (
+                            <span style={styles.required}>*</span>
+                          )}
+                        </span>
+                        <button
+                          type="button"
+                          title="Not Applicable"
+                          style={styles.iconButton}
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              [field.field_name]: "NA",
+                            }))
+                          }
+                        >
+                          NA
+                        </button>
+                        <button
+                          type="button"
+                          title="Missing Data"
+                          style={styles.iconButton}
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              [field.field_name]: "MD",
+                            }))
+                          }
+                        >
+                          MD
+                        </button>
+                      </div>
+                      {/* Render select if options are present, else input */}
+                      {field.options && field.options.trim() ? (
+                        <select
+                          name={field.field_name}
+                          required={field.required === "True"}
+                          value={formData[field.field_name] || ""}
+                          onChange={handleChange}
+                          style={styles.input}
+                        >
+                          <option value="">Select...</option>
+                          {field.options.split(",").map((opt) => (
+                            <option key={opt.trim()} value={opt.trim()}>
+                              {opt.trim()}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          name={field.field_name}
+                          required={field.required === "True"}
+                          value={formData[field.field_name] || ""}
+                          onChange={handleChange}
+                          style={styles.input}
+                        />
+                      )}
+                      {field.description && (
+                        <div
+                          style={{
+                            color: "#888",
+                            fontSize: 13,
+                            marginTop: 2,
+                          }}
+                        >
+                          {field.description}
+                        </div>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <input type="submit" value="Add Product" style={styles.submit} />
+        </form>
+
+        {status.message && (
+          <div style={{ ...styles.status, color: status.color }}>
+            {status.message}
           </div>
-        ))}
+        )}
 
-        <input type="submit" value="Add Product" style={styles.submit} />
-      </form>
-
-      {status.message && (
-        <div style={{ ...styles.status, color: status.color }}>
-          {status.message}
-        </div>
-      )}
-
-      <Link href="/" style={styles.link}>← Back</Link>
+        <Link href="/" style={styles.link}>← Back</Link>
+      </div>
     </div>
   );
 }
@@ -329,26 +339,6 @@ const styles = {
     height: 22,
     width: 22,
     justifyContent: 'center'
-  },
-  groupBlock: {
-    border: "1px solid #e0e0e0",
-    borderRadius: 8,
-    marginBottom: 18,
-    background: "#f8fafc",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
-  },
-  groupHeader: {
-    cursor: "pointer",
-    padding: "12px 18px",
-    fontWeight: 700,
-    fontSize: 18,
-    background: "#e3e9f6",
-    borderRadius: "8px 8px 0 0",
-    display: "flex",
-    alignItems: "center",
-    height: 22,
-    width: 22,
-    justifyContent: "center",
   },
   groupBlock: {
     border: "1px solid #e0e0e0",

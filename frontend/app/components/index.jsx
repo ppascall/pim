@@ -1,173 +1,191 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import BackButton from './BackButton';
 
-const InventoryManager = () => {
-  const [refreshing, setRefreshing] = useState(false);
-  const [refreshMsg, setRefreshMsg] = useState('');
-  const [errorModal, setErrorModal] = useState(null);
+export default function InventoryManager() {
   const router = useRouter();
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    setRefreshMsg('');
+  // ui
+  const [statusMsg, setStatusMsg] = useState('');
+  const [useShopify, setUseShopify] = useState(false);
+
+  useEffect(() => {
     try {
-      const res = await fetch('/api/refresh_products', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        setRefreshMsg(`Refreshed products! Updated: ${data.updated}, Created: ${data.created}`);
-      } else {
-        if (data.errors && data.errors.length > 0) {
-          const firstError = data.errors[0];
-          setErrorModal({
-            message: firstError.message,
-            productId: firstError.product?.id || firstError.product?.shopify_id || '',
-            field: firstError.field || '', // Add this to your backend error if possible!
-            type: firstError.type
-          });
-        } else {
-          setRefreshMsg(`Error: ${data.message}`);
-        }
-      }
-    } catch (err) {
-      setRefreshMsg('Error refreshing products.');
+      const v = localStorage.getItem('useShopify');
+      setUseShopify(v === 'true');
+    } catch (e) {
+      setUseShopify(false);
     }
-    setRefreshing(false);
-  };
+  }, []);
 
-  const handleModalClose = () => setErrorModal(null);
-
-  const handleModalGo = () => {
-    if (errorModal) {
-      // Redirect to /search with query params for edit and field
-      let url = '/search';
-      const params = [];
-      if (errorModal.productId) params.push(`edit=${encodeURIComponent(errorModal.productId)}`);
-      if (errorModal.field) params.push(`field=${encodeURIComponent(errorModal.field)}`);
-      if (params.length) url += '?' + params.join('&');
-      router.push(url);
-      setErrorModal(null);
+  const toggleShopify = async () => {
+    const next = !useShopify;
+    setUseShopify(next);
+    try {
+      localStorage.setItem('useShopify', next ? 'true' : 'false');
+    } catch {}
+    try {
+      await fetch('/api/set_use_shopify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ use_shopify: next }),
+      });
+      setStatusMsg(next ? 'Shopify sync enabled' : 'Shopify sync disabled');
+    } catch {
+      setStatusMsg(next ? 'Shopify toggle saved (local)' : 'Shopify toggle saved (local)');
     }
+    setTimeout(() => setStatusMsg(''), 2200);
   };
 
   return (
-    <div className="container">
-      <h1 style={{
-        fontSize: '2.2rem',
-        fontWeight: 700,
-        marginBottom: '2.2rem',
-        textAlign: 'center',
-        letterSpacing: '-1px',
-        color: '#222'
-      }}>
-        Inventory Manager
-      </h1>
-      <ul style={{
-        listStyle: 'none',
-        padding: 0,
-        margin: 0,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '18px'
-      }}>
-        <li>
-          <Link href="/add_field" className="button">
-            Add a field
-          </Link>
-        </li>
-        <li>
-          <Link href="/manage_fields" className="button">
-            Manage Fields
-          </Link>
-        </li>
-        <li>
-          <Link href="/manage_products" className="button">
-            Manage Products
-          </Link>
-        </li>
-        <li>
-          <Link href="/add_product" className="button">
-            Add Product
-          </Link>
-        </li>
-        <li>
-          <Link href="/search" className="button">
-            Search Products
-          </Link>
-        </li>
-        <li>
-          <Link href="/upload" className="button">
-            Upload CSV
-          </Link>
-        </li>
-        <li>
-          <Link href="/download" className="button">
-            Download CSV
-          </Link>
-        </li>
-        <li>
-          <Link href="/ai_theme" className="button">
-            AI Theme Descriptions
-          </Link>
-        </li>
-        <li>
-          <Link href="/lang" className="button">
-            Translate All Products
-          </Link>
-        </li>
-        <li>
-          <button
-            onClick={handleRefresh}
-            className="button"
-            disabled={refreshing}
-            style={{
-              background: '#007BFF',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 6,
-              padding: '10px 18px',
-              fontSize: '1rem',
-              cursor: refreshing ? 'not-allowed' : 'pointer',
-              opacity: refreshing ? 0.7 : 1
-            }}
-          >
-            {refreshing ? 'Refreshing...' : 'Refresh from Shopify'}
-          </button>
-        </li>
-      </ul>
-      {refreshMsg && (
-        <div style={{ marginTop: 16, textAlign: 'center', color: refreshMsg.startsWith('Error') ? 'red' : 'green' }}>
-          {refreshMsg}
-        </div>
-      )}
-      {/* Custom error modal */}
-      {errorModal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-          background: 'rgba(0,0,0,0.25)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <div style={{
-            background: '#fff', borderRadius: 10, padding: 32, minWidth: 320, boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-            textAlign: 'center'
-          }}>
-            <h2 style={{ color: '#d32f2f', marginBottom: 12 }}>Product Sync Error</h2>
-            <div style={{ color: '#333', marginBottom: 18, fontSize: 16 }}>
-              {errorModal.message}
+    <div style={{ position: 'relative' }}>
+      <BackButton to="/" />{/* top-left consistent back button (goes home) */}
+
+      <div style={styles.page}>
+        <div style={styles.container}>
+          <header style={styles.header}>
+            <div>
+              <h1 style={styles.title}>PIM Dashboard</h1>
+              <p style={styles.subtitle}>Grouped navigation — click a button to go to the page.</p>
             </div>
-            <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
-              <button className="button" style={{ background: '#1976d2', color: '#fff' }} onClick={handleModalGo}>
-                Go to Problem
-              </button>
-              <button className="button" style={{ background: '#888', color: '#fff' }} onClick={handleModalClose}>
-                Close
-              </button>
+
+            <div style={styles.topControls}>
+              <div style={styles.switchRow}>
+                <label style={styles.switchLabel}>Shopify Sync</label>
+                <button
+                  role="switch"
+                  aria-checked={useShopify}
+                  onClick={toggleShopify}
+                  style={{ ...styles.switch, background: useShopify ? '#16a34a' : '#d1d5db' }}
+                >
+                  <span style={{ ...styles.knob, transform: useShopify ? 'translateX(20px)' : 'translateX(2px)' }} />
+                </button>
+              </div>
+              <div style={styles.status}>{statusMsg || (useShopify ? 'Live sync: ON' : 'Live sync: OFF')}</div>
             </div>
-          </div>
+          </header>
+
+          <main style={styles.grid}>
+            <section style={styles.group}>
+              <div style={styles.groupInner}>
+                <div>
+                  <h2 style={styles.groupTitle}>Fields</h2>
+                  <p style={styles.groupDesc}>Manage product fields and groups used across your catalog.</p>
+                </div>
+                <div style={styles.buttons}>
+                  <Link href="/add_field" className="card-btn primary">Add Field</Link>
+                  <Link href="/manage_fields" className="card-btn neutral">Manage Fields</Link>
+                </div>
+              </div>
+            </section>
+
+            <section style={styles.group}>
+              <div style={styles.groupInner}>
+                <div>
+                  <h2 style={styles.groupTitle}>Products</h2>
+                  <p style={styles.groupDesc}>Create and manage products. Changes sync to Shopify when enabled.</p>
+                </div>
+                <div style={styles.buttons}>
+                  <Link href="/add_product" className="card-btn primary">Add Product</Link>
+                  <Link href="/manage_products" className="card-btn neutral">Manage Products</Link>
+                  <Link href="/search" className="card-btn neutral">Search</Link>
+                </div>
+              </div>
+            </section>
+
+            <section style={styles.group}>
+              <div style={styles.groupInner}>
+                <div>
+                  <h2 style={styles.groupTitle}>Data</h2>
+                  <p style={styles.groupDesc}>Import/export and sync utilities.</p>
+                </div>
+                <div style={styles.buttons}>
+                  <Link href="/upload" className="card-btn neutral">Upload CSV</Link>
+                  <Link href="/download" className="card-btn neutral">Download CSV</Link>
+                  <button
+                    className="card-btn neutral"
+                    onClick={() => fetch('/api/refresh_products', { method: 'POST' }).then(()=>setStatusMsg('Refresh requested')).catch(()=>setStatusMsg('Refresh failed'))}
+                  >
+                    Refresh from Shopify
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section style={styles.group}>
+              <div style={styles.groupInner}>
+                <div>
+                  <h2 style={styles.groupTitle}>Utilities</h2>
+                  <p style={styles.groupDesc}>Extra tools and helpers.</p>
+                </div>
+                <div style={styles.buttons}>
+                  <Link href="/ai_theme" className="card-btn neutral">AI Descriptions</Link>
+                  <Link href="/lang" className="card-btn neutral">Translate</Link>
+                </div>
+              </div>
+            </section>
+          </main>
+
         </div>
-      )}
+
+        <style>{`
+          :root {
+            --accent: #2563eb;   /* single accent color */
+            --muted: #6b7280;    /* muted text / gray */
+            --card-bg: #ffffff;
+            --btn-bg: #f3f4f6;   /* neutral button background */
+            --btn-text: #0f172a;
+          }
+
+          .card-btn {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:10px 16px;
+            color: var(--btn-text);
+            background: var(--btn-bg);
+            border-radius:10px;
+            font-weight:700;
+            text-decoration:none;
+            border: 1px solid rgba(15,23,42,0.06);
+            cursor:pointer;
+            min-width:140px;
+            margin:6px;
+          }
+          .card-btn.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: rgba(15,23,42,0.06);
+          }
+          .card-btn.neutral {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+          }
+          .card-btn:hover { filter: brightness(0.98); }
+        `}</style>
+      </div>
     </div>
   );
-};
+}
 
-export default InventoryManager;
+const styles = {
+  page: { padding: 28, fontFamily: 'Inter, system-ui, Arial, sans-serif', background: '#f8fafc', minHeight: '100vh' },
+  container: { maxWidth: 1100, margin: '0 auto' },
+  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 20, marginBottom: 18 },
+  title: { margin: 0, fontSize: 28, color: '#0f172a' },
+  subtitle: { margin: '6px 0 0 0', color: '#6b7280' },
+  topControls: { display: 'flex', alignItems: 'center', gap: 16, textAlign: 'right' },
+  switchRow: { display: 'flex', alignItems: 'center', gap: 10 },
+  switchLabel: { fontSize: 13, color: '#374151', fontWeight: 700 },
+  switch: { width: 46, height: 26, borderRadius: 999, position: 'relative', border: 'none', padding: 0, display: 'inline-block' },
+  knob: { width: 20, height: 20, background: '#fff', borderRadius: '50%', display: 'block', margin: 3, transition: 'transform 160ms' },
+  status: { fontSize: 13, color: '#374151', fontWeight: 600 },
+  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 },
+  group: { background: '#fff', borderRadius: 12, padding: 0, boxShadow: '0 8px 26px rgba(2,6,23,0.04)' },
+  groupInner: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: 18, minHeight: 140 },
+  groupTitle: { margin: 0, fontSize: 16, fontWeight: 800, color: '#0f172a' },
+  groupDesc: { marginTop: 6, color: '#6b7280', fontSize: 13, minHeight: 48 },
+  buttons: { marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'flex-end' },
+};

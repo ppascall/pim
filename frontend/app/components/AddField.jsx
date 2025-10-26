@@ -1,4 +1,6 @@
+'use client';
 import React, { useState } from 'react';
+import BackButton from './BackButton';
 
 export default function AddField({ endpoint = '/api/add_field' }) { // Use /api/ prefix for proxy
   const [fieldName, setFieldName] = useState('');
@@ -36,7 +38,8 @@ export default function AddField({ endpoint = '/api/add_field' }) { // Use /api/
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{ position: 'relative', paddingTop: 8 }}>
+      <BackButton to="/"/>
       <h1 style={styles.heading}>Add New Field</h1>
       <form onSubmit={handleSubmit} style={styles.form}>
         <label style={styles.label}>
