@@ -1,4 +1,4 @@
-field_name,required,description
+field_name,required,description,options,group
 status,False,
 id,False,
 tags,False,
@@ -23,3 +23,5 @@ Categorie,False,
 Item,False,
 Merk,False,
 Zoekopdracht Marktplaats,False,
+Test,False,XXX
+BLA BLA BLA,False,LBLABLAKLG

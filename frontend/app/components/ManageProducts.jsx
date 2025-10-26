@@ -286,10 +286,35 @@ const ManageProducts = ({
     }
   };
 
-  // Pagination for fields
-  const visibleFields = fields.slice(fieldOffset, fieldOffset + MAX_VISIBLE_FIELDS);
+  // Group fields by group property
+  const groupedFields = (() => {
+    const groups = {};
+    fields.forEach((field) => {
+      const group = field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(field);
+    });
+    // Sort group names alphabetically, Ungrouped last
+    const ordered = {};
+    Object.keys(groups)
+      .sort((a, b) => {
+        if (a === "Ungrouped") return 1;
+        if (b === "Ungrouped") return -1;
+        return a.localeCompare(b);
+      })
+      .forEach((g) => (ordered[g] = groups[g]));
+    return ordered;
+  })();
+
+  const groupNames = ["All", ...Object.keys(groupedFields)];
+  const [selectedGroup, setSelectedGroup] = useState("All");
+
+  // Only show fields from the selected group, or all fields if "All" is selected
+  const allFields = Object.values(groupedFields).flat();
+  const groupFields = selectedGroup === "All" ? allFields : (groupedFields[selectedGroup] || []);
+  const visibleFields = groupFields.slice(fieldOffset, fieldOffset + MAX_VISIBLE_FIELDS);
   const canPrevField = fieldOffset > 0;
-  const canNextField = fieldOffset + MAX_VISIBLE_FIELDS < fields.length;
+  const canNextField = fieldOffset + MAX_VISIBLE_FIELDS < groupFields.length;
 
   // Pagination for products
   const canPrevPage = page > 0;
@@ -347,6 +372,21 @@ const ManageProducts = ({
         >
           Next Fields ▶
         </button>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+        <label style={{ fontWeight: 600 }}>Field Group:</label>
+        <select
+          value={selectedGroup}
+          onChange={e => {
+            setSelectedGroup(e.target.value);
+            setFieldOffset(0); // Reset paging when group changes
+          }}
+          style={styles.select}
+        >
+          {groupNames.map(g => (
+            <option key={g} value={g}>{g}</option>
+          ))}
+        </select>
       </div>
       <div style={styles.tableWrap}>
         <table style={styles.table}>
@@ -410,48 +450,7 @@ const ManageProducts = ({
             })}
           </tbody>
         </table>
-      </div>
-      <div style={styles.actionRow}>
-        <div style={styles.actionGroup}>
-          <button
-            onClick={handleBulkDelete}
-            disabled={!selected.length}
-            style={{
-              ...styles.button,
-              ...styles.buttonDanger,
-              ...(!selected.length ? styles.buttonDisabled : {})
-            }}
-          >
-            Delete Selected
-          </button>
-          <select
-            value={editField}
-            onChange={e => setEditField(e.target.value)}
-            style={styles.select}
-          >
-            <option value="">Bulk Edit Field...</option>
-            {fields.map(f => (
-              <option key={f.field_name} value={f.field_name}>{f.field_name}</option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="New value"
-            value={editValue}
-            onChange={e => setEditValue(e.target.value)}
-            style={styles.input}
-          />
-          <button
-            onClick={handleBulkEdit}
-            disabled={!selected.length || !editField}
-            style={{
-              ...styles.button,
-              ...(!selected.length || !editField ? styles.buttonDisabled : {})
-            }}
-          >
-            Set For Selected
-          </button>
-        </div>
+        {/* Move pagination here, under the table */}
         <div style={styles.pagination}>
           <button
             onClick={() => setPage(p => Math.max(0, p - 1))}
@@ -475,6 +474,53 @@ const ManageProducts = ({
             }}
           >
             Next ▶
+          </button>
+        </div>
+      </div>
+      {/* Remove the old pagination from here */}
+      <div style={styles.actionRow}>
+        <div style={styles.actionGroup}>
+          <button
+            onClick={handleBulkDelete}
+            disabled={!selected.length}
+            style={{
+              ...styles.button,
+              ...styles.buttonDanger,
+              ...(!selected.length ? styles.buttonDisabled : {})
+            }}
+          >
+            Delete Selected
+          </button>
+          <select
+            value={editField}
+            onChange={e => setEditField(e.target.value)}
+            style={styles.select}
+          >
+            <option value="">Bulk Edit Field...</option>
+            {Object.entries(groupedFields).map(([group, groupFields]) => (
+              <optgroup key={group} label={group}>
+                {groupFields.map(f => (
+                  <option key={f.field_name} value={f.field_name}>{f.field_name}</option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+          <input
+            type="text"
+            placeholder="New value"
+            value={editValue}
+            onChange={e => setEditValue(e.target.value)}
+            style={styles.input}
+          />
+          <button
+            onClick={handleBulkEdit}
+            disabled={!selected.length || !editField}
+            style={{
+              ...styles.button,
+              ...(!selected.length || !editField ? styles.buttonDisabled : {})
+            }}
+          >
+            Set For Selected
           </button>
         </div>
       </div>

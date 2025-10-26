@@ -1,21 +1,25 @@
 import os
 import csv
 import requests
-from flask import Flask, request, jsonify, send_file
+import time
+import random
+from flask import Flask, request, jsonify, send_file, Response, stream_with_context
 from flask_cors import CORS
 from dotenv import load_dotenv
 
+# Use absolute paths for data files
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CATEGORY_FILE = os.path.join(BASE_DIR, 'categories.csv')
+PRODUCT_FILE = os.path.abspath(os.path.join(BASE_DIR, '../../../../products.csv'))
+USER_FILE = os.path.join(BASE_DIR, '../../db/users.csv')
+
 # Correct .env path (three levels up from this file)
-load_dotenv(dotenv_path=os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../.env')))
+load_dotenv(dotenv_path=os.path.abspath(os.path.join(BASE_DIR, '../../../.env')))
 
 app = Flask(__name__)
 CORS(app)
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
-
-CATEGORY_FILE = 'categories.csv'
-PRODUCT_FILE = 'products.csv'
-USER_FILE = os.path.join(os.path.dirname(__file__), '../../db/users.csv')
 
 # --- Shopify Integration ---
 SHOP = os.environ.get("SHOPIFY_SHOP")  # e.g. 'nextime-clocks.myshopify.com'
@@ -63,23 +67,20 @@ def fetch_shopify_products():
                     product_variant_map[inventory_item_id] = (product, variant)
 
             product['read_inventory'] = inventory_total
-            product['warehouse_stock'] = warehouse_stock  # <-- Add this line
+            product['warehouse_stock'] = warehouse_stock
 
         # Fetch all inventory levels in batches
         levels = fetch_inventory_levels_batch(headers, all_inventory_item_ids)
 
         # Map location_id to name
-        warehouse_stock_map = {}
         for level in levels:
             loc_id = level['location_id']
             available = level['available']
             inventory_item_id = level['inventory_item_id']
             warehouse_name = location_map.get(loc_id, f"Warehouse {loc_id}")
             product, variant = product_variant_map[inventory_item_id]
-            # Add to product's warehouse_stock
             if 'warehouse_stock' not in product:
                 product['warehouse_stock'] = {}
-            # FIX: Prevent TypeError if available is None
             product['warehouse_stock'][warehouse_name] = product['warehouse_stock'].get(warehouse_name, 0) + (available if available is not None else 0)
 
         all_products.extend(products)
@@ -128,8 +129,9 @@ def load_fields():
         return list(csv.DictReader(f))
 
 def save_fields(fields):
+    fieldnames = ['field_name', 'required', 'description', 'options', 'group']
     with open(CATEGORY_FILE, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=['field_name', 'required', 'description'])
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(fields)
 
@@ -142,10 +144,16 @@ def load_products():
 def save_products(products):
     if not products:
         return
+    # Collect all unique keys for header
+    all_keys = set()
+    for p in products:
+        all_keys.update(p.keys())
+    all_keys = list(all_keys)
     with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=products[0].keys())
+        writer = csv.DictWriter(f, fieldnames=all_keys)
         writer.writeheader()
-        writer.writerows(products)
+        for p in products:
+            writer.writerow(p)
 
 def save_product(product):
     file_exists = os.path.exists(PRODUCT_FILE)
@@ -173,7 +181,8 @@ def save_users(users):
 
 @app.route('/fields', methods=['GET'])
 def get_fields():
-    return jsonify({'fields': load_fields()})
+    fields = load_fields()
+    return jsonify({'fields': fields})
 
 @app.route('/add_field', methods=['POST'])
 def add_field():
@@ -181,6 +190,8 @@ def add_field():
     field_name = data.get('field_name', '').strip()
     required = data.get('required', 'no').strip().capitalize()
     description = data.get('description', '').strip()
+    options = data.get('options', '').strip()
+    group = data.get('group', '').strip()
 
     if not field_name:
         return jsonify({'success': False, 'message': 'Field name is required'}), 400
@@ -192,11 +203,24 @@ def add_field():
     new_field = {
         'field_name': field_name,
         'required': 'True' if required == 'Yes' else 'False',
-        'description': description
+        'description': description,
+        'options': options,
+        'group': group
     }
 
     fields.append(new_field)
     save_fields(fields)
+
+    # --- Add this block to create metafield definition in Shopify ---
+    if SHOP and TOKEN:
+        try:
+            ensure_metafield_definition(
+                key=field_name,
+                name=description or field_name.replace("_", " ").title(),
+                type_="single_line_text_field"  # or infer from options/required
+            )
+        except Exception as e:
+            print(f"Shopify metafield definition error: {e}")
 
     return jsonify({'success': True})
 
@@ -214,11 +238,15 @@ def update_field():
     new_name = data.get('field_name', old_name)
     updated_desc = data.get('description', fields[index].get('description', ''))
     updated_required = data.get('required', fields[index].get('required', 'False'))
+    updated_options = data.get('options', fields[index].get('options', ''))
+    updated_group = data.get('group', fields[index].get('group', ''))  # <-- Add this line
 
     fields[index] = {
         'field_name': new_name,
         'description': updated_desc,
-        'required': updated_required
+        'required': updated_required,
+        'options': updated_options,
+        'group': updated_group  # <-- Add this line
     }
     save_fields(fields)
 
@@ -251,8 +279,9 @@ def delete_field():
 
 @app.route('/products', methods=['GET'])
 def get_products():
-    # Just return local products
-    return jsonify({'products': load_products()})
+    products = load_products()
+    products = [clean_dict_keys(p) for p in products]
+    return jsonify({'products': products})
 
 @app.route('/shopify-products', methods=['GET'])
 def get_shopify_products():
@@ -263,245 +292,154 @@ def get_shopify_products():
 
 @app.route('/refresh_products', methods=['POST'])
 def refresh_products():
-    products, error = fetch_shopify_products()
-    if error:
-        return jsonify({'success': False, 'message': error}), 500
-    if not products:
-        return jsonify({'success': False, 'message': 'No products found on Shopify'}), 404
-    save_shopify_products_to_csv(products)
-    clean_products_csv()  # <-- Clean after saving!
-    return jsonify({'success': True, 'count': len(products)})
-
-@app.route('/add_product', methods=['POST'])
-def add_product():
-    data = request.form or request.json
-    fields = load_fields()
-    product = {field['field_name']: data.get(field['field_name'], '') for field in fields}
-
-    # --- Shopify create logic ---
-    shopify_id = None
-    if SHOP and TOKEN:
-        url = f"https://{SHOP}/admin/api/2024-01/products.json"
-        headers = {
-            "X-Shopify-Access-Token": TOKEN,
-            "Content-Type": "application/json"
-        }
-        # Only send allowed fields to Shopify
-        allowed_fields = ["title", "body_html", "vendor", "product_type", "tags", "status"]
-        shopify_fields = {k: v for k, v in product.items() if k in allowed_fields}
-        payload = {"product": shopify_fields}
-        resp = requests.post(url, headers=headers, json=payload)
-        if resp.status_code == 201:
-            shopify_product = resp.json().get("product")
-            if shopify_product and "id" in shopify_product:
-                shopify_id = shopify_product["id"]
-                product["id"] = str(shopify_id)  # Save Shopify ID in local CSV
-        else:
-            return jsonify({'success': False, 'message': f"Shopify create failed: {resp.text}"}), 500
-
-    save_product(product)
-    return jsonify({'success': True, 'shopify_id': shopify_id})
-
-@app.route('/update_product', methods=['POST'])
-def update_product():
-    data = request.json
-    index = data.get('index')
-    if index is None:
-        return jsonify({'success': False, 'message': 'No index provided'}), 400
-    products = load_products()
-    if not (0 <= index < len(products)):
-        return jsonify({'success': False, 'message': 'Invalid index'}), 400
-
-    # Update local product
-    for key in data:
-        if key != 'index':
-            products[index][key] = data[key]
-    save_products(products)
-
-    # --- Shopify update logic ---
-    shopify_id = products[index].get('id') or products[index].get('shopify_id')
-    if shopify_id and SHOP and TOKEN:
-        url = f"https://{SHOP}/admin/api/2024-01/products/{shopify_id}.json"
-        headers = {
-            "X-Shopify-Access-Token": TOKEN,
-            "Content-Type": "application/json"
-        }
-        # Only send fields that are allowed by Shopify API
-        allowed_fields = ["title", "body_html", "vendor", "product_type", "tags", "status"]
-        update_fields = {k: v for k, v in data.items() if k in allowed_fields}
-        if update_fields:
-            payload = {"product": {"id": int(shopify_id), **update_fields}}
-            resp = requests.put(url, headers=headers, json=payload)
-            if resp.status_code != 200:
-                return jsonify({'success': False, 'message': f"Local updated, but Shopify update failed: {resp.text}"}), 500
-
-    return jsonify({'success': True})
-
-@app.route('/delete_product', methods=['POST'])
-def delete_product():
-    data = request.json
-    index = data.get('index')
-    products = load_products()
-    if index is None or not (0 <= index < len(products)):
-        return jsonify({'success': False, 'message': 'Invalid index'}), 400
-    del products[index]
-    save_products(products)
-    return jsonify({'success': True})
-
-@app.route('/search_products', methods=['POST'])
-def search_products():
-    # Just search local products
-    data = request.json
-    query = data.get('query', '').lower()
-    field_key = data.get('fieldKey', '')
-    field_value = data.get('fieldValue', '')
-    products = load_products()
-    results = []
-    for product in products:
-        field_match = not field_key or not field_value or product.get(field_key, '') == field_value
-        search_match = not query or any(query in str(v).lower() for v in product.values())
-        if field_match and search_match:
-            results.append(product)
-    return jsonify({'products': results})
-
-@app.route('/upload_csv', methods=['POST'])
-def upload_csv():
-    file = request.files['file']
-    if file and (file.filename.endswith('.csv') or file.filename.endswith('.txt')):
-        content = file.read().decode('utf-8')
-        delimiter = '\t' if '\t' in content.splitlines()[0] else ','
-        rows = list(csv.reader(content.splitlines(), delimiter=delimiter))
-        if rows:
-            headers = rows[0]
-            existing_fields = set(f['field_name'] for f in load_fields())
-            new_fields = [
-                {'field_name': h, 'required': 'False', 'description': ''}
-                for h in headers if h not in existing_fields
-            ]
-            if new_fields:
-                with open(CATEGORY_FILE, 'a', newline='', encoding='utf-8') as f:
-                    writer = csv.DictWriter(f, fieldnames=['field_name', 'required', 'description'])
-                    if os.path.getsize(CATEGORY_FILE) == 0:
-                        writer.writeheader()
-                    writer.writerows(new_fields)
-            with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow(headers)
-                writer.writerows(rows[1:])
-        return jsonify({'success': True})
-    return jsonify({'success': False, 'message': 'Invalid file'}), 400
-
-@app.route('/download', methods=['GET'])
-def download():
-    return send_file(PRODUCT_FILE, as_attachment=True)
-
-@app.route('/bulk_delete_products', methods=['POST'])
-def bulk_delete_products():
     try:
-        data = request.get_json()
-        indices = data.get('indices', [])
-        # Load products
-        with open(PRODUCT_FILE, newline='', encoding='utf-8') as f:
-            reader = list(csv.DictReader(f))
-        # Remove products at the given indices
-        new_products = [p for i, p in enumerate(reader) if i not in indices]
-        # Write back
-        with open(PRODUCT_FILE, 'w', newline='', encoding='utf-8') as f:
-            if new_products:
-                writer = csv.DictWriter(f, fieldnames=new_products[0].keys())
-                writer.writeheader()
-                writer.writerows(new_products)
-            else:
-                # If no products left, still write the header row using fields
-                fields = load_fields()
-                if fields:
-                    writer = csv.DictWriter(f, fieldnames=[fld['field_name'] for fld in fields])
-                    writer.writeheader()
+        if not SHOP or not TOKEN:
+            return jsonify({'success': False, 'message': 'Shopify credentials not set'}), 500
+
+        try:
+            start = int(request.args.get('start', 0))
+            count = int(request.args.get('count', 5))  # Keep batch small!
+        except Exception:
+            start = 0
+            count = 5
+
+        products = load_products()
+        allowed_fields = ["title", "body_html", "vendor", "product_type", "tags", "status"]
+
+        headers_shopify = {
+            "X-Shopify-Access-Token": TOKEN,
+            "Content-Type": "application/json"
+        }
+
+        updated = 0
+        created = 0
+        failed = 0
+        errors = []
+
+        batch = products[start:start+count]
+        for idx, product in enumerate(batch):
+            global_idx = start + idx
+            shopify_id = product.get('id') or product.get('shopify_id')
+            shopify_fields = {k: v for k, v in product.items() if k in allowed_fields}
+            custom_fields = {k: v for k, v in product.items() if k not in allowed_fields and k not in ['id', 'shopify_id']}
+
+            try:
+                print(f"Processing product {global_idx} (ID: {shopify_id})")
+                if shopify_id:
+                    try:
+                        shopify_id_int = int(shopify_id)
+                    except Exception:
+                        failed += 1
+                        errors.append({
+                            "type": "invalid_id",
+                            "product_index": global_idx,
+                            "product": product,
+                            "message": f"Invalid Shopify ID: {shopify_id}"
+                        })
+                        continue
+
+                    url = f"https://{SHOP}/admin/api/2024-01/products/{shopify_id_int}.json"
+                    payload = {"product": {"id": shopify_id_int, **shopify_fields}}
+                    print(f"Sending request to Shopify: {url}")
+                    resp = requests.put(url, headers=headers_shopify, json=payload, timeout=10)
+                    print(f"Shopify response: {resp.status_code} {resp.text}")
+                    if resp.status_code == 429:
+                        # Rate limited, wait and retry once
+                        time.sleep(1.5)
+                        resp = requests.put(url, headers=headers_shopify, json=payload)
+                    if resp.status_code == 200:
+                        updated += 1
+                        if custom_fields:
+                            push_metafields_to_shopify_with_rate_limit(shopify_id_int, custom_fields)
+                    else:
+                        failed += 1
+                        errors.append({
+                            "type": "update_failed",
+                            "product_index": global_idx,
+                            "product": product,
+                            "message": f"Failed to update product {shopify_id}: {resp.text}"
+                        })
                 else:
-                    f.truncate(0)
-        return jsonify({'success': True})
+                    url = f"https://{SHOP}/admin/api/2024-01/products.json"
+                    payload = {"product": shopify_fields}
+                    resp = requests.post(url, headers=headers_shopify, json=payload)
+                    if resp.status_code == 429:
+                        time.sleep(1.5)
+                        resp = requests.post(url, headers=headers_shopify, json=payload)
+                    if resp.status_code == 201:
+                        shopify_product = resp.json().get("product")
+                        if shopify_product and "id" in shopify_product:
+                            new_id = shopify_product["id"]
+                            product["id"] = str(new_id)
+                            created += 1
+                            if custom_fields:
+                                push_metafields_to_shopify_with_rate_limit(new_id, custom_fields)
+                    else:
+                        failed += 1
+                        errors.append({
+                            "type": "create_failed",
+                            "product_index": global_idx,
+                            "product": product,
+                            "message": f"Failed to create product: {resp.text}"
+                        })
+            except Exception as e:
+                failed += 1
+                errors.append({
+                    "type": "exception",
+                    "product_index": global_idx,
+                    "product": product,
+                    "message": str(e)
+                })
+            # Always sleep between products to avoid rate limit
+            time.sleep(0.7)
+
+        save_products(products)
+        total = len(products)
+        next_start = start + count if (start + count) < total else None
+
+        print(f"Returning response: updated={updated}, created={created}, failed={failed}, errors={errors}")
+
+        return jsonify({
+            'success': failed == 0,
+            'updated': updated,
+            'created': created,
+            'failed': failed,
+            'errors': errors,
+            'message': f"Processed {len(batch)} products. Updated {updated}, created {created}, failed {failed}.",
+            'next_start': next_start,
+            'total': total
+        })
     except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
+        print(f"UNHANDLED EXCEPTION in /refresh_products: {e}")
+        return jsonify({'success': False, 'message': f'Internal server error: {e}'}), 500
 
-@app.route('/bulk_edit_products', methods=['POST'])
-def bulk_edit_products():
-    data = request.json
-    indices = data.get('indices', [])
-    field = data.get('field')
-    value = data.get('value')
-    if not indices or field is None:
-        return jsonify({'success': False, 'message': 'Missing indices or field'}), 400
-    products = load_products()
-    for idx in indices:
-        if 0 <= idx < len(products):
-            products[idx][field] = value
-    save_products(products)
-    return jsonify({'success': True})
-
-@app.route('/api/users', methods=['GET'])
-def get_users():
-    users = load_users()
-    # Don't send hashed_password to frontend
-    return jsonify({'users': [
-        {'email': u['email'], 'role': u['role']} for u in users
-    ]})
-
-@app.route('/api/users/<email>', methods=['PATCH'])
-def update_user_role(email):
-    users = load_users()
-    data = request.get_json()
-    new_role = data.get('role')
-    updated = False
-    for user in users:
-        if user['email'] == email:
-            user['role'] = new_role
-            updated = True
-            break
-    if updated:
-        save_users(users)
-        return jsonify({'success': True})
-    else:
-        return jsonify({'success': False, 'message': 'User not found'}), 404
-
-@app.route('/api/users/<email>', methods=['DELETE'])
-def delete_user(email):
-    users = load_users()
-    new_users = [u for u in users if u['email'] != email]
-    if len(new_users) == len(users):
-        return jsonify({'success': False, 'message': 'User not found'}), 404
-    save_users(new_users)
-    return jsonify({'success': True})
-
-@app.route('/shopify-update-product/<product_id>', methods=['PUT'])
-def shopify_update_product(product_id):
-    """
-    Update a product on Shopify using the Admin API.
-    Expects JSON body with fields to update, e.g.:
-    {
-      "title": "New Title",
-      "body_html": "<strong>New Description</strong>",
-      ...
-    }
-    """
+def push_metafields_to_shopify_with_rate_limit(product_id, custom_fields):
     if not SHOP or not TOKEN:
-        return jsonify({'success': False, 'message': 'Shopify credentials not set'}), 500
-
-    update_fields = request.json
-    if not update_fields:
-        return jsonify({'success': False, 'message': 'No update fields provided'}), 400
-
-    url = f"https://{SHOP}/admin/api/2024-01/products/{product_id}.json"
-    headers = {
-        "X-Shopify-Access-Token": TOKEN,
-        "Content-Type": "application/json"
-    }
-    payload = {"product": {"id": int(product_id), **update_fields}}
-
-    resp = requests.put(url, headers=headers, json=payload)
-    if resp.status_code == 200:
-        return jsonify({'success': True, 'product': resp.json().get('product')})
-    else:
-        return jsonify({'success': False, 'message': resp.text}), resp.status_code
+        return
+    for key, value in custom_fields.items():
+        try:
+            ensure_metafield_definition(key)
+            url = f"https://{SHOP}/admin/api/2024-01/products/{product_id}/metafields.json"
+            headers = {
+                "X-Shopify-Access-Token": TOKEN,
+                "Content-Type": "application/json"
+            }
+            metafield = {
+                "metafield": {
+                    "namespace": "custom",
+                    "key": key,
+                    "value": value,
+                    "type": "single_line_text_field"
+                }
+            }
+            resp = requests.post(url, headers=headers, json=metafield)
+            if resp.status_code == 429:
+                time.sleep(1.5)
+                resp = requests.post(url, headers=headers, json=metafield)
+            # Always sleep between metafield calls
+            time.sleep(0.7)
+        except Exception as e:
+            print(f"Metafield error for {key}: {e}")
 
 def clean_products_csv():
     import ast
@@ -544,8 +482,6 @@ def fetch_inventory_levels(headers, inventory_item_id):
         return []
     return resp.json().get("inventory_levels", [])
 
-# Instead of calling fetch_inventory_levels for each variant,
-# collect all inventory_item_ids, then fetch in batches.
 def fetch_inventory_levels_batch(headers, inventory_item_ids):
     url = f"https://{SHOP}/admin/api/2024-01/inventory_levels.json"
     levels = []
@@ -556,6 +492,53 @@ def fetch_inventory_levels_batch(headers, inventory_item_ids):
         if resp.status_code == 200:
             levels.extend(resp.json().get("inventory_levels", []))
     return levels
+
+def clean_dict_keys(obj):
+    if isinstance(obj, dict):
+        return {str(k) if k is not None else '' : clean_dict_keys(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_dict_keys(i) for i in obj]
+    else:
+        return obj
+
+def ensure_metafield_definition(key, name=None, type_="single_line_text_field"):
+    url = f"https://{SHOP}/admin/api/2024-01/metafield_definitions.json"
+    headers = {
+        "X-Shopify-Access-Token": TOKEN,
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "metafield_definition": {
+            "name": name or key.replace("_", " ").title(),
+            "namespace": "custom",
+            "key": key,
+            "type": type_,
+            "owner_type": "PRODUCT"
+        }
+    }
+    # Check if definition exists first (optional: GET /metafield_definitions.json?namespace=custom&key=key)
+    resp = requests.post(url, headers=headers, json=payload)
+    # Shopify will error if it already exists, so you may want to ignore 422 errors
+
+def push_metafields_to_shopify(product_id, custom_fields):
+    if not SHOP or not TOKEN:
+        return
+    for key, value in custom_fields.items():
+        ensure_metafield_definition(key)
+        url = f"https://{SHOP}/admin/api/2024-01/products/{product_id}/metafields.json"
+        headers = {
+            "X-Shopify-Access-Token": TOKEN,
+            "Content-Type": "application/json"
+        }
+        metafield = {
+            "metafield": {
+                "namespace": "custom",
+                "key": key,
+                "value": value,
+                "type": "single_line_text_field"
+            }
+        }
+        requests.post(url, headers=headers, json=metafield)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
