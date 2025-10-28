@@ -6,11 +6,45 @@ function _safeStr(v) {
   return String(v);
 }
 
+// split options by pipe(s) or commas, trim and remove empties
+// robust options parser: accepts arrays, JSON arrays, pipes, commas, semicolons, newlines,
+// handles quoted values, percent-encoding and common malformed forms
+function parseOptions(raw = '') {
+  if (!raw && raw !== 0) return [];
+  if (Array.isArray(raw)) return raw.map(x => String(x).trim()).filter(Boolean);
+
+  let s = String(raw).trim();
+
+  // Remove surrounding quotes if present
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1).trim();
+  }
+
+  // Try JSON parse if it looks like an array
+  if (/^\[.*\]$/.test(s)) {
+    try {
+      const parsed = JSON.parse(s.replace(/'/g, '"'));
+      if (Array.isArray(parsed)) return parsed.map(x => String(x).trim()).filter(Boolean);
+    } catch (_) { /* fallthrough */ }
+  }
+
+  // decode percent-encoding if present
+  try { s = decodeURIComponent(s); } catch (_) {}
+
+  // normalize escaped separators and odd patterns
+  s = s.replace(/\\\|/g, '|').replace(/\\,/g, ',').replace(/"\s*,\s*"/g, '|');
+
+  // Split on pipe, comma, semicolon or newline and trim entries
+  const parts = s.split(/\r?\n|;|,|\|/);
+  return parts.map(p => p.trim()).filter(Boolean);
+}
+
 export default function SearchProducts() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editData, setEditData] = useState({});
 
   useEffect(() => {
     let mounted = true;
@@ -21,8 +55,8 @@ export default function SearchProducts() {
         const list = (json.products || json || []).map(p => {
           const prod = {};
           Object.keys(p || {}).forEach(k => { prod[k] = _safeStr(p[k]); });
-          prod.title = prod.title || prod['Product Name'] || prod['product_name'] || prod.handle || prod['Product number'] || 'Untitled Product';
-          prod.category = prod.category || prod['Product Group'] || prod.Category || 'Uncategorized';
+          prod.title = prod['Product Name'] || prod['Product name'] || prod.title || prod.handle || prod['Product number'] || 'Untitled Product';
+          prod.category = prod['Product Group'] || prod['Category'] || prod.category || 'Uncategorized';
           return prod;
         });
         if (mounted) {
@@ -52,7 +86,41 @@ export default function SearchProducts() {
     setResults(filtered);
   };
 
-  useEffect(() => { handleSearch(); }, [query]); // live search
+  useEffect(() => { handleSearch(); }, [query, all]);
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditData(prev => ({ ...prev, [name]: value }));
+  };
+
+  // groupedFields should come from /fields endpoint; safe fallback empty
+  const [groupedFields, setGroupedFields] = useState({});
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const res = await fetch('/fields');
+        const json = await res.json();
+        const fields = (json.fields || []).map(f => ({
+          ...f,
+          field_name: _safeStr(f.field_name),
+          options: _safeStr(f.options),
+          group: _safeStr(f.group) || 'Other'
+        }));
+        // group them
+        const g = {};
+        fields.forEach(f => {
+          const grp = f.group || 'Other';
+          if (!g[grp]) g[grp] = [];
+          g[grp].push(f);
+        });
+        if (mounted) setGroupedFields(g);
+      } catch (e) {
+        if (mounted) setGroupedFields({});
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <div style={{ maxWidth: 980, margin: '0 auto', padding: 12 }}>
@@ -90,6 +158,42 @@ export default function SearchProducts() {
           {results.length === 0 && <div style={{ marginTop: 8, color: '#666' }}>No products found</div>}
         </div>
       )}
+
+      {/* Render grouped fields with proper option parsing */}
+      {Object.entries(groupedFields).map(([group, groupFields]) => (
+        <div key={group} style={{ marginTop: 18 }}>
+          <div style={{ fontWeight: 700, fontSize: 16, margin: "8px 0" }}>{group}</div>
+          {groupFields.map(field => (
+            <div key={field.field_name} style={{ marginBottom: 8, wordBreak: 'break-word', whiteSpace: 'normal' }}>
+              <label>
+                {field.field_name}:
+                {field.options && String(field.options).trim() ? (
+                  <select
+                    name={field.field_name}
+                    value={editData[field.field_name] || ""}
+                    onChange={handleEditChange}
+                    style={{ marginLeft: 8 }}
+                  >
+                    <option value="">Select...</option>
+                    {parseOptions(field.options).map((opt, i) => (
+                      <option key={`${field.field_name}--${i}`} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    name={field.field_name}
+                    value={editData[field.field_name] || ""}
+                    onChange={handleEditChange}
+                    style={{ marginLeft: 8, width: '60%' }}
+                  />
+                )}
+              </label>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
