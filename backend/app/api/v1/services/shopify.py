@@ -1,37 +1,37 @@
 import os
-import time
 import requests
+from typing import Optional, Dict, Any
 
-SHOP = os.environ.get("SHOPIFY_SHOP")
-TOKEN = os.environ.get("SHOPIFY_ADMIN_TOKEN")
-USE_SHOPIFY = os.environ.get("USE_SHOPIFY", "false").lower() in ("1", "true", "yes")
+SHOPIFY_STORE = os.environ.get("SHOPIFY_STORE")  # e.g. your-store.myshopify.com
+SHOPIFY_API_KEY = os.environ.get("SHOPIFY_API_KEY")
+SHOPIFY_API_PASSWORD = os.environ.get("SHOPIFY_API_PASSWORD")
+SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2023-10")
 
-def fetch_shopify_locations(headers):
-    url = f"https://{SHOP}/admin/api/2024-01/locations.json"
-    resp = requests.get(url, headers=headers)
-    if resp.status_code != 200:
-        return []
-    return resp.json().get("locations", [])
+AUTH = (SHOPIFY_API_KEY, SHOPIFY_API_PASSWORD)
 
-def fetch_inventory_levels_batch(headers, inventory_item_ids):
-    url = f"https://{SHOP}/admin/api/2024-01/inventory_levels.json"
-    levels = []
-    for i in range(0, len(inventory_item_ids), 50):
-        batch_ids = inventory_item_ids[i:i+50]
-        params = {'inventory_item_ids': ','.join(str(iid) for iid in batch_ids)}
-        resp = requests.get(url, headers=headers, params=params)
-        if resp.status_code == 200:
-            levels.extend(resp.json().get("inventory_levels", []))
-    return levels
+def _base() -> Optional[str]:
+    if not SHOPIFY_STORE or not SHOPIFY_API_KEY or not SHOPIFY_API_PASSWORD:
+        return None
+    return f"https://{SHOPIFY_STORE}/admin/api/{SHOPIFY_API_VERSION}"
 
-def ensure_metafield_definition(key, name=None, type_="single_line_text_field"):
-    url = f"https://{SHOP}/admin/api/2024-01/metafield_definitions.json"
-    headers = {
-        "X-Shopify-Access-Token": TOKEN,
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "metafield_definition": {
+def find_product_by_handle(handle: str) -> Optional[Dict[str, Any]]:
+    """Return first matching product object for handle (or None)."""
+    base = _base()
+    if not base or not handle:
+        return None
+    try:
+        url = f"{base}/products.json"
+        resp = requests.get(url, params={"handle": handle}, auth=AUTH, timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+        prods = data.get("products") or []
+        return prods[0] if prods else None
+    except Exception:
+        return None
+
+def update_product_by_id(product_id: int, payload: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """PUT product update by id. payload must be { "product": {...} } shape."""
+    base = _base()
             "name": name or key.replace("_", " ").title(),
             "namespace": "custom",
             "key": key,

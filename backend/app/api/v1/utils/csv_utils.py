@@ -23,6 +23,15 @@ def clean_dict_keys(obj):
         return [clean_dict_keys(i) for i in obj]
     return obj
 
+def _strip_surrounding_quotes(s):
+    if s is None:
+        return ''
+    s = str(s)
+    s = s.strip()
+    if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
+        return s[1:-1].strip()
+    return s
+
 # Fields (categories) CSV read/write
 def load_fields():
     path = get_fields_csv_path()
@@ -33,12 +42,14 @@ def load_fields():
         reader = csv.DictReader(fh)
         for row in reader:
             cleaned = {k: (_safe_str(v).strip() if v is not None else '') for k, v in row.items()}
-            # ensure canonical keys
+            # ensure canonical keys and strip surrounding quotes from options
+            options_raw = _strip_surrounding_quotes(cleaned.get('options', ''))
             out.append({
                 'field_name': cleaned.get('field_name', '') or cleaned.get('name', ''),
                 'required': cleaned.get('required', 'False'),
                 'description': cleaned.get('description', ''),
-                'options': cleaned.get('options', ''),
+                # return plain string (no list) so frontend parser can split on comma/pipe
+                'options': options_raw,
                 'group': cleaned.get('group', '')
             })
     # stable sort

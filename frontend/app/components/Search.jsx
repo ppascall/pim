@@ -501,7 +501,13 @@ const SearchProducts = ({
               </thead>
               <tbody>
                 {products.map(product => {
-                  const productName = product.data['Product Description EN'] || product.data.product_name || 'Unnamed Product';
+                  // prefer backend "title" field first, then fallbacks; also log for debugging
+                  const productName =
+                    (product.data && (product.data.title || product.data['title'])) ||
+                    product.data['Product Description EN'] ||
+                    product.data.product_name ||
+                    'Unnamed Product';
+                  console.log('render product title:', productName);
                   const isExpanded = expandedIndex === product.index;
                   return (
                     <React.Fragment key={product.index}>

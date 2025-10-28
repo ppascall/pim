@@ -271,7 +271,7 @@ export default function UserDashboard() {
                 }
 
                 const productName =
-                  product["Product Description EN"] ||
+                  product["title"] ||
                   product.product_name ||
                   Object.values(product)[0] ||
                   "Unnamed Product";

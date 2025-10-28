@@ -96,3 +96,29 @@ def debug_products():
         })
     except Exception as e:
         return jsonify({'error': 'debug failed', 'details': str(e)}), 500
+
+@products_bp.route('/add_product', methods=['POST'])
+def add_product():
+    """
+    Accepts JSON or form data to create a new product row.
+    Example JSON:
+      { "Product number":"SKU123", "Product Name":"My Product", "category":"Packaging" }
+    """
+    payload = request.get_json(silent=True) or request.form or {}
+    if not isinstance(payload, dict) or not payload:
+        return jsonify({'success': False, 'message': 'invalid or empty payload'}), 400
+
+    # normalize keys/values to strings
+    new_row = { str(k): ('' if v is None else v) for k, v in payload.items() }
+
+    # require at least a name or identifier
+    if not new_row.get('Product Name') and not new_row.get('Product number') and not new_row.get('handle'):
+        return jsonify({'success': False, 'message': 'Product Name or Product number required'}), 400
+
+    products = read_products_from_csv()
+    products.append(new_row)
+    try:
+        write_products_to_csv(products)
+        return jsonify({'success': True, 'product': new_row}), 201
+    except Exception as e:
+        return jsonify({'success': False, 'message': 'failed to save product', 'details': str(e)}), 500
