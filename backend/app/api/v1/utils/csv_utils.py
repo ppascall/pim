@@ -7,11 +7,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 def get_fields_csv_path():
     # categories.csv lives under backend/app/api/v1/
-    return BASE_DIR / "categories.csv"
+    return BASE_DIR / "backend/app/api/v1/categories.csv"
 
 def get_products_csv_path():
     # products.csv lives under backend/app/api/v1/
-    return BASE_DIR / "products.csv"
+    return BASE_DIR / "backend/app/api/v1/products.csv"
 
 def _safe_str(v):
     return '' if v is None else str(v)

@@ -347,11 +347,44 @@ const SearchProducts = ({
 
   // Open modal to edit all fields of a product
   const openEditModal = (product) => {
+    const src = (product && (product.data || product)) ? (product.data || product) : {};
+
+    // copy preview data exactly (preserves the keys shown in renderPage)
+    const mapped = {};
+    Object.keys(src || {}).forEach(k => {
+      mapped[k] = _safeStr(src[k]);
+    });
+
+    // ensure each configured field exists in mapped; try case-insensitive / underscore fallbacks
+    (fields || []).forEach(f => {
+      const fname = f.field_name;
+      if (Object.prototype.hasOwnProperty.call(mapped, fname)) return;
+      // try case-insensitive exact
+      const ci = Object.keys(src || {}).find(k => k.toLowerCase() === fname.toLowerCase());
+      if (ci) { mapped[fname] = _safeStr(src[ci]); return; }
+      // try underscore / kebab / compact variants
+      const unders = fname.replace(/\s+/g, "_").toLowerCase();
+      const dash = fname.replace(/\s+/g, "-").toLowerCase();
+      const compact = fname.replace(/[_\-\s]+/g, "").toLowerCase();
+      const keys = Object.keys(src || {});
+      const match = keys.find(k => {
+        const nk = String(k).toLowerCase();
+        return nk === unders || nk === dash || nk === compact;
+      });
+      mapped[fname] = match ? _safeStr(src[match]) : '';
+    });
+
+    // canonical title: match preview resolution (do not copy title into every other field)
+    mapped.title = mapped.title || mapped['title'] || mapped['Product Description EN'] || mapped.product_name || mapped['Product Name'] || 'Unnamed Product';
+    mapped['Product Name'] = mapped.title;
+
+    // open modal with mapped values
     setEditProduct(product);
-    setEditFields({ ...product.data });
-    setEditStatus({ message: '', color: '' });
-    setExpandedGroups({}); // Reset group expansion
-    setGroupPages({}); // Reset group pages
+    setEditFields(mapped);
+    setEditStatus({ message: "", color: "" });
+    const firstGroup = Object.keys(groupedFields || {})[0];
+    setExpandedGroups(firstGroup ? { [firstGroup]: true } : {});
+    setGroupPages({});
     setEditModalOpen(true);
   };
 
@@ -364,30 +397,95 @@ const SearchProducts = ({
     setGroupPages({});
   };
 
-  // Save all edited fields for the product
-  const handleEditSave = async () => {
-    if (!editProduct) return;
-    try {
-      // Use originalIndex if available, otherwise fallback to index
-      const payload = { index: editProduct.originalIndex ?? editProduct.index, ...editFields };
-      const res = await fetch('/api/update_product', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (data.success) {
-        setEditStatus({ message: 'Product updated!', color: 'green' });
-        await fetchProducts();
-        setTimeout(closeEditModal, 800);
-      } else {
-        setEditStatus({ message: data.message || 'Edit failed.', color: 'red' });
-      }
-    } catch {
-      setEditStatus({ message: 'Error updating product.', color: 'red' });
-    }
+  // helper: pick the best identifier field from a product data object
+  const getPrimaryIdentifier = (src = {}) => {
+    if (!src) return { field: null, id: null };
+    if (src.handle) return { field: "handle", id: src.handle };
+    if (src.sku_primary) return { field: "sku_primary", id: src.sku_primary };
+    if (src.sku) return { field: "sku", id: src.sku };
+    if (src.id) return { field: "id", id: src.id };
+    if (src["Product number"]) return { field: "Product number", id: src["Product number"] };
+    return { field: null, id: null };
   };
 
+  // update a single edit field (ensure modal inputs remain controlled)
+  const handleEditFieldChange = (key, value) => {
+    setEditFields(prev => ({ ...(prev || {}), [key]: value }));
+  };
+
+  // Save handler for the edit modal form: build minimal updates payload and call backend
+  const saveEditProduct = async (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!editProduct) {
+      setEditStatus({ message: "No product selected", color: "red" });
+      return;
+    }
+
+    const original = editProduct.data || editProduct || {};
+    const edited = editFields || {};
+
+    // determine identifier
+    const { field: identifier_field, id: identifier_value } = getPrimaryIdentifier(original);
+    if (!identifier_field || !identifier_value) {
+      setEditStatus({ message: "Could not determine product identifier (handle/sku/etc.)", color: "red" });
+      return;
+    }
+
+    // build updates object containing only changed fields
+    const updates = {};
+    Object.keys(edited).forEach(k => {
+      const origVal = original[k] == null ? "" : String(original[k]);
+      const newVal = edited[k] == null ? "" : String(edited[k]);
+      if (newVal !== origVal) updates[k] = newVal;
+    });
+
+    if (Object.keys(updates).length === 0) {
+      setEditStatus({ message: "No changes to save", color: "#666" });
+      return;
+    }
+
+    const payload = {
+      identifier_field,
+      id: identifier_value,
+      updates
+    };
+
+    try {
+      console.debug("update_product payload:", payload);
+      const res = await fetch("/api/update_product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const body = await (res.headers.get("Content-Type") || "").includes("application/json") ? res.json() : { ok: false, text: await res.text() };
+      if (!res.ok) {
+        console.error("update_product failed:", res.status, body);
+        const msg = (body && (body.message || body.error || JSON.stringify(body))) || `HTTP ${res.status}`;
+        setEditStatus({ message: `Save failed: ${msg}`, color: "red" });
+      } else {
+        setEditStatus({ message: "Saved successfully", color: "green" });
+        // update local products list so preview reflects saved changes without reload
+        setProducts(prev => {
+          return (prev || []).map(p => {
+            if ((p.index !== undefined && p.index === editProduct.index) || (p.data && p.data[identifier_field] === identifier_value)) {
+              // merge edits into product.data
+              const newData = { ...(p.data || {}), ...(updates || {}) };
+              return { ...p, data: newData };
+            }
+            return p;
+          });
+        });
+        // keep modal open briefly so user sees success
+        setTimeout(() => {
+          setEditModalOpen(false);
+        }, 700);
+      }
+    } catch (err) {
+      console.error("update_product exception:", err);
+      setEditStatus({ message: `Save error: ${String(err)}`, color: "red" });
+    }
+  };
+  
   // Group fields by group property, default to 'Ungrouped'
   const groupedFields = React.useMemo(() => {
     const groups = {};
@@ -615,10 +713,7 @@ const SearchProducts = ({
             }}>
               <h2 style={{ marginBottom: 18, fontWeight: 700, fontSize: 20 }}>Edit Product</h2>
               <form
-                onSubmit={e => {
-                  e.preventDefault();
-                  handleEditSave();
-                }}
+                onSubmit={saveEditProduct}
               >
                 {Object.entries(groupedFields).map(([group, groupFields]) => {
                   const page = groupPages[group] || 0;

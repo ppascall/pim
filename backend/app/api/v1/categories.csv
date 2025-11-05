@@ -1,99 +1,25 @@
-field_name,required,description,options,group
-Product number,True,Unique SKU/identifier used internally and for variants,,
-Product Name,True,Display title shown in catalog,,
-Product Group,False,High-level group or collection this product belongs to,"Water Bottles,Tumblers,Mugs,Wall Clocks,Table & Mantel Clocks,Packaging,Home Decor,Office & Stationery,Bundles,Accessories",Identification
-Current collection,False,Shopify or internal collection name,,
-Product type,True,Type/category for filtering,"Water Bottle,Wall clock,Tumbler,Mug,Table clock,Bundle,Packaging,Accessory",Identification
-Brand,True,Brand or manufacturer name,,
-EAN Code,False,Primary barcode / EAN code,,
-IC EAN,False,Internal/secondary EAN if available,,
-MC EAN,False,Master carton EAN,,
-TARIC Code,False,Customs / tariff code,,
-Designer,False,Designer name,,
-Power type,False,Power source for the product,"Battery,Mains,USB,None",Power & Adapter
-Adapter Output Voltage (V),False,Adapter output voltage in volts (V),,Power & Adapter
-Adapter Cable Length (cm),False,Adapter cable length in cm,,
-Adapter Colour,False,Color of adapter,,
-Adapter Pins included,False,Whether adapter pins are included,"Yes,No",Power & Adapter
-Adapter Input Voltage (V),False,Adapter input voltage in volts (V),,Power & Adapter
-Battery type,False,Battery chemistry or type,"AA,AAA,CR2032,Lithium,NiMH,None",Battery
-Number of Batteries (pcs),False,Number of batteries required (integer),,Battery
-Main Case Material,False,Primary case / body material (e.g., Stainless Steel, PVC, Glass),"Stainless Steel,PVC,Glass,Wood,Metal,Cardboard",Materials & Finish
-Case Length (cm),False,Case length in cm (if applicable),,Dimensions
-Case Width (cm),False,Case width in cm (if applicable),,Dimensions
-Case Depth (cm),False,Case depth in cm (if applicable),,Dimensions
-Case Round (cm),False,Round diameter for round cases in cm,,
-Case Colour,False,Main case color,,
-Case Finish,False,Surface finish for case,"Matte,Gloss,Satin,Natural,Varnish,Textured,Metallic",Materials & Finish
-Main Dial Material,False,Material of the dial (if clock),"Glass,Metal,Wood,PVC",Materials & Finish
-Dial Colour,False,Color of the dial,,
-Hands Material Hour,False,Material for hour hand,"Metal,Wood,Plastic",Movement & Hands
-Hands Material Minute,False,Material for minute hand,"Metal,Wood,Plastic",Movement & Hands
-Hands Material Second,False,Material for second hand,"Metal,Plastic",Movement & Hands
-Hour Hand Dimensions (cm),False,Dimensions of hour hand in cm,,
-Minute Hand Dimensions (cm),False,Dimensions of minute hand in cm,,
-Second Hand Dimensions (cm),False,Dimensions of second hand in cm,,
-Hour Hand Colour,False,Color of hour hand,,
-Minute Hand Colour,False,Color of minute hand,,
-Second Hand Colour,False,Color of second hand,,
-Hands Finish,False,Finish for hands,"Matt,Gloss,Polished",Movement & Hands
-Logo Width (cm),False,Printed logo width in cm,,
-Logo Colour,False,Logo color,,
-Logo Location,False,Where logo is located on product,"Between 12 and Centre,Bottom,Back,Side,Center",Branding
-Main Product Material,False,Primary product material,,
-Secondary Product Material,False,Secondary material if composite,,
-Type of wood,False,If wood used — primary wood type,"Oak,Walnut,Pine,Bamboo",Materials & Finish
-Secondary Type of wood,False,Secondary wood type if used,"Oak,Walnut,Pine,Bamboo",Materials & Finish
-Main Product Colour,False,Primary product color,,
-Movement Type,False,Primary movement type for clocks,"Step,Sweep,High Torque,Quartz",Movement & Hands
-Movement Number Primary,False,Primary movement reference or part number,,
-Movement Type Secondary,False,Secondary movement type if applicable,"Step,Sweep,High Torque,Quartz",Movement & Hands
-Movement Number Secondary,False,Secondary movement reference,,
-Product Size Round (cm),False,Rounded diameter in cm (for round products),,Size & Weight
-Product Size length (cm),False,Length in cm,,
-Product Size Width (cm),False,Width in cm,,
-Product Size Depth (cm),False,Depth in cm,,
-Pendulum length Visible (cm),False,Visible pendulum length in cm (clocks only),,Movement & Hands
-Pendulum Width Visible (cm),False,Pendulum visible width in cm (clocks only),,Movement & Hands
-Pendulum Depth Visible (cm),False,Pendulum visible depth in cm (clocks only),,Movement & Hands
-Net Weight Product (kg),False,Net product weight in kilograms,,
-Shape of Product,False,Product shape,"Round,Rectangular,Assorted,Square,Oval",Size & Weight
-Digital or Analog,False,Is product digital or analog?,"Digital,Analog",Features/Flags
-Age group,False,Recommended age group or market,"All,Adult,Kids",Features/Flags
-Radio controlled,False,Radio controlled clock? (yes/no),"Yes,No",Features/Flags
-Silent,False,Whether product is marketed as silent/quiet,"Yes,No",Features/Flags
-Index,False,Index type for clock face,"Arabic,Roman,Indexes",Appearance
-Style,False,Style or collection descriptor,"Minimal,Lifestyle,Classic,Modern,Skeleton,Rustic",Appearance
-Outside or inside,False,Indoor or outdoor product,"Inside,Outside",Features/Flags
-Control by app,False,Controlled by mobile app?,"Yes,No",Features/Flags
-Assembly Required,False,Does product require user assembly?,"Yes,No",Logistics
-Second hand,False,Is there a second hand present?,"Yes,No",Movement & Hands
-Luminous Hands,False,Hands with luminous paint?,"Yes,No",Appearance
-Moving Gears,False,Visible moving gears (skeleton clocks),"Yes,No",Appearance
-Glow in the dark dial,False,Glow-in-the-dark dial?,"Yes,No",Appearance
-Bluetooth version,False,Bluetooth version if applicable (e.g. 4.0),,Features/Flags
-Giftbox length (cm),False,Giftbox length in cm, ,Packaging
-Giftbox Width (cm),False,Giftbox width in cm, ,Packaging
-Giftbox Depth (cm),False,Giftbox depth in cm, ,Packaging
-Giftbox Print,False,Giftbox print type,"Plain,Print",Packaging
-Giftbox type,False,Type of giftbox,"Box,Bag,Sleeve",Packaging
-Gross Weight Giftbox+Product (kg),False,Gross weight including giftbox in kg, ,Packaging
-Inner Carton length (cm),False,Inner carton length in cm, ,Logistics
-Inner Carton Width (cm),False,Inner carton width in cm, ,Logistics
-Inner Carton Depth (cm),False,Inner carton depth in cm, ,Logistics
-Inner Carton Net Weight (kg),False,Net weight per inner carton in kg, ,Logistics
-Inner Carton Gross Weight (kg),False,Gross weight per inner carton in kg, ,Logistics
-Inner Carton Quantity (pcs),False,Quantity of products per inner carton (pcs), ,Logistics
-Master Carton length (cm),False,Master carton length in cm, ,Logistics
-Master Carton Width (cm),False,Master carton width in cm, ,Logistics
-Master Carton Depth (cm),False,Master carton depth in cm, ,Logistics
-Master Carton Net Weight (kg),False,Master carton net weight in kg, ,Logistics
-Master Carton Gross Weight (kg),False,Master carton gross weight in kg, ,Logistics
-Master Carton Quantity (pcs),False,Quantity of inner cartons (or products) per master carton, ,Logistics
-Measurements Cubic Meters per MC,False,Cubic meters per master carton (m3), ,Logistics
-Packaging Weight Paper (g),False,Packaging paper weight in grams, ,Packaging
-Packaging Weight Plastic (g),False,Packaging plastic weight in grams, ,Packaging
-Packaging Weight Other (g),False,Other packaging weight in grams, ,Packaging
-User Manual Link,False,URL to user manual or instructions, ,Media
-Movie link,False,URL to product video, ,Media
-Country of Origin,False,Country where the product is manufactured or assembled,"China,Vietnam,Netherlands,Germany,Other",Identification
+category_type,value,description,required,options,group
+product_type,MD,,,,
+product_type,accessories,,,,
+product_type,asd,,,,
+product_type,bottle,,,,
+product_type,giftcard,,,,
+product_type,snowboard,,,,
+product_type,test,,,,
+tag,Accessory,,,,
+tag,Archived,,,,
+tag,Premium,,,,
+tag,Snow,,,,
+tag,Snowboard,,,,
+tag,Sport,,,,
+tag,Winter,,,,
+tag,asd,,,,
+tag,idk,,,,
+tag,test,,,,
+vendor,Hydrogen Vendor,,,,
+vendor,Multi-managed Vendor,,,,
+vendor,Nextime,,,,
+vendor,Snowboard Vendor,,,,
+vendor,TEST-WINKEL-PIM,,,,
+vendor,asd,,,,
+vendor,test,,,,

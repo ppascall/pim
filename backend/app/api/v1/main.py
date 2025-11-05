@@ -1,11 +1,12 @@
 import os
 import sys
-from flask import Flask
 from dotenv import load_dotenv
+from flask import Flask
 
-# load .env
+# load .env early so services and routes see SHOP/TOKEN and other vars
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-load_dotenv(dotenv_path=os.path.abspath(os.path.join(BASE_DIR, '../../../.env')))
+_env_path = os.path.abspath(os.path.join(BASE_DIR, '..', '..', '..', '..', '.env'))
+load_dotenv(_env_path)
 
 def create_app():
     app = Flask(__name__)

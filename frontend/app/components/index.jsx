@@ -106,7 +106,19 @@ export default function InventoryManager() {
                   <Link href="/download" className="card-btn neutral">Download CSV</Link>
                   <button
                     className="card-btn neutral"
-                    onClick={() => fetch('/api/refresh_products', { method: 'POST' }).then(()=>setStatusMsg('Refresh requested')).catch(()=>setStatusMsg('Refresh failed'))}
+                    onClick={async () => {
+                      setStatusMsg('Syncing...');
+                      try {
+                        // Sync products
+                        await fetch('/api/refresh_from_shopify', { method: 'POST' });
+                        // Sync categories
+                        await fetch('/api/refresh_categories_from_shopify', { method: 'POST' });
+                        setStatusMsg('Products & categories refreshed from Shopify!');
+                      } catch {
+                        setStatusMsg('Shopify sync failed');
+                      }
+                      setTimeout(() => setStatusMsg(''), 2200);
+                    }}
                   >
                     Refresh from Shopify
                   </button>
