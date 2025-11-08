@@ -1,15 +1,29 @@
 import os
 import csv
 from pathlib import Path
+from typing import Optional
 
 # v1 dir (…/backend/app/api/v1)
 V1_DIR = Path(__file__).resolve().parents[1]
 
+def _data_dir() -> Path:
+    """Optional override directory for CSV files via PIM_DATA_DIR env var."""
+    override = os.environ.get("PIM_DATA_DIR")
+    if override:
+        try:
+            p = Path(override).resolve()
+            p.mkdir(parents=True, exist_ok=True)
+            return p
+        except Exception:
+            # fall back to default on error
+            pass
+    return V1_DIR
+
 def get_categories_csv_path():
-    return V1_DIR / "categories.csv"
+    return _data_dir() / "categories.csv"
 
 def get_products_csv_path():
-    return V1_DIR / "products.csv"
+    return _data_dir() / "products.csv"
 
 def _safe_str(v):
     return '' if v is None else str(v)
@@ -75,3 +89,32 @@ def load_fields():
             'category_type': _safe_str(row.get('category_type')).strip(),
         })
     return out
+
+def save_fields(fields: list[dict]):
+    """
+    Persist the given fields list back to categories.csv.
+    Inverse of load_fields():
+      field_name -> value
+      description -> description
+      required -> required
+      options -> options
+      group -> group
+      category_type -> category_type (default 'custom_field')
+    """
+    rows = []
+    for f in (fields or []):
+        # Ensure stable header order by constructing dicts in desired sequence
+        category_type = _safe_str((f or {}).get('category_type')).strip() or 'custom_field'
+        value = _safe_str((f or {}).get('field_name')).strip()
+        if not value:
+            # skip rows without a field name
+            continue
+        rows.append({
+            'category_type': category_type,
+            'value': value,
+            'description': _safe_str((f or {}).get('description')).strip(),
+            'required': _safe_str((f or {}).get('required')).strip(),
+            'options': _safe_str((f or {}).get('options')).strip(),
+            'group': _safe_str((f or {}).get('group')).strip(),
+        })
+    _write_csv(get_categories_csv_path(), rows)
