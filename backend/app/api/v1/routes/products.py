@@ -307,30 +307,38 @@ def debug_products():
         return jsonify({'error': 'debug failed', 'details': str(e)}), 500
 
 @products_bp.route('/add_product', methods=['POST'])
+@products_bp.route('/api/add_product', methods=['POST'])  # optional alias if frontend uses /api/add_product
 def add_product():
     """
     Accepts JSON or form data to create a new product row.
-    Example JSON:
-      { "Product number":"SKU123", "Product Name":"My Product", "category":"Packaging" }
+    Returns 201 with product or 400/500 with error details.
     """
-    payload = request.get_json(silent=True) or request.form or {}
-    if not isinstance(payload, dict) or not payload:
-        return jsonify({'success': False, 'message': 'invalid or empty payload'}), 400
-
-    # normalize keys/values to strings
-    new_row = { str(k): ('' if v is None else v) for k, v in payload.items() }
-
-    # require at least a name or identifier
-    if not new_row.get('Product Name') and not new_row.get('Product number') and not new_row.get('handle'):
-        return jsonify({'success': False, 'message': 'Product Name or Product number required'}), 400
-
-    products = read_products_from_csv()
-    products.append(new_row)
     try:
+        payload = request.get_json(silent=True) or request.form or {}
+        if not isinstance(payload, dict) or not payload:
+            return jsonify({'success': False, 'message': 'invalid or empty payload'}), 400
+
+        new_row = {str(k): ('' if v is None else v) for k, v in payload.items()}
+
+        if not new_row.get('Product Name') and not new_row.get('Product number') and not new_row.get('handle'):
+            return jsonify({'success': False, 'message': 'Product Name or Product number required'}), 400
+
+        products = read_products_from_csv()
+        # Prevent duplicate Product number or handle
+        pn = new_row.get('Product number')
+        h = new_row.get('handle')
+        for p in products:
+            if pn and p.get('Product number') == pn:
+                return jsonify({'success': False, 'message': 'duplicate Product number'}), 409
+            if h and p.get('handle') == h:
+                return jsonify({'success': False, 'message': 'duplicate handle'}), 409
+
+        products.append(new_row)
         write_products_to_csv(products)
         return jsonify({'success': True, 'product': new_row}), 201
     except Exception as e:
-        return jsonify({'success': False, 'message': 'failed to save product', 'details': str(e)}), 500
+        logging.exception("add_product failed")
+        return jsonify({'success': False, 'message': 'internal error', 'details': str(e)}), 500
 
 @products_bp.route('/refresh_from_shopify', methods=['POST'])
 def refresh_from_shopify():
@@ -378,7 +386,7 @@ def refresh_from_shopify():
             rows.append(row)
 
         # Overwrite products.csv
-        csv_path = os.path.abspath(os.path.join(current_app.root_path, '../../../../products.csv'))
+        csv_path = os.path.abspath(os.path.join(current_app.root_path, "products.csv"))
         keys = ["handle", "title", "vendor", "product_type", "tags", "status", "id", "sku_primary"]
         with open(csv_path, "w", newline="", encoding="utf-8") as fh:
             writer = csv.DictWriter(fh, fieldnames=keys)
@@ -472,7 +480,7 @@ def shopify_status():
 
 def _fallback_load_products():
     """Fallback loader: reads top-level products.csv if csv_utils not available."""
-    csv_path = os.path.abspath(os.path.join(current_app.root_path, '../../../../products.csv'))
+    csv_path = os.path.abspath(os.path.join(current_app.root_path, "products.csv"))
     rows = []
     if not os.path.exists(csv_path):
         return rows
@@ -488,7 +496,7 @@ def _fallback_load_products():
 
 def _fallback_save_products(rows):
     """Best-effort CSV save if csv_utils not available. Overwrites header ordering."""
-    csv_path = os.path.abspath(os.path.join(current_app.root_path, '../../../../products.csv'))
+    csv_path = os.path.abspath(os.path.join(current_app.root_path, "products.csv"))
     try:
         import csv as _csv
         if not rows:

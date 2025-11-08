@@ -2,123 +2,76 @@ import os
 import csv
 from pathlib import Path
 
-# point to the v1 package directory (parent of utils)
-BASE_DIR = Path(__file__).resolve().parent.parent
+# v1 dir (…/backend/app/api/v1)
+V1_DIR = Path(__file__).resolve().parents[1]
 
-def get_fields_csv_path():
-    # categories.csv lives under backend/app/api/v1/
-    return BASE_DIR / "backend/app/api/v1/categories.csv"
+def get_categories_csv_path():
+    return V1_DIR / "categories.csv"
 
 def get_products_csv_path():
-    # products.csv lives under backend/app/api/v1/
-    return BASE_DIR / "backend/app/api/v1/products.csv"
+    return V1_DIR / "products.csv"
 
 def _safe_str(v):
     return '' if v is None else str(v)
 
-def clean_dict_keys(obj):
-    if isinstance(obj, dict):
-        return {str(k) if k is not None else '': clean_dict_keys(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [clean_dict_keys(i) for i in obj]
-    return obj
-
-def _strip_surrounding_quotes(s):
-    if s is None:
-        return ''
-    s = str(s)
-    s = s.strip()
-    if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
-        return s[1:-1].strip()
-    return s
-
-# Fields (categories) CSV read/write
-def load_fields():
-    path = get_fields_csv_path()
+def _read_csv(path: Path):
     if not path.exists():
         return []
     out = []
     with path.open(newline='', encoding='utf-8') as fh:
         reader = csv.DictReader(fh)
-        for row in reader:
-            cleaned = {k: (_safe_str(v).strip() if v is not None else '') for k, v in row.items()}
-            # ensure canonical keys and strip surrounding quotes from options
-            options_raw = _strip_surrounding_quotes(cleaned.get('options', ''))
-            out.append({
-                'field_name': cleaned.get('field_name', '') or cleaned.get('name', ''),
-                'required': cleaned.get('required', 'False'),
-                'description': cleaned.get('description', ''),
-                # return plain string (no list) so frontend parser can split on comma/pipe
-                'options': options_raw,
-                'group': cleaned.get('group', '')
-            })
-    # stable sort
-    out.sort(key=lambda x: (x.get('group', '').lower(), x.get('field_name', '').lower()))
+        for r in reader:
+            out.append({k: _safe_str(v) for k, v in (r or {}).items()})
     return out
 
-def save_fields(fields):
-    path = get_fields_csv_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    fieldnames = ['field_name', 'required', 'description', 'options', 'group']
-    with path.open('w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in fields:
-            writer.writerow({k: _safe_str(row.get(k, '')) for k in fieldnames})
-
-# Products CSV read/write + simple normalization
-def read_products_from_csv():
-    path = get_products_csv_path()
-    if not path.exists():
-        return []
-    out = []
-    with path.open(newline='', encoding='utf-8') as fh:
-        reader = csv.DictReader(fh)
-        for row in reader:
-            cleaned = { (k if k is not None else ''): ('' if v is None else v) for k, v in row.items() }
-            out.append(cleaned)
-    return out
-
-def write_products_to_csv(products):
-    path = get_products_csv_path()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if not products:
+def _write_csv(path: Path, rows: list[dict]):
+    if not rows:
         with path.open('w', newline='', encoding='utf-8') as fh:
             fh.write('')
         return
-    header = []
-    for p in products:
-        for k in p.keys():
-            if k not in header:
-                header.append(k)
+    keys = []
+    for r in rows:
+        for k in r.keys():
+            if k not in keys:
+                keys.append(k)
     with path.open('w', newline='', encoding='utf-8') as fh:
-        writer = csv.DictWriter(fh, fieldnames=header)
-        writer.writeheader()
-        for p in products:
-            row = {k: ('' if p.get(k) is None else p.get(k)) for k in header}
-            writer.writerow(row)
+        w = csv.DictWriter(fh, fieldnames=keys)
+        w.writeheader()
+        for r in rows:
+            w.writerow({k: ('' if r.get(k) is None else r.get(k)) for k in keys})
 
-def load_products(normalize=True):
-    prods = read_products_from_csv()
-    if not normalize:
-        return prods
+# Products
+def read_products_from_csv():
+    return _read_csv(get_products_csv_path())
+
+def write_products_to_csv(rows):
+    _write_csv(get_products_csv_path(), rows)
+
+# Back-compat aliases
+def load_products():
+    return read_products_from_csv()
+
+def save_products(rows):
+    return write_products_to_csv(rows)
+
+# Fields (derived from categories.csv)
+def load_fields():
+    """
+    Map categories.csv rows into the 'fields' shape expected by the frontend.
+    field_name <= value
+    """
+    rows = _read_csv(get_categories_csv_path())
     out = []
-    for p in prods:
-        p = clean_dict_keys(p)
-        # Product Name priority (CSV header)
-        title = p.get('Product Name') or p.get('Product name') or p.get('title') or p.get('handle') or ''
-        p['title'] = str(title).strip() or 'Untitled Product'
-        # category
-        p['category'] = p.get('Product Group') or p.get('category') or 'Uncategorized'
-        # status safe default
-        status = str(p.get('status') or '').lower()
-        p['status'] = status if status in ('active', 'draft', 'archived') else 'draft'
-        out.append(p)
+    for row in rows:
+        field_name = _safe_str(row.get('value')).strip()
+        if not field_name:
+            continue
+        out.append({
+            'field_name': field_name,
+            'description': _safe_str(row.get('description')).strip(),
+            'required': _safe_str(row.get('required') or 'False').strip(),
+            'options': _safe_str(row.get('options')).strip(),
+            'group': _safe_str(row.get('group')).strip(),
+            'category_type': _safe_str(row.get('category_type')).strip(),
+        })
     return out
-
-def save_products(products):
-    try:
-        write_products_to_csv(products)
-        return True
-    except Exception:
-        return False
