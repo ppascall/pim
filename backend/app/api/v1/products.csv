@@ -1,0 +1,25 @@
+handle,title,vendor,product_type,tags,status,id,sku_primary
+2424,2424,Nextime,bottle,idk,draft,10066924667219,
+asd,asd,asd,asd,asd,active,10074511507795,
+asd-1,asd,asd,asd,asd,active,10074511737171,
+asdasd,asdasd,Nextime,MD,asd,active,10074554466643,
+asdasd-1,asdasd,Nextime,MD,asd,active,10074554827091,
+asdasd-2,asdasd,Nextime,MD,asd,active,10074554859859,
+gift-card,Gift Card,Snowboard Vendor,giftcard,,active,10049262649683,
+selling-plans-ski-wax,maxine ruikt slecht,TEST-WINKEL-PIM,accessories,"Accessory, Sport, Winter",active,10049263010131,
+test,test,test,test,test,active,10049338016083,
+the-3p-fulfilled-snowboard,The 3p Fulfilled Snowboard,TEST-WINKEL-PIM,snowboard,"Accessory, Sport, Winter",active,10049263239507,sku-hosted-1
+the-archived-snowboard,The Archived Snowboard,Snowboard Vendor,snowboard,"Archived, Premium, Snow, Snowboard, Sport, Winter",archived,10049262715219,
+the-collection-snowboard-hydrogen,The Collection Snowboard: Hydrogen,Hydrogen Vendor,snowboard,"Accessory, Sport, Winter",active,10049262944595,
+the-collection-snowboard-liquid,The Collection Snowboard: Liquid,Hydrogen Vendor,snowboard,"Accessory, Sport, Winter",active,10049263173971,
+the-collection-snowboard-oxygen,The Collection Snowboard: Oxygen,Hydrogen Vendor,snowboard,"Accessory, Sport, Winter",active,10049263108435,
+the-compare-at-price-snowboard,The Compare at Price Snowboard,TEST-WINKEL-PIM,snowboard,"Accessory, Sport, Winter",active,10049262780755,
+the-complete-snowboard,The Complete Snowboard,Snowboard Vendor,snowboard,"Premium, Snow, Snowboard, Sport, Winter",active,10049262879059,
+the-draft-snowboard,The Draft Snowboard,Snowboard Vendor,snowboard,,draft,10049262747987,
+the-hidden-snowboard,The Hidden Snowboard,Snowboard Vendor,snowboard,"Premium, Snow, Snowboard, Sport, Winter",active,10049262813523,
+the-inventory-not-tracked-snowboard,The Inventory Not Tracked Snowboard,TEST-WINKEL-PIM,snowboard,"Accessory, Sport, Winter",active,10049262682451,sku-untracked-1
+the-minimal-snowboard,The Minimal Snowboard,TEST-WINKEL-PIM,,,active,10049262846291,
+the-multi-location-snowboard,The Multi-location Snowboard,TEST-WINKEL-PIM,snowboard,"Premium, Snow, Snowboard, Sport, Winter",active,10049263141203,
+the-multi-managed-snowboard,The Multi-managed Snowboard,Multi-managed Vendor,snowboard,"Premium, Snow, Snowboard, Sport, Winter",active,10049263206739,sku-managed-1
+the-out-of-stock-snowboard,The Out of Stock Snowboard,TEST-WINKEL-PIM,snowboard,"Accessory, Sport, Winter",active,10049262911827,
+the-videographer-snowboard,The Videographer Snowboard,TEST-WINKEL-PIM,snowboard,,active,10049262977363,

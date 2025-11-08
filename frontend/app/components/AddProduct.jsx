@@ -1,48 +1,51 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+'use client';
+import React, { useState, useEffect } from 'react';
+import BackButton from './BackButton';
+import Link from 'next/link';
 
-export default function AddProduct({
-  fields: initialFields,
-  endpoint = "/api/add_product",
-  fetchFieldsEndpoint = "/api/fields",
-}) {
-  const [fields, setFields] = useState(initialFields || []);
-  const [loading, setLoading] = useState(
+export default function AddProduct(props) {
+  const {
+    fields: initialFields,
+    endpoint = '/api/add_product',
+    fetchFieldsEndpoint = '/api/fields'
+  } = props;
+
+  const [fields, setFields] = React.useState(initialFields || []);
+  const [loading, setLoading] = React.useState(
     !initialFields || initialFields.length === 0
   );
-  const [primaryTitle, setPrimaryTitle] = useState("");
-  const [formData, setFormData] = useState({});
-  const [status, setStatus] = useState({ message: "", color: "" });
-  const [expandedGroups, setExpandedGroups] = useState({});
+  const [primaryTitle, setPrimaryTitle] = React.useState("");
+  const [formData, setFormData] = React.useState({});
+  const [status, setStatus] = React.useState({ message: "", color: "" });
+  const [expandedGroups, setExpandedGroups] = React.useState({});
 
   // Fetch fields if not provided
-  useEffect(() => {
+  React.useEffect(() => {
     if (!initialFields || initialFields.length === 0) {
       setLoading(true);
       fetch(fetchFieldsEndpoint)
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           if (Array.isArray(data.fields) && data.fields.length > 0) {
             setFields(data.fields);
             // Initialize formData for all fields
             const initialData = {};
-            data.fields.forEach((field) => {
-              initialData[field.field_name] = "";
+            data.fields.forEach(field => {
+              initialData[field.field_name] = '';
             });
             setFormData(initialData);
           } else {
             setFields([]);
-            setStatus({ message: "No fields found.", color: "red" });
+            setStatus({ message: 'No fields found.', color: 'red' });
           }
         })
-        .catch(() => setStatus({ message: "Failed to load fields.", color: "red" }))
+        .catch(() => setStatus({ message: 'Failed to load fields.', color: 'red' }))
         .finally(() => setLoading(false));
     } else {
       // Initialize formData for all fields
       const initialData = {};
-      initialFields.forEach((field) => {
-        initialData[field.field_name] = "";
+      initialFields.forEach(field => {
+        initialData[field.field_name] = '';
       });
       setFormData(initialData);
       setLoading(false);
@@ -71,7 +74,7 @@ export default function AddProduct({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value,
     }));
@@ -86,26 +89,23 @@ export default function AddProduct({
     const submitData = { ...formData, primary_title: primaryTitle };
     try {
       const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData),
       });
       const result = await response.json();
       if (result.success) {
-        setStatus({ message: "Product added successfully!", color: "green" });
+        setStatus({ message: 'Product added successfully!', color: 'green' });
         const resetData = {};
-        fields.forEach((field) => (resetData[field.field_name] = ""));
+        fields.forEach(field => (resetData[field.field_name] = ''));
         setFormData(resetData);
         setPrimaryTitle("");
         setExpandedGroups({});
       } else {
-        setStatus({
-          message: result.message || "Failed to add product.",
-          color: "red",
-        });
+        setStatus({ message: result.message || 'Failed to add product.', color: 'red' });
       }
     } catch {
-      setStatus({ message: "Error occurred. Try again.", color: "red" });
+      setStatus({ message: 'Error occurred. Try again.', color: 'red' });
     }
   };
 
@@ -120,174 +120,165 @@ export default function AddProduct({
     return (
       <div style={styles.container}>
         <h1 style={styles.heading}>Add Product</h1>
-        <div
-          style={{
-            textAlign: "center",
-            margin: 40,
-            fontSize: 18,
-          }}
-        >
-          Loading fields...
-        </div>
-        <Link href="/" style={styles.link}>
-          ← Back
-        </Link>
+        <div style={{ textAlign: 'center', margin: 40, fontSize: 18 }}>Loading fields...</div>
+        <Link href="/" style={styles.link}>← Back</Link>
       </div>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.heading}>Add Product</h1>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <label style={styles.label}>
-          Primary Title <span style={styles.required}>*</span>
-          <input
-            type="text"
-            name="primary_title"
-            required
-            value={primaryTitle}
-            onChange={handlePrimaryTitleChange}
-            style={styles.input}
-            placeholder="Enter main product title"
-          />
-        </label>
+    <div style={{ position: 'relative', paddingTop: 8 }}>
+      <BackButton to="/" />
+      <div style={styles.container}>
+        <h1 style={styles.heading}>Add Product</h1>
+        <form onSubmit={handleSubmit} style={styles.form}>
+          <label style={styles.label}>
+            Primary Title <span style={styles.required}>*</span>
+            <input
+              type="text"
+              name="primary_title"
+              required
+              value={primaryTitle}
+              onChange={handlePrimaryTitleChange}
+              style={styles.input}
+              placeholder="Enter main product title"
+            />
+          </label>
 
-        {/* Grouped fields */}
-        {Object.entries(groupedFields).map(([group, groupFields]) => (
-          <div key={group} style={styles.groupBlock}>
-            <div
-              style={styles.groupHeader}
-              onClick={() => toggleGroup(group)}
-              tabIndex={0}
-              role="button"
-              aria-expanded={!!expandedGroups[group]}
-              onKeyDown={e => {
-                if (e.key === "Enter" || e.key === " ") toggleGroup(group);
-              }}
-            >
-              <span style={styles.groupTitle}>
-                {expandedGroups[group] ? "▼" : "▶"} {group}
-              </span>
-              <span style={styles.groupCount}>({groupFields.length})</span>
-            </div>
-            {expandedGroups[group] && (
-              <div style={styles.groupFields}>
-                {groupFields.map((field, idx) => (
-                  <label key={field.field_name} style={styles.label}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span>
-                        {field.field_name}
-                        {field.required === "True" && (
-                          <span style={styles.required}>*</span>
-                        )}
-                      </span>
-                      <button
-                        type="button"
-                        title="Not Applicable"
-                        style={styles.iconButton}
-                        onClick={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            [field.field_name]: "NA",
-                          }))
-                        }
-                      >
-                        NA
-                      </button>
-                      <button
-                        type="button"
-                        title="Missing Data"
-                        style={styles.iconButton}
-                        onClick={() =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            [field.field_name]: "MD",
-                          }))
-                        }
-                      >
-                        MD
-                      </button>
-                    </div>
-                    {/* Render select if options are present, else input */}
-                    {field.options && field.options.trim() ? (
-                      <select
-                        name={field.field_name}
-                        required={field.required === "True"}
-                        value={formData[field.field_name] || ""}
-                        onChange={handleChange}
-                        style={styles.input}
-                      >
-                        <option value="">Select...</option>
-                        {field.options.split(",").map((opt) => (
-                          <option key={opt.trim()} value={opt.trim()}>
-                            {opt.trim()}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        name={field.field_name}
-                        required={field.required === "True"}
-                        value={formData[field.field_name] || ""}
-                        onChange={handleChange}
-                        style={styles.input}
-                      />
-                    )}
-                    {field.description && (
-                      <div
-                        style={{
-                          color: "#888",
-                          fontSize: 13,
-                          marginTop: 2,
-                        }}
-                      >
-                        {field.description}
-                      </div>
-                    )}
-                  </label>
-                ))}
+          {/* Grouped fields */}
+          {Object.entries(groupedFields).map(([group, groupFields]) => (
+            <div key={group} style={styles.groupBlock}>
+              <div
+                style={styles.groupHeader}
+                onClick={() => toggleGroup(group)}
+                tabIndex={0}
+                role="button"
+                aria-expanded={!!expandedGroups[group]}
+                onKeyDown={e => {
+                  if (e.key === "Enter" || e.key === " ") toggleGroup(group);
+                }}
+              >
+                <span style={styles.groupTitle}>
+                  {expandedGroups[group] ? "▼" : "▶"} {group}
+                </span>
+                <span style={styles.groupCount}>({groupFields.length})</span>
               </div>
-            )}
+              {expandedGroups[group] && (
+                <div style={styles.groupFields}>
+                  {groupFields.map((field, idx) => (
+                    <label key={field.field_name} style={styles.label}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span>
+                          {field.field_name}
+                          {field.required === "True" && (
+                            <span style={styles.required}>*</span>
+                          )}
+                        </span>
+                        <button
+                          type="button"
+                          title="Not Applicable"
+                          style={styles.iconButton}
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              [field.field_name]: "NA",
+                            }))
+                          }
+                        >
+                          NA
+                        </button>
+                        <button
+                          type="button"
+                          title="Missing Data"
+                          style={styles.iconButton}
+                          onClick={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              [field.field_name]: "MD",
+                            }))
+                          }
+                        >
+                          MD
+                        </button>
+                      </div>
+                      {/* Render select if options are present, else input */}
+                      {field.options && field.options.trim() ? (
+                        <select
+                          name={field.field_name}
+                          required={field.required === "True"}
+                          value={formData[field.field_name] || ""}
+                          onChange={handleChange}
+                          style={styles.input}
+                        >
+                          <option value="">Select...</option>
+                          {field.options.split(",").map((opt) => (
+                            <option key={opt.trim()} value={opt.trim()}>
+                              {opt.trim()}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          name={field.field_name}
+                          required={field.required === "True"}
+                          value={formData[field.field_name] || ""}
+                          onChange={handleChange}
+                          style={styles.input}
+                        />
+                      )}
+                      {field.description && (
+                        <div
+                          style={{
+                            color: "#888",
+                            fontSize: 13,
+                            marginTop: 2,
+                          }}
+                        >
+                          {field.description}
+                        </div>
+                      )}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <input type="submit" value="Add Product" style={styles.submit} />
+        </form>
+
+        {status.message && (
+          <div style={{ ...styles.status, color: status.color }}>
+            {status.message}
           </div>
-        ))}
+        )}
 
-        <input type="submit" value="Add Product" style={styles.submit} />
-      </form>
-
-      {status.message && (
-        <div style={{ ...styles.status, color: status.color }}>
-          {status.message}
-        </div>
-      )}
-
-      <Link href="/" style={styles.link}>
-        ← Back
-      </Link>
+        <Link href="/" style={styles.link}>← Back</Link>
+      </div>
     </div>
   );
 }
 
 const styles = {
   container: {
-    backgroundColor: "#fff",
-    padding: "30px 40px",
-    borderRadius: "12px",
-    boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
-    width: "90%",
+    backgroundColor: '#fff',
+    padding: '30px 40px',
+    borderRadius: '12px',
+    boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
+    width: '90%',
     maxWidth: 700,
-    margin: "40px auto",
-    fontFamily: "Arial, sans-serif",
+    margin: '40px auto',
+    fontFamily: 'Arial, sans-serif',
   },
   heading: {
-    textAlign: "center",
+    textAlign: 'center',
     marginBottom: 30,
-    color: "#333",
+    color: '#333',
   },
   form: {
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
     gap: 20,
   },
   label: {
@@ -298,56 +289,56 @@ const styles = {
     marginBottom: 12,
   },
   required: {
-    color: "red",
+    color: 'red',
     marginLeft: 4,
-    fontWeight: "normal",
+    fontWeight: 'normal',
   },
   input: {
     padding: 10,
     borderRadius: 6,
-    border: "1px solid #ccc",
+    border: '1px solid #ccc',
     fontSize: 14,
     marginTop: 5,
   },
   submit: {
     padding: 12,
     fontSize: 16,
-    backgroundColor: "#007BFF",
-    color: "white",
-    border: "none",
+    backgroundColor: '#007BFF',
+    color: 'white',
+    border: 'none',
     borderRadius: 6,
-    cursor: "pointer",
-    transition: "background-color 0.3s",
+    cursor: 'pointer',
+    transition: 'background-color 0.3s',
     marginTop: 16,
   },
   status: {
     marginTop: 15,
-    textAlign: "center",
-    fontWeight: "bold",
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
   link: {
-    display: "block",
+    display: 'block',
     marginTop: 20,
-    textAlign: "center",
-    color: "#666",
-    textDecoration: "none",
+    textAlign: 'center',
+    color: '#666',
+    textDecoration: 'none',
   },
   iconButton: {
-    background: "#f4f4f4",
-    border: "1px solid #ccc",
+    background: '#f4f4f4',
+    border: '1px solid #ccc',
     borderRadius: 4,
-    cursor: "pointer",
-    padding: "2px 4px",
+    cursor: 'pointer',
+    padding: '2px 4px',
     fontSize: 13,
     marginLeft: 2,
     marginRight: 2,
-    color: "#555",
-    transition: "background 0.2s, color 0.2s",
-    display: "flex",
-    alignItems: "center",
+    color: '#555',
+    transition: 'background 0.2s, color 0.2s',
+    display: 'flex',
+    alignItems: 'center',
     height: 22,
     width: 22,
-    justifyContent: "center",
+    justifyContent: 'center'
   },
   groupBlock: {
     border: "1px solid #e0e0e0",
