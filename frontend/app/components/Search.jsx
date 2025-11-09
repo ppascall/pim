@@ -245,14 +245,41 @@ const SearchProducts = ({
     fetchProductsInitial();
   }, [fetchFieldsEndpoint, fetchProductsEndpoint]);
 
-  // If the modal is open and fields arrive later, auto-expand the first group
+  // Build modal groups: include a Standard group derived from product keys, then the configured groups
+  const modalGroups = React.useMemo(() => {
+    const result = {};
+    try {
+      const src = editProduct && (editProduct.data || editProduct) ? (editProduct.data || editProduct) : null;
+      if (src) {
+        const whitelist = [
+          'title', 'Product Name', 'handle', 'vendor', 'product_type', 'tags', 'status',
+          'sku_primary', 'sku', 'id'
+        ];
+        const std = whitelist
+          .filter((k) => Object.prototype.hasOwnProperty.call(src, k))
+          .map((k) => ({ field_name: k, options: '' }));
+        if (std.length) {
+          result['Standard'] = std;
+        }
+      }
+    } catch {}
+    // append configured groups from categories
+    Object.entries(groupedFields || {}).forEach(([g, arr]) => {
+      result[g] = arr;
+    });
+    return result;
+  }, [groupedFields, editProduct]);
+
+  // If the modal is open and fields arrive later, auto-expand the first modal group
   useEffect(() => {
     if (!editModalOpen) return;
-    const groupKeys = Object.keys(groupedFields || {});
+    const groupKeys = Object.keys(modalGroups || {});
     if (groupKeys.length && Object.keys(expandedGroups || {}).length === 0) {
-      setExpandedGroups({ [groupKeys[0]]: true });
+      // Prefer expanding Standard if present
+      const first = groupKeys.includes('Standard') ? 'Standard' : groupKeys[0];
+      setExpandedGroups({ [first]: true });
     }
-  }, [editModalOpen, groupedFields, fields]);
+  }, [editModalOpen, modalGroups, fields]);
 
   // Add after products are loaded
   useEffect(() => {
@@ -736,7 +763,7 @@ const SearchProducts = ({
               <form
                 onSubmit={saveEditProduct}
               >
-                {Object.entries(groupedFields).map(([group, groupFields]) => {
+                {Object.entries(modalGroups).map(([group, groupFields]) => {
                   const page = groupPages[group] || 0;
                   const totalPages = Math.ceil(groupFields.length / CATEGORY_PAGE_SIZE);
                   const start = page * CATEGORY_PAGE_SIZE;
