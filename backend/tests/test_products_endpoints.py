@@ -51,6 +51,39 @@ def test_add_update_delete_product(client):
     assert r_del.get_json().get("success") is True
 
 
+def test_bulk_edit_and_delete_products(client):
+    # ensure at least two products exist by adding another
+    r_add = client.post("/add_product", json={
+        "handle": "bulk-temp",
+        "title": "Bulk Temp",
+        "Product number": "BULK-1",
+    })
+    assert r_add.status_code in (200, 201)
+    # fetch products to get indices
+    r = client.get("/products")
+    prods = r.get_json()["products"]
+    assert len(prods) >= 1
+    # pick up to first two indices
+    targets = list(range(min(2, len(prods))))
+    # bulk edit vendor
+    r_edit = client.post("/bulk_edit_products", json={"indices": targets, "field": "vendor", "value": "AcmeBulk"})
+    assert r_edit.status_code == 200
+    # verify change
+    r2 = client.get("/products")
+    for i in targets:
+        assert r2.get_json()["products"][i].get("vendor") == "AcmeBulk"
+    # bulk delete just the extra item we added if present
+    # find index of bulk-temp
+    r3 = client.get("/products")
+    prods3 = r3.get_json()["products"]
+    try:
+        idx = next(i for i, p in enumerate(prods3) if p.get("handle") == "bulk-temp")
+        r_del = client.post("/bulk_delete_products", json={"indices": [idx]})
+        assert r_del.status_code == 200
+    except StopIteration:
+        pass
+
+
 def test_debug_endpoint(client):
     r = client.get("/debug")
     assert r.status_code == 200

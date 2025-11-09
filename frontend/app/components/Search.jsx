@@ -192,34 +192,67 @@ const SearchProducts = ({
   const highlightProductId = searchParams.get('edit');
   const highlightField = searchParams.get('field');
 
+  // Group fields by group property, default to 'Ungrouped' (declare early so effects can depend on it safely)
+  const groupedFields = React.useMemo(() => {
+    const groups = {};
+    (fields || []).forEach((field) => {
+      const group = field && field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
+      if (!groups[group]) groups[group] = [];
+      groups[group].push(field);
+    });
+    const ordered = {};
+    Object.keys(groups)
+      .sort((a, b) => {
+        if (a === "Ungrouped") return 1;
+        if (b === "Ungrouped") return -1;
+        return a.localeCompare(b);
+      })
+      .forEach((g) => (ordered[g] = groups[g]));
+    return ordered;
+  }, [fields]);
+
+  // Expose field and product fetchers so we can re-use when opening modal
+  const fetchFields = async () => {
+    try {
+      const res = await fetch(fetchFieldsEndpoint);
+      const data = await res.json();
+      const arr = Array.isArray(data.fields) ? data.fields : [];
+      setFields(arr);
+      return arr;
+    } catch {
+      setStatus({ message: 'Failed to fetch fields.', color: 'red' });
+      return [];
+    }
+  };
+  const fetchProductsInitial = async () => {
+    try {
+      const res = await fetch(fetchProductsEndpoint);
+      const data = await res.json();
+      setProducts(
+        (data.products || []).map((p, idx) => ({
+          index: idx,
+          data: p
+        }))
+      );
+    } catch {
+      setStatus({ message: 'Failed to fetch products.', color: 'red' });
+    }
+  };
+
   // Fetch fields and products on mount
   useEffect(() => {
-    const fetchFields = async () => {
-      try {
-        const res = await fetch(fetchFieldsEndpoint);
-        const data = await res.json();
-        setFields(data.fields ? data.fields : []);
-      } catch {
-        setStatus({ message: 'Failed to fetch fields.', color: 'red' });
-      }
-    };
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch(fetchProductsEndpoint);
-        const data = await res.json();
-        setProducts(
-          (data.products || []).map((p, idx) => ({
-            index: idx,
-            data: p
-          }))
-        );
-      } catch {
-        setStatus({ message: 'Failed to fetch products.', color: 'red' });
-      }
-    };
     fetchFields();
-    fetchProducts();
+    fetchProductsInitial();
   }, [fetchFieldsEndpoint, fetchProductsEndpoint]);
+
+  // If the modal is open and fields arrive later, auto-expand the first group
+  useEffect(() => {
+    if (!editModalOpen) return;
+    const groupKeys = Object.keys(groupedFields || {});
+    if (groupKeys.length && Object.keys(expandedGroups || {}).length === 0) {
+      setExpandedGroups({ [groupKeys[0]]: true });
+    }
+  }, [editModalOpen, groupedFields, fields]);
 
   // Add after products are loaded
   useEffect(() => {
@@ -346,8 +379,13 @@ const SearchProducts = ({
   };
 
   // Open modal to edit all fields of a product
-  const openEditModal = (product) => {
+  const openEditModal = async (product) => {
     const src = (product && (product.data || product)) ? (product.data || product) : {};
+
+    // If fields haven't loaded yet (user clicked super fast), load them first then reopen.
+    if (!fields.length) {
+      await fetchFields();
+    }
 
     // copy preview data exactly (preserves the keys shown in renderPage)
     const mapped = {};
@@ -486,25 +524,7 @@ const SearchProducts = ({
     }
   };
   
-  // Group fields by group property, default to 'Ungrouped'
-  const groupedFields = React.useMemo(() => {
-    const groups = {};
-    fields.forEach((field) => {
-      const group = field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
-      if (!groups[group]) groups[group] = [];
-      groups[group].push(field);
-    });
-    // Sort group names alphabetically, Ungrouped last
-    const ordered = {};
-    Object.keys(groups)
-      .sort((a, b) => {
-        if (a === "Ungrouped") return 1;
-        if (b === "Ungrouped") return -1;
-        return a.localeCompare(b);
-      })
-      .forEach((g) => (ordered[g] = groups[g]));
-    return ordered;
-  }, [fields]);
+  // (moved groupedFields earlier)
 
   const toggleGroup = (group) => {
     setExpandedGroups((prev) => ({
@@ -624,13 +644,14 @@ const SearchProducts = ({
                         </td>
                         <td style={styles.td}>
                           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <button
-                              className="button"
-                              style={styles.button}
-                              onClick={() => openEditModal(product)}
-                            >
-                              Edit
-                            </button>
+                                <button
+                                  className="button"
+                                  style={styles.button}
+                                  onClick={() => openEditModal(product)}
+                                  disabled={!fields.length}
+                                >
+                                  {fields.length ? 'Edit' : 'Loading fields...'}
+                                </button>
                             <button
                               className="button"
                               style={styles.buttonDanger}

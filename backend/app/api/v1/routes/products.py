@@ -193,20 +193,34 @@ def update_product():
         payload = request.get_json(silent=True) or request.form or {}
         identifier_field = payload.get('identifier_field') or payload.get('id_field') or 'Product number'
         identifier_value = payload.get('id') or payload.get('identifier') or payload.get('value')
+        index_val = payload.get('index')
         updates = payload.get('updates') or payload.get('data') or {}
-        if not identifier_value:
-            return jsonify({'success': False, 'message': 'identifier value required'}), 400
 
         products = read_products_from_csv()
         updated_row = None
-        for p in products:
-            val = p.get(identifier_field) or p.get('Product number') or p.get('handle')
-            if val and str(val).strip() == str(identifier_value).strip():
+        # Allow index-based update as used by frontend editor
+        if index_val is not None and (identifier_value is None):
+            try:
+                idx = int(index_val)
+                if idx < 0 or idx >= len(products):
+                    return jsonify({'success': False, 'message': 'index out of range'}), 400
+                updated_row = products[idx]
                 if isinstance(updates, dict):
                     for k, v in updates.items():
-                        p[k] = '' if v is None else v
-                updated_row = p
-                break
+                        updated_row[k] = '' if v is None else v
+            except Exception:
+                return jsonify({'success': False, 'message': 'invalid index'}), 400
+        else:
+            if not identifier_value:
+                return jsonify({'success': False, 'message': 'identifier value required'}), 400
+            for p in products:
+                val = p.get(identifier_field) or p.get('Product number') or p.get('handle')
+                if val and str(val).strip() == str(identifier_value).strip():
+                    if isinstance(updates, dict):
+                        for k, v in updates.items():
+                            p[k] = '' if v is None else v
+                    updated_row = p
+                    break
 
         if not updated_row:
             return jsonify({'success': False, 'message': 'product not found'}), 404
@@ -586,6 +600,70 @@ def delete_product():
         "shopify_deleted": shopify_delete_result
     }), 200
 
+@products_bp.route('/bulk_delete_products', methods=['POST'])
+def bulk_delete_products():
+    """Delete multiple products by their indices in the current CSV ordering.
+
+    Payload: { "indices": [0,2,5] }
+    Returns success and counts.
+    """
+    payload = request.get_json(silent=True) or request.form or {}
+    indices = payload.get("indices")
+    if not isinstance(indices, list):
+        return jsonify({"success": False, "message": "indices list required"}), 400
+
+    products = read_products_from_csv()
+    to_delete = set()
+    for i in indices:
+        try:
+            idx = int(i)
+            if 0 <= idx < len(products):
+                to_delete.add(idx)
+        except Exception:
+            continue
+    if not to_delete:
+        return jsonify({"success": False, "message": "no valid indices"}), 400
+
+    new_products = [p for i, p in enumerate(products) if i not in to_delete]
+    try:
+        write_products_to_csv(new_products)
+        return jsonify({"success": True, "deleted": len(to_delete), "remaining": len(new_products)}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": "failed to save CSV", "details": str(e)}), 500
+
+@products_bp.route('/bulk_edit_products', methods=['POST'])
+def bulk_edit_products():
+    """Apply a single field=value update across multiple product indices.
+
+    Payload: { "indices": [..], "field": "vendor", "value": "Acme" }
+    """
+    payload = request.get_json(silent=True) or request.form or {}
+    indices = payload.get("indices")
+    field = payload.get("field")
+    value = payload.get("value")
+    if not isinstance(indices, list) or not field:
+        return jsonify({"success": False, "message": "indices list and field required"}), 400
+
+    products = read_products_from_csv()
+    changed = 0
+    for i in indices:
+        try:
+            idx = int(i)
+            if 0 <= idx < len(products):
+                products[idx][field] = '' if value is None else value
+                changed += 1
+        except Exception:
+            continue
+
+    if not changed:
+        return jsonify({"success": False, "message": "no valid indices to edit"}), 400
+
+    try:
+        write_products_to_csv(products)
+        return jsonify({"success": True, "edited": changed}), 200
+    except Exception as e:
+        return jsonify({"success": False, "message": "failed to save CSV", "details": str(e)}), 500
+
 @products_bp.route('/create_product', methods=['POST'])
 def create_product():
     """
@@ -697,11 +775,20 @@ def refresh_categories_from_shopify():
             # Only Shopify-derived fields, no custom fields
             writer.writerow(["category_type", "value", "description", "required", "options", "group"])
             for pt in sorted(product_types):
-                writer.writerow(["product_type", pt, "", "", "", ""])
+                writer.writerow(["product_type", pt, "", "", "", "Product Types"])  # set group
             for tag in sorted(tags):
-                writer.writerow(["tag", tag, "", "", "", ""])
+                # Basic grouping for tags by prefix commonly used by shop
+                grp = "Tags"
+                if isinstance(tag, str):
+                    if tag.startswith("Color_"): grp = "Colors"
+                    elif tag.startswith("Size_"): grp = "Sizes"
+                    elif tag.startswith("Material_"): grp = "Materials"
+                    elif tag.startswith("Special Features_"): grp = "Features"
+                    elif tag.startswith("Product Type_"): grp = "Product Types"
+                    elif tag.startswith("Brand_"): grp = "Brands"
+                writer.writerow(["tag", tag, "", "", "", grp])
             for vendor in sorted(vendors):
-                writer.writerow(["vendor", vendor, "", "", "", ""])
+                writer.writerow(["vendor", vendor, "", "", "", "Vendors"])  # set group
 
         return jsonify({
             'success': True,

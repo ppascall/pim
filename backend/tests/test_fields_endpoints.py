@@ -28,9 +28,12 @@ def test_update_field_creates_new(client):
 def test_delete_field(client):
     # ensure Size exists first
     resp = client.get("/fields")
-    names = {f.get("field_name") for f in resp.get_json()["fields"]}
+    fields = resp.get_json()["fields"]
+    names = {f.get("field_name") for f in fields}
     assert "Size" in names
-    del_resp = client.post("/delete_field", json={"field_name": "Size"})
+    # also try delete by index
+    size_idx = next(i for i, f in enumerate(fields) if f.get("field_name") == "Size")
+    del_resp = client.post("/delete_field", json={"index": size_idx})
     assert del_resp.status_code == 200
     after = client.get("/fields").get_json()
     names_after = {f.get("field_name") for f in after["fields"]}
