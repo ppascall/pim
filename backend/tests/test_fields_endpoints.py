@@ -38,3 +38,20 @@ def test_delete_field(client):
     after = client.get("/fields").get_json()
     names_after = {f.get("field_name") for f in after["fields"]}
     assert "Size" not in names_after
+
+
+def test_add_field_defaults_to_tag(client):
+    # Add a minimal field payload; should default to Shopify tag (category_type='tag')
+    resp = client.post("/add_field", json={"field_name": "NewMarketingTag"})
+    assert resp.status_code == 200
+    body = resp.get_json()
+    assert body.get("success") is True
+    assert body.get("category_type") == "tag"
+
+    # Verify it persisted in fields list
+    fields = client.get("/fields").get_json()["fields"]
+    match = next((f for f in fields if f.get("field_name") == "NewMarketingTag"), None)
+    assert match is not None
+    assert match.get("category_type") == "tag"
+    # Group defaults to 'Tags' for tag fields
+    assert (match.get("group") or "") == "Tags"

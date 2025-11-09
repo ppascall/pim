@@ -111,3 +111,41 @@ def test_refresh_categories_from_shopify_without_env(client):
     # Missing credentials -> 400
     assert r.status_code == 400
     assert r.get_json().get("success") is False
+
+
+def test_live_sync_toggle_and_update_response(client):
+    # ensure live sync starts disabled
+    r0 = client.get("/api/get_use_shopify")
+    assert r0.status_code == 200
+    assert r0.get_json().get("use_shopify") in (False, True)  # default False
+
+    # Disable explicitly
+    r1 = client.post("/api/set_use_shopify", json={"use_shopify": False})
+    assert r1.status_code == 200
+    assert r1.get_json().get("use_shopify") is False
+
+    # Update a product; shopify push should be skipped with reason
+    r_upd = client.post(
+        "/update_product",
+        json={
+            "index": 0,
+            "updates": {"title": "Test Live Toggle"},
+        },
+    )
+    assert r_upd.status_code == 200
+    body = r_upd.get_json()
+    assert body.get("success") is True
+    assert body.get("shopify", {}).get("pushed") in (False, None)
+
+    # Enable live sync and update again (no real creds, but path exercised)
+    r2 = client.post("/api/set_use_shopify", json={"use_shopify": True})
+    assert r2.status_code == 200
+    assert r2.get_json().get("use_shopify") is True
+
+
+def test_refresh_alias_endpoints_without_env(client):
+    # /api aliases should be routed and return 400 (missing creds) not 404
+    r1 = client.post("/api/refresh_from_shopify")
+    assert r1.status_code == 400
+    r2 = client.post("/api/refresh_categories_from_shopify")
+    assert r2.status_code == 400

@@ -43,20 +43,20 @@ def update_product_by_id(product_id: int, payload: Dict[str, Any]) -> Optional[D
         return None
 
 def attempt_update_shopify(product_row: Dict[str, Any], updates: Dict[str, Any]) -> Dict[str, Any]:
+    """Best-effort push of updates to Shopify.
+
+    Mappings:
+      - title -> product.title
+      - description -> product.body_html
+      - tags -> product.tags (full overwrite of tag string)
+      - sku/sku_primary -> variant.sku (first matched variant)
     """
-    Best-effort push of updates to Shopify:
-      - prefer finding product by handle (product_row['handle'])
-      - map CSV fields to Shopify product fields (title -> title, description -> body_html)
-      - if SKU update provided, try to update matching variant.sku
-    Returns dict with result info.
-    """
-    result = {"pushed": False, "reason": None}
+    result: Dict[str, Any] = {"pushed": False, "reason": None}
     try:
         handle = (product_row.get("handle") or "").strip()
         product = None
         if handle:
             product = find_product_by_handle(handle)
-        # if still no product, try matching by title
         if product is None and product_row.get("title"):
             product = find_product_by_handle(product_row.get("title"))
 
@@ -65,42 +65,37 @@ def attempt_update_shopify(product_row: Dict[str, Any], updates: Dict[str, Any])
             return result
 
         prod_id = product.get("id")
-        shopify_payload = {"product": {}}
-        # map common CSV->Shopify fields
+        shopify_payload: Dict[str, Any] = {"product": {}}
+        # product-level mappings
         if "title" in updates:
             shopify_payload["product"]["title"] = updates["title"]
-        elif product_row.get("title"):
-            # nothing to update but keep current, skip
-            pass
         if "description" in updates:
             shopify_payload["product"]["body_html"] = updates["description"]
+        if "tags" in updates:
+            shopify_payload["product"]["tags"] = updates["tags"]
 
-        # attempt to update variants when SKU changes or variant-specific fields provided
+        # variant-level SKU update
         variant_updated = False
         if "sku_primary" in updates or "sku" in updates or "sku" in product_row:
             new_sku = updates.get("sku_primary") or updates.get("sku")
             if new_sku:
                 try:
-                    # fetch latest product to inspect variants
                     base = _base()
                     url = f"{base}/products/{prod_id}.json"
                     resp = requests.get(url, auth=AUTH, timeout=10)
                     resp.raise_for_status()
                     current = resp.json().get("product", {})
                     for v in (current.get("variants") or []):
-                        # match by existing sku or by title/option heuristics
                         if str(v.get("sku") or "").strip() and (str(v.get("sku") or "").strip() == (product_row.get("sku_primary") or product_row.get("sku") or "")):
-                            # update this variant
-                            variant_payload = {"variant": {"id": v["id"], "sku": new_sku}}
+                            payload = {"variant": {"id": v["id"], "sku": new_sku}}
                             vurl = f"{base}/variants/{v['id']}.json"
-                            r2 = requests.put(vurl, json=variant_payload, auth=AUTH, timeout=10)
+                            r2 = requests.put(vurl, json=payload, auth=AUTH, timeout=10)
                             if r2.ok:
                                 variant_updated = True
                                 break
                 except Exception:
                     pass
 
-        # Only send product-level update if we have fields to update
         if shopify_payload["product"]:
             upd = update_product_by_id(prod_id, shopify_payload)
             if upd:

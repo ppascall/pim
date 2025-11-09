@@ -1,144 +1,145 @@
 category_type,value,description,required,options,group
-product_type,Afstandmeter,,,,Product Types
-product_type,Alarm Clock,,,,Product Types
-product_type,Alarmsysteem,,,,Product Types
-product_type,Badthermometer,,,,Product Types
-product_type,Batterijoplader,,,,Product Types
-product_type,Bestekset,,,,Product Types
-product_type,Buitenthermometer,,,,Product Types
-product_type,Digitale wandklok,,,,Product Types
-product_type,Home & Garden,,,,Product Types
-product_type,Keukenthermometer,,,,Product Types
-product_type,Klok,,,,Product Types
-product_type,Kompas,,,,Product Types
-product_type,Kookwekker,,,,Product Types
-product_type,Luchtkwaliteitmeter,,,,Product Types
-product_type,Projectiewekker,,,,Product Types
-product_type,Radio,,,,Product Types
-product_type,Sauna thermometer,,,,Product Types
-product_type,Table clock,,,,Product Types
-product_type,Thermometer,,,,Product Types
-product_type,Thermostaat,,,,Product Types
-product_type,Vochtmeter,,,,Product Types
-product_type,Wall clock,,,,Product Types
-product_type,Wandklok,,,,Product Types
-product_type,Waterthermometer,,,,Product Types
-product_type,Weerstation,,,,Product Types
-product_type,Wekker,,,,Product Types
-product_type,Wekkerradio,,,,Product Types
-tag,2021 Collection,,,,Tags
-tag,Alarm Clock on Wheel,,,,Tags
-tag,Analog / Digital_Analog,,,,Tags
-tag,Analog / Digital_Digital,,,,Tags
-tag,Brand_Clocky,,,,Brands
-tag,Brand_NeXtime,,,,Brands
-tag,Buitenthermometer,,,,Tags
-tag,Clock that runs,,,,Tags
-tag,Collection Industrial,,,,Tags
-tag,Collection_Designer Clocks,,,,Tags
-tag,Collection_Industrial Clocks,,,,Tags
-tag,Collection_Modern Classic,,,,Tags
-tag,Collection_Natural Habitat,,,,Tags
-tag,Collection_Table Clocks & Alarm,,,,Tags
-tag,Color_Black,,,,Colors
-tag,Color_Brown,,,,Colors
-tag,Color_Gold,,,,Colors
-tag,Color_White,,,,Colors
-tag,FM-radio,,,,Tags
-tag,Front theme,,,,Tags
-tag,Index_Design Index,,,,Tags
-tag,Index_Numbers,,,,Tags
-tag,Index_Roman Numbers,,,,Tags
-tag,Index_Stripe Index,,,,Tags
-tag,Kinderwekker,,,,Tags
-tag,Kookwekker,,,,Tags
-tag,Material_Metal,,,,Materials
-tag,Material_Plastic,,,,Materials
-tag,Material_Wood,,,,Materials
-tag,NeXha,,,,Tags
-tag,Oplader,,,,Tags
-tag,Product Type_Alarm clock,,,,Product Types
-tag,Product Type_Table clock,,,,Product Types
-tag,Product Type_Wall clock,,,,Product Types
-tag,Quartzklok,,,,Tags
-tag,Runaway Alarm,,,,Tags
-tag,Runaway Clock,,,,Tags
-tag,Size_Large (>40cm),,,,Sizes
-tag,Size_Medium (20cm to 40cm),,,,Sizes
-tag,Size_Small (<20cm),,,,Sizes
-tag,Special Features_LCD Display,,,,Features
-tag,Special Features_Pendulum,,,,Features
-tag,Special Features_Silent,,,,Features
-tag,Special Features_kids,,,,Features
-tag,Wandklokken,,,,Tags
-tag,Weerstation,,,,Tags
-tag,__tab1:product-manual-nextime-clock,,,,Tags
-tag,alarm,,,,Tags
-tag,alarm clock,,,,Tags
-tag,alarm clock bed,,,,Tags
-tag,alarm clock for heavy sleepers,,,,Tags
-tag,alarm clock kids,,,,Tags
-tag,alarm clock loud,,,,Tags
-tag,alarm clock that rolls,,,,Tags
-tag,alarm functie,,,,Tags
-tag,buitensensor,,,,Tags
-tag,can't wake up,,,,Tags
-tag,chase alarm clock,,,,Tags
-tag,clever,,,,Tags
-tag,clock,,,,Tags
-tag,clock for oversleeping,,,,Tags
-tag,clock with disabled snooze,,,,Tags
-tag,clocky,,,,Tags
-tag,clocky alarm clock,,,,Tags
-tag,clocky alarm clock on wheels,,,,Tags
-tag,clocky alarm clocks,,,,Tags
-tag,co2,,,,Tags
-tag,co2 meter,,,,Tags
-tag,color_silver,,,,Tags
-tag,datumweergave,,,,Tags
-tag,digitale wandklok,,,,Tags
-tag,disable snooze button,,,,Tags
-tag,flying alarm clock,,,,Tags
-tag,flying clock,,,,Tags
-tag,funny alarm clock,,,,Tags
-tag,gauri nanda,,,,Tags
-tag,get out of bed,,,,Tags
-tag,gifts,,,,Tags
-tag,heavy sleeper alarm clock,,,,Tags
-tag,humiditymeter,,,,Tags
-tag,hygrometer,,,,Tags
-tag,jumping alarm clock,,,,Tags
-tag,jumping clock,,,,Tags
-tag,loud alarm clock,,,,Tags
-tag,loud clock,,,,Tags
-tag,luchtdrukweergave,,,,Tags
-tag,mobile alert,,,,Tags
-tag,moving alarm clock,,,,Tags
-tag,multiple alarm clock,,,,Tags
-tag,nanda home,,,,Tags
-tag,pre_order_table_clocks,,,,Tags
-tag,programmable snooze button,,,,Tags
-tag,projectiefunctie,,,,Tags
-tag,puzzle alarm clock,,,,Tags
-tag,robot alarm clock,,,,Tags
-tag,rolling alarm,,,,Tags
-tag,rolling alarm clock,,,,Tags
-tag,rolling alarm clocks,,,,Tags
-tag,runaway alarm clock,,,,Tags
-tag,snooze button,,,,Tags
-tag,snoozefunctie,,,,Tags
-tag,tafelklok,,,,Tags
-tag,thermometer,,,,Tags
-tag,thermometer functie,,,,Tags
-tag,tool,,,,Tags
-tag,unique alarm clock,,,,Tags
-tag,unique clock,,,,Tags
-tag,unique products,,,,Tags
-tag,weersvoorspelling,,,,Tags
-tag,wekker,,,,Tags
-tag,zendergestuurd,,,,Tags
-vendor,Clocky Store,,,,Vendors
-vendor,NeXtime,,,,Vendors
-vendor,NeXtime Clocks,,,,Vendors
-vendor,Technoline,,,,Vendors
-vendor,Technoline Store,,,,Vendors
+product_type,Afstandmeter,,False,,Product Types
+product_type,Alarm Clock,,False,,Product Types
+product_type,Alarmsysteem,,False,,Product Types
+product_type,Badthermometer,,False,,Product Types
+product_type,Batterijoplader,,False,,Product Types
+product_type,Bestekset,,False,,Product Types
+product_type,Buitenthermometer,,False,,Product Types
+product_type,Digitale wandklok,,False,,Product Types
+product_type,Home & Garden,,False,,Product Types
+product_type,Keukenthermometer,,False,,Product Types
+product_type,Klok,,False,,Product Types
+product_type,Kompas,,False,,Product Types
+product_type,Kookwekker,,False,,Product Types
+product_type,Luchtkwaliteitmeter,,False,,Product Types
+product_type,Projectiewekker,,False,,Product Types
+product_type,Radio,,False,,Product Types
+product_type,Sauna thermometer,,False,,Product Types
+product_type,Table clock,,False,,Product Types
+product_type,Thermometer,,False,,Product Types
+product_type,Thermostaat,,False,,Product Types
+product_type,Vochtmeter,,False,,Product Types
+product_type,Wall clock,,False,,Product Types
+product_type,Wandklok,,False,,Product Types
+product_type,Waterthermometer,,False,,Product Types
+product_type,Weerstation,,False,,Product Types
+product_type,Wekker,,False,,Product Types
+product_type,Wekkerradio,,False,,Product Types
+tag,2021 Collection,,False,,Tags
+tag,Alarm Clock on Wheel,,False,,Tags
+tag,Analog / Digital_Analog,,False,,Tags
+tag,Analog / Digital_Digital,,False,,Tags
+tag,Brand_Clocky,,False,,Brands
+tag,Brand_NeXtime,,False,,Brands
+tag,Buitenthermometer,,False,,Tags
+tag,Clock that runs,,False,,Tags
+tag,Collection Industrial,,False,,Tags
+tag,Collection_Designer Clocks,,False,,Tags
+tag,Collection_Industrial Clocks,,False,,Tags
+tag,Collection_Modern Classic,,False,,Tags
+tag,Collection_Natural Habitat,,False,,Tags
+tag,Collection_Table Clocks & Alarm,,False,,Tags
+tag,Color_Black,,False,,Colors
+tag,Color_Brown,,False,,Colors
+tag,Color_Gold,,False,,Colors
+tag,Color_White,,False,,Colors
+tag,FM-radio,,False,,Tags
+tag,Front theme,,False,,Tags
+tag,Index_Design Index,,False,,Tags
+tag,Index_Numbers,,False,,Tags
+tag,Index_Roman Numbers,,False,,Tags
+tag,Index_Stripe Index,,False,,Tags
+tag,Kinderwekker,,False,,Tags
+tag,Kookwekker,,False,,Tags
+tag,Material_Metal,,False,,Materials
+tag,Material_Plastic,,False,,Materials
+tag,Material_Wood,,False,,Materials
+tag,NeXha,,False,,Tags
+tag,Oplader,,False,,Tags
+tag,Product Type_Alarm clock,,False,,Product Types
+tag,Product Type_Table clock,,False,,Product Types
+tag,Product Type_Wall clock,,False,,Product Types
+tag,Quartzklok,,False,,Tags
+tag,Runaway Alarm,,False,,Tags
+tag,Runaway Clock,,False,,Tags
+tag,Size_Large (>40cm),,False,,Sizes
+tag,Size_Medium (20cm to 40cm),,False,,Sizes
+tag,Size_Small (<20cm),,False,,Sizes
+tag,Special Features_LCD Display,,False,,Features
+tag,Special Features_Pendulum,,False,,Features
+tag,Special Features_Silent,,False,,Features
+tag,Special Features_kids,,False,,Features
+tag,Wandklokken,,False,,Tags
+tag,Weerstation,,False,,Tags
+tag,__tab1:product-manual-nextime-clock,,False,,Tags
+tag,alarm,,False,,Tags
+tag,alarm clock,,False,,Tags
+tag,alarm clock bed,,False,,Tags
+tag,alarm clock for heavy sleepers,,False,,Tags
+tag,alarm clock kids,,False,,Tags
+tag,alarm clock loud,,False,,Tags
+tag,alarm clock that rolls,,False,,Tags
+tag,alarm functie,,False,,Tags
+tag,buitensensor,,False,,Tags
+tag,can't wake up,,False,,Tags
+tag,chase alarm clock,,False,,Tags
+tag,clever,,False,,Tags
+tag,clock,,False,,Tags
+tag,clock for oversleeping,,False,,Tags
+tag,clock with disabled snooze,,False,,Tags
+tag,clocky,,False,,Tags
+tag,clocky alarm clock,,False,,Tags
+tag,clocky alarm clock on wheels,,False,,Tags
+tag,clocky alarm clocks,,False,,Tags
+tag,co2,,False,,Tags
+tag,co2 meter,,False,,Tags
+tag,color_silver,,False,,Tags
+tag,datumweergave,,False,,Tags
+tag,digitale wandklok,,False,,Tags
+tag,disable snooze button,,False,,Tags
+tag,flying alarm clock,,False,,Tags
+tag,flying clock,,False,,Tags
+tag,funny alarm clock,,False,,Tags
+tag,gauri nanda,,False,,Tags
+tag,get out of bed,,False,,Tags
+tag,gifts,,False,,Tags
+tag,heavy sleeper alarm clock,,False,,Tags
+tag,humiditymeter,,False,,Tags
+tag,hygrometer,,False,,Tags
+tag,jumping alarm clock,,False,,Tags
+tag,jumping clock,,False,,Tags
+tag,loud alarm clock,,False,,Tags
+tag,loud clock,,False,,Tags
+tag,luchtdrukweergave,,False,,Tags
+tag,mobile alert,,False,,Tags
+tag,moving alarm clock,,False,,Tags
+tag,multiple alarm clock,,False,,Tags
+tag,nanda home,,False,,Tags
+tag,ppppppppppp,ppppppppppp,Yes,"ppppppppppp,ppppppppppp,ppppppppppp",Vendors
+tag,pre_order_table_clocks,,False,,Tags
+tag,programmable snooze button,,False,,Tags
+tag,projectiefunctie,,False,,Tags
+tag,puzzle alarm clock,,False,,Tags
+tag,robot alarm clock,,False,,Tags
+tag,rolling alarm,,False,,Tags
+tag,rolling alarm clock,,False,,Tags
+tag,rolling alarm clocks,,False,,Tags
+tag,runaway alarm clock,,False,,Tags
+tag,snooze button,,False,,Tags
+tag,snoozefunctie,,False,,Tags
+tag,tafelklok,,False,,Tags
+tag,thermometer,,False,,Tags
+tag,thermometer functie,,False,,Tags
+tag,tool,,False,,Tags
+tag,unique alarm clock,,False,,Tags
+tag,unique clock,,False,,Tags
+tag,unique products,,False,,Tags
+tag,weersvoorspelling,,False,,Tags
+tag,wekker,,False,,Tags
+tag,zendergestuurd,,False,,Tags
+vendor,Clocky Store,,False,,Vendors
+vendor,NeXtime,,False,,Vendors
+vendor,NeXtime Clocks,,False,,Vendors
+vendor,Technoline,,False,,Vendors
+vendor,Technoline Store,,False,,Vendors

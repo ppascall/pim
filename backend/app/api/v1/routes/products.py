@@ -3,9 +3,20 @@ import logging
 import os
 import requests
 from dotenv import load_dotenv
-from ..utils.csv_utils import load_products, save_products, read_products_from_csv, write_products_to_csv, load_fields
+from ..utils.csv_utils import (
+    load_products,
+    save_products,
+    read_products_from_csv,
+    write_products_to_csv,
+    load_fields,
+    _read_csv as _read_categories_csv_raw,  # internal for merging
+)
+from ..utils.csv_utils import get_products_csv_path as _get_products_csv_path  # for returning paths
+from ..utils.csv_utils import get_categories_csv_path as _get_categories_csv_path, _write_csv as _write_categories_csv_raw
+from ..utils.categories_merge import merge_categories
 from ..services import shopify as shopify_svc
 import csv
+from ..core.state import is_live_sync, set_live_sync
 
 products_bp = Blueprint('products_bp', __name__)
 
@@ -227,11 +238,13 @@ def update_product():
 
         write_products_to_csv(products)
 
-        # Best-effort: attempt to push changes to Shopify if service supports it
+        # Best-effort: attempt to push changes to Shopify if enabled and service supports it
         shopify_result = None
         try:
-            if hasattr(shopify_svc, 'attempt_update_shopify'):
+            if is_live_sync() and hasattr(shopify_svc, 'attempt_update_shopify'):
                 shopify_result = shopify_svc.attempt_update_shopify(updated_row, updates or {})
+            else:
+                shopify_result = {'pushed': False, 'reason': 'live sync disabled' if not is_live_sync() else 'attempt_update_shopify missing'}
         except Exception:
             logging.exception("shopify push failed")
             shopify_result = {'error': 'shopify push exception'}
@@ -246,6 +259,19 @@ def update_product():
         return jsonify({'success': True, 'shopify': shopify_result, 'metafields_sync': metafields_sync})
     except Exception as e:
         return jsonify({'success': False, 'message': 'update failed', 'details': str(e)}), 500
+
+
+@products_bp.route('/api/set_use_shopify', methods=['POST'])
+def set_use_shopify():
+    payload = request.get_json(silent=True) or {}
+    enabled = bool(payload.get('use_shopify'))
+    set_live_sync(enabled)
+    return jsonify({'success': True, 'use_shopify': enabled}), 200
+
+
+@products_bp.route('/api/get_use_shopify', methods=['GET'])
+def get_use_shopify():
+    return jsonify({'use_shopify': is_live_sync()}), 200
 
 # refresh_products kept here but can be delegated to shopify service
 @products_bp.route('/refresh_products', methods=['POST'])
@@ -355,6 +381,7 @@ def add_product():
         return jsonify({'success': False, 'message': 'internal error', 'details': str(e)}), 500
 
 @products_bp.route('/refresh_from_shopify', methods=['POST'])
+@products_bp.route('/api/refresh_from_shopify', methods=['POST'])
 def refresh_from_shopify():
     """
     Fetches all products from Shopify and overwrites products.csv with the latest data.
@@ -399,14 +426,14 @@ def refresh_from_shopify():
                 row["sku_primary"] = p["variants"][0].get("sku")
             rows.append(row)
 
-        # Overwrite products.csv
-        csv_path = os.path.abspath(os.path.join(current_app.root_path, "products.csv"))
+        # Overwrite products.csv using csv_utils for consistent path
         keys = ["handle", "title", "vendor", "product_type", "tags", "status", "id", "sku_primary"]
-        with open(csv_path, "w", newline="", encoding="utf-8") as fh:
-            writer = csv.DictWriter(fh, fieldnames=keys)
-            writer.writeheader()
-            for r in rows:
-                writer.writerow({k: r.get(k, "") for k in keys})
+        # ensure rows only include keys above
+        normalized = []
+        for r in rows:
+            normalized.append({k: r.get(k, "") for k in keys})
+        write_products_to_csv(normalized)
+        csv_path = str(_get_products_csv_path())
 
         return jsonify({'success': True, 'count': len(rows), 'csv_path': csv_path}), 200
 
@@ -725,6 +752,7 @@ def create_product():
         return jsonify({"success": False, "message": str(e)}), 500
 
 @products_bp.route('/refresh_categories_from_shopify', methods=['POST'])
+@products_bp.route('/api/refresh_categories_from_shopify', methods=['POST'])
 def refresh_categories_from_shopify():
     """
     Fetches all unique product_type, tags, and vendor values from Shopify and writes categories.csv.
@@ -768,34 +796,25 @@ def refresh_categories_from_shopify():
             if p.get("vendor"):
                 vendors.add(p["vendor"])
 
-        # Write to categories.csv in backend directory
-        csv_path = os.path.abspath(os.path.join(current_app.root_path, "categories.csv"))
-        with open(csv_path, "w", newline="", encoding="utf-8") as fh:
-            writer = csv.writer(fh)
-            # Only Shopify-derived fields, no custom fields
-            writer.writerow(["category_type", "value", "description", "required", "options", "group"])
-            for pt in sorted(product_types):
-                writer.writerow(["product_type", pt, "", "", "", "Product Types"])  # set group
-            for tag in sorted(tags):
-                # Basic grouping for tags by prefix commonly used by shop
-                grp = "Tags"
-                if isinstance(tag, str):
-                    if tag.startswith("Color_"): grp = "Colors"
-                    elif tag.startswith("Size_"): grp = "Sizes"
-                    elif tag.startswith("Material_"): grp = "Materials"
-                    elif tag.startswith("Special Features_"): grp = "Features"
-                    elif tag.startswith("Product Type_"): grp = "Product Types"
-                    elif tag.startswith("Brand_"): grp = "Brands"
-                writer.writerow(["tag", tag, "", "", "", grp])
-            for vendor in sorted(vendors):
-                writer.writerow(["vendor", vendor, "", "", "", "Vendors"])  # set group
+        # Merge with existing categories preserving custom fields & metadata
+        categories_path = _get_categories_csv_path()
+        existing_rows = _read_categories_csv_raw(categories_path)
+        merged = merge_categories(existing_rows, {
+            'product_type': product_types,
+            'tag': tags,
+            'vendor': vendors,
+        })
+        # Write merged rows
+        _write_categories_csv_raw(categories_path, merged)
 
         return jsonify({
             'success': True,
             'product_types': list(product_types),
             'tags': list(tags),
             'vendors': list(vendors),
-            'csv_path': csv_path
+            'preserved_custom_fields': len([r for r in existing_rows if r.get('category_type') not in {'product_type','tag','vendor'}]),
+            'merged_count': len(merged),
+            'csv_path': str(categories_path),
         }), 200
 
     except Exception as e:
