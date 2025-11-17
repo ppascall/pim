@@ -69,5 +69,5 @@ fi
 
 # --- Frontend (Next.js) start ---
 cd frontend
-echo "Starting Next.js on port ${FRONTEND_PORT} (proxies /api to ${BACKEND_HOST}:${BACKEND_PORT})"
-npx next start -p "${FRONTEND_PORT}"
+echo "Starting Next.js on 0.0.0.0:${FRONTEND_PORT} (proxies /api to ${BACKEND_HOST}:${BACKEND_PORT})"
+npx next start -H 0.0.0.0 -p "${FRONTEND_PORT}"
