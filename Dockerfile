@@ -24,12 +24,12 @@ RUN cd frontend \
   && npm run build
 
 ENV HOST=0.0.0.0 \
-    PORT=3000 \
+  PORT=8080 \
     PIM_DATA_DIR=/data
 
 RUN mkdir -p /data
 
-EXPOSE 3000
+EXPOSE 8080
 
 # Start both backend and frontend; /api is proxied to 127.0.0.1:5000 via next.config.js
 CMD ["bash", "./start.sh"]

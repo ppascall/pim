@@ -4,7 +4,8 @@ set -euo pipefail
 # --- Config ---
 BACKEND_HOST=127.0.0.1
 BACKEND_PORT=5000
-FRONTEND_PORT="${PORT:-3000}"
+# Default to 8080 if PORT is not set by the platform
+FRONTEND_PORT="${PORT:-8080}"
 PIM_DATA_DIR="${PIM_DATA_DIR:-/tmp/pim_data}"
 
 # --- Frontend (Next.js) build first to minimize memory while backend is running ---
