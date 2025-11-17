@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+frontend/.next/cache
+frontend/node_modules
+**/__pycache__/
+.pytest_cache
+.venv
+.git
+shopifydata/*
+*.csv
+!products.csv
+backend/app/api/v1/__pycache__
+backend/app/**/__pycache__
