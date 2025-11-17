@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
+import { apiUrl } from '../lib/api';
 
 const MAX_VISIBLE_FIELDS = 6;
 const PRODUCTS_PER_PAGE = 25;
@@ -188,12 +189,12 @@ const ManageProducts = ({
 
   // Fetch products and fields
   const fetchProducts = async () => {
-    const res = await fetch(fetchEndpoint);
+    const res = await fetch(apiUrl(fetchEndpoint));
     const data = await res.json();
     setProducts(data.products || []);
   };
   const fetchFields = async () => {
-    const res = await fetch('/api/fields');
+    const res = await fetch(apiUrl('/api/fields'));
     const data = await res.json();
     setFields(data.fields || []);
   };
@@ -227,7 +228,7 @@ const ManageProducts = ({
   const handleBulkDelete = async () => {
     if (!selected.length) return;
     if (!window.confirm('Delete selected products?')) return;
-    const res = await fetch(bulkDeleteEndpoint, {
+    const res = await fetch(apiUrl(bulkDeleteEndpoint), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ indices: selected }),
@@ -245,7 +246,7 @@ const ManageProducts = ({
   // Bulk edit
   const handleBulkEdit = async () => {
     if (!selected.length || !editField) return;
-    const res = await fetch(bulkEditEndpoint, {
+    const res = await fetch(apiUrl(bulkEditEndpoint), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -268,7 +269,7 @@ const ManageProducts = ({
     if (!editProduct) return;
     try {
       const payload = { index: editProduct.index, ...editFields };
-      const res = await fetch('/api/update_product', {
+      const res = await fetch(apiUrl('/api/update_product'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

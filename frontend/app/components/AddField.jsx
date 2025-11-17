@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import BackButton from './BackButton';
+import { apiUrl } from '../lib/api';
 
 export default function AddField({ endpoint = '/api/add_field' }) { // Use /api/ prefix for proxy
   const [fieldName, setFieldName] = useState('');
@@ -17,7 +18,7 @@ export default function AddField({ endpoint = '/api/add_field' }) { // Use /api/
     formData.append('description', description);
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(apiUrl(endpoint), {
         method: 'POST',
         body: formData,
       });

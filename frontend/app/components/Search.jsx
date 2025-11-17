@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import BackButton from './BackButton';
+import { apiUrl } from '../lib/api';
 
 const PAGE_SIZE = 5;
 const CATEGORY_PAGE_SIZE = 4;
@@ -214,7 +215,7 @@ const SearchProducts = ({
   // Expose field and product fetchers so we can re-use when opening modal
   const fetchFields = async () => {
     try {
-      const res = await fetch(fetchFieldsEndpoint);
+      const res = await fetch(apiUrl(fetchFieldsEndpoint));
       const data = await res.json();
       const arr = Array.isArray(data.fields) ? data.fields : [];
       setFields(arr);
@@ -226,7 +227,7 @@ const SearchProducts = ({
   };
   const fetchProductsInitial = async () => {
     try {
-      const res = await fetch(fetchProductsEndpoint);
+      const res = await fetch(apiUrl(fetchProductsEndpoint));
       const data = await res.json();
       setProducts(
         (data.products || []).map((p, idx) => ({
@@ -345,7 +346,7 @@ const SearchProducts = ({
     setExpandedIndex(null);
     setStatus({ message: '', color: '' });
     try {
-      const res = await fetch(searchEndpoint, {
+  const res = await fetch(apiUrl(searchEndpoint), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -371,7 +372,7 @@ const SearchProducts = ({
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(fetchProductsEndpoint);
+  const res = await fetch(apiUrl(fetchProductsEndpoint));
       const data = await res.json();
       setProducts(
         (data.products || []).map((p, idx) => ({
@@ -388,7 +389,7 @@ const SearchProducts = ({
   const handleDelete = async (productIdx) => {
     if (!window.confirm('Are you sure?')) return;
     try {
-      const res = await fetch(deleteProductEndpoint, {
+  const res = await fetch(apiUrl(deleteProductEndpoint), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ index: productIdx })
@@ -517,7 +518,7 @@ const SearchProducts = ({
 
     try {
       console.debug("update_product payload:", payload);
-      const res = await fetch("/api/update_product", {
+  const res = await fetch(apiUrl("/api/update_product"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

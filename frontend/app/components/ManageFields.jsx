@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 
+import { apiUrl } from '../lib/api';
+
 const ManageFields = ({
   fetchEndpoint = '/api/fields',
   updateEndpoint = '/api/update_field',
@@ -18,7 +20,7 @@ const ManageFields = ({
   useEffect(() => {
     const fetchFields = async () => {
       try {
-        const res = await fetch(fetchEndpoint);
+  const res = await fetch(apiUrl(fetchEndpoint));
         const data = await res.json();
         // Debug: log raw payload for diagnosing empty list issues
         // Remove once verified
@@ -91,7 +93,7 @@ const ManageFields = ({
     e.preventDefault();
     if (selectedIndex !== null) {
       try {
-        const res = await fetch(updateEndpoint, {
+  const res = await fetch(apiUrl(updateEndpoint), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -118,7 +120,7 @@ const ManageFields = ({
     e.preventDefault();
     if (selectedIndex !== null && window.confirm('Are you sure you want to delete this field?')) {
       try {
-        const res = await fetch(deleteEndpoint, {
+  const res = await fetch(apiUrl(deleteEndpoint), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ index: selectedIndex }),
