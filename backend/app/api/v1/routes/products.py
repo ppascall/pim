@@ -174,11 +174,13 @@ def sync_metafields_for_row(row, shopify_result=None):
     return {"product_id": product_id, "results": results}
 
 @products_bp.route('/products', methods=['GET'])
+@products_bp.route('/api/products', methods=['GET'])
 def get_products():
     products = load_products()
     return jsonify({'products': products})
 
 @products_bp.route('/search_products', methods=['POST'])
+@products_bp.route('/api/search_products', methods=['POST'])
 def search_products():
     try:
         payload = request.get_json(silent=True) or request.form or {}
@@ -199,6 +201,7 @@ def search_products():
         return jsonify({'error': 'search failed', 'details': str(e)}), 500
 
 @products_bp.route('/update_product', methods=['POST'])
+@products_bp.route('/api/update_product', methods=['POST'])
 def update_product():
     try:
         payload = request.get_json(silent=True) or request.form or {}
@@ -275,6 +278,7 @@ def get_use_shopify():
 
 # refresh_products kept here but can be delegated to shopify service
 @products_bp.route('/refresh_products', methods=['POST'])
+@products_bp.route('/api/refresh_products', methods=['POST'])
 def refresh_products():
     """
     Refresh a batch of products and attempt to push them to Shopify.
@@ -348,6 +352,8 @@ def debug_products():
 
 @products_bp.route('/add_product', methods=['POST'])
 @products_bp.route('/api/add_product', methods=['POST'])  # optional alias if frontend uses /api/add_product
+@products_bp.route('/create_product', methods=['POST'])  # legacy naming alias
+@products_bp.route('/api/create_product', methods=['POST'])
 def add_product():
     """
     Accepts JSON or form data to create a new product row.
@@ -582,6 +588,7 @@ def _detect_csv_type(csv_path):
     return None
 
 @products_bp.route('/delete_product', methods=['POST'])
+@products_bp.route('/api/delete_product', methods=['POST'])
 def delete_product():
     payload = request.get_json(silent=True) or request.form or {}
     identifier_field = payload.get("identifier_field") or "handle"
@@ -628,6 +635,7 @@ def delete_product():
     }), 200
 
 @products_bp.route('/bulk_delete_products', methods=['POST'])
+@products_bp.route('/api/bulk_delete_products', methods=['POST'])
 def bulk_delete_products():
     """Delete multiple products by their indices in the current CSV ordering.
 
@@ -659,6 +667,7 @@ def bulk_delete_products():
         return jsonify({"success": False, "message": "failed to save CSV", "details": str(e)}), 500
 
 @products_bp.route('/bulk_edit_products', methods=['POST'])
+@products_bp.route('/api/bulk_edit_products', methods=['POST'])
 def bulk_edit_products():
     """Apply a single field=value update across multiple product indices.
 

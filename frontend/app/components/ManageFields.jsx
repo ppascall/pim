@@ -20,6 +20,9 @@ const ManageFields = ({
       try {
         const res = await fetch(fetchEndpoint);
         const data = await res.json();
+        // Debug: log raw payload for diagnosing empty list issues
+        // Remove once verified
+        console.log('[ManageFields] fetched fields payload:', data);
         if (Array.isArray(data.fields)) {
           setFields(
             data.fields
@@ -260,7 +263,13 @@ const ManageFields = ({
             </form>
           </>
         ) : (
-          <p style={{ textAlign: 'center', marginTop: 24, color: '#888' }}>No field selected yet.</p>
+          <div style={{ textAlign: 'center', marginTop: 24, color: '#555' }}>
+            {fields.length === 0 ? (
+              <p>No fields found. Add one via the Add Field page or refresh categories from Shopify.</p>
+            ) : (
+              <p style={{ color: '#888' }}>No field selected yet.</p>
+            )}
+          </div>
         )}
 
         {status.message && (

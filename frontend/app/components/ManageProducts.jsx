@@ -169,7 +169,7 @@ const styles = {
 
 const ManageProducts = ({
   fetchEndpoint = '/api/products',
-  bulkDeleteEndpoint = 'api/bulk_delete_products',
+  bulkDeleteEndpoint = '/api/bulk_delete_products',
   bulkEditEndpoint = '/api/bulk_edit_products'
 }) => {
   const [products, setProducts] = useState([]);

@@ -63,6 +63,11 @@ def test_bulk_edit_and_delete_products(client):
     r = client.get("/products")
     prods = r.get_json()["products"]
     assert len(prods) >= 1
+
+    # alias endpoint
+    r_api = client.get("/api/products")
+    assert r_api.status_code == 200
+    assert "products" in r_api.get_json()
     # pick up to first two indices
     targets = list(range(min(2, len(prods))))
     # bulk edit vendor
@@ -82,6 +87,12 @@ def test_bulk_edit_and_delete_products(client):
         assert r_del.status_code == 200
     except StopIteration:
         pass
+
+    # API aliases
+    r_edit_api = client.post("/api/bulk_edit_products", json={"indices": [0], "field": "vendor", "value": "Alias"})
+    assert r_edit_api.status_code in (200, 400)  # 400 possible if no index 0
+    r_del_api = client.post("/api/bulk_delete_products", json={"indices": []})
+    assert r_del_api.status_code in (200, 400)
 
 
 def test_debug_endpoint(client):

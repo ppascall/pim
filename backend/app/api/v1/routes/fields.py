@@ -20,12 +20,25 @@ def get_fields():
 def update_field():
     payload = request.get_json(silent=True) or {}
     field_name = (payload.get('field_name') or '').strip()
-    if not field_name:
+    index_val = payload.get('index')
+    # We'll allow index-based updates even if field_name changes (rename use-case).
+    if not field_name and index_val is None:
         return jsonify({'success': False, 'message': 'field_name required'}), 400
 
     # load, upsert, save
     fields = load_fields()
+    # Attempt locate by name first
     idx = next((i for i, f in enumerate(fields) if (f.get('field_name') or '') == field_name), None)
+    original_idx = None
+    # If name not found and client passed index, use index for update (rename scenario)
+    if idx is None and index_val is not None:
+        try:
+            cand = int(index_val)
+            if 0 <= cand < len(fields):
+                original_idx = cand
+                idx = cand
+        except Exception:
+            pass
     # Decide category_type:
     # For new fields default to tag if the caller wants Shopify tag creation (as_tag flag, default True).
     # Existing fields preserve their category_type unless explicitly overridden.
@@ -52,7 +65,12 @@ def update_field():
     if is_new:
         fields.append(updated)
     else:
+        # Preserve any fields not supplied explicitly (e.g., category_type already handled above)
         fields[idx] = {**fields[idx], **updated}
+        # If this was a rename (original_idx determined and field_name changed), ensure we didn't duplicate
+        if original_idx is not None and original_idx != idx:
+            # This branch unlikely because we set idx=cand; kept for clarity
+            pass
 
     save_fields(fields)
     resp = {'success': True, 'field_name': field_name, 'category_type': category_type}
