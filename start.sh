@@ -7,6 +7,27 @@ BACKEND_PORT=5000
 FRONTEND_PORT="${PORT:-3000}"
 PIM_DATA_DIR="${PIM_DATA_DIR:-/tmp/pim_data}"
 
+# --- Frontend (Next.js) build first to minimize memory while backend is running ---
+cd frontend
+if command -v npm >/dev/null 2>&1; then
+  if [ -d ".next" ]; then
+    echo "Detected existing .next build; skipping build step."
+  else
+    echo "Installing frontend deps..."
+    npm install --no-audit --no-fund
+    echo "Building Next.js (reduced memory)..."
+    export NEXT_TELEMETRY_DISABLED=1
+    export NEXT_DISABLE_SOURCEMAPS=1
+    # Limit Node heap if platform enforces strict memory
+    export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=1024"
+    npm run build
+  fi
+else
+  echo "npm not found. Please ensure Node.js is available in this environment."
+  exit 1
+fi
+cd ..
+
 # --- Backend (Flask) ---
 # Resolve a Python interpreter (prefer $PY_BIN, then python3, then python)
 PY_BIN=${PY_BIN:-}
@@ -46,16 +67,7 @@ else
   "$PY" backend/app/api/v1/main.py &
 fi
 
-# --- Frontend (Next.js) ---
+# --- Frontend (Next.js) start ---
 cd frontend
-if command -v npm >/dev/null 2>&1; then
-  echo "Installing frontend deps..."
-  npm install --no-audit --no-fund
-  echo "Building Next.js..."
-  npm run build
-  echo "Starting Next.js on port ${FRONTEND_PORT} (proxies /api to ${BACKEND_HOST}:${BACKEND_PORT})"
-  npx next start -p "${FRONTEND_PORT}"
-else
-  echo "npm not found. Please ensure Node.js is available in this environment."
-  exit 1
-fi
+echo "Starting Next.js on port ${FRONTEND_PORT} (proxies /api to ${BACKEND_HOST}:${BACKEND_PORT})"
+npx next start -p "${FRONTEND_PORT}"
