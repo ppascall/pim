@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import { apiUrl } from "../lib/api";
 
-const API_BASE = "http://localhost:3000/api";
+const api = (path = "") => apiUrl(path || "/api");
 const PAGE_SIZE = 5;
 const PRODUCTS_PER_PAGE = 15;
 const CATEGORY_PAGE_SIZE = 4;
@@ -35,7 +36,7 @@ export default function UserDashboard() {
 
   // Fetch fields and products on mount
   useEffect(() => {
-    fetch(`${API_BASE}/fields`)
+    fetch(api("/api/fields"))
       .then(res => res.json())
       .then(data => setFields(data.fields ? data.fields : []));
     fetchProducts();
@@ -43,7 +44,7 @@ export default function UserDashboard() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${API_BASE}/products`);
+  const res = await fetch(api("/api/products"));
       const data = await res.json();
       setProducts(data.products || []);
     } catch {
@@ -57,7 +58,7 @@ export default function UserDashboard() {
     setSearching(true);
     setTimeout(async () => {
       try {
-        const res = await fetch(`${API_BASE}/products`);
+  const res = await fetch(api("/api/products"));
         const data = await res.json();
         const allProducts = data.products || [];
         const filtered = allProducts.filter(product =>
@@ -116,7 +117,7 @@ export default function UserDashboard() {
     if (!editProduct) return;
     try {
       const payload = { ...editFields };
-      const res = await fetch(`${API_BASE}/update_product`, {
+  const res = await fetch(api("/api/update_product"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -143,7 +144,7 @@ export default function UserDashboard() {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     setAddAnim(true);
-    const res = await fetch(`${API_BASE}/add_product`, {
+  const res = await fetch(api("/api/add_product"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(addForm),
