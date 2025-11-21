@@ -19,6 +19,7 @@ def create_app():
         # works when module is imported as a package
         from .routes.fields import fields_bp
         from .routes.products import products_bp
+        from .routes.auth import auth_bp
     except Exception:
         # fallback when running the file directly (python main.py)
         # ensure project root is on sys.path so "backend" package can be imported
@@ -29,11 +30,13 @@ def create_app():
             # try absolute package import now that project root is on sys.path
             from backend.app.api.v1.routes.fields import fields_bp
             from backend.app.api.v1.routes.products import products_bp
+            from backend.app.api.v1.routes.auth import auth_bp
         except Exception:
             # final fallback: import modules directly from file paths
             import importlib.util
             fields_path = os.path.join(BASE_DIR, 'routes', 'fields.py')
             products_path = os.path.join(BASE_DIR, 'routes', 'products.py')
+            auth_path = os.path.join(BASE_DIR, 'routes', 'auth.py')
             spec_f = importlib.util.spec_from_file_location('fields_mod', fields_path)
             fields_mod = importlib.util.module_from_spec(spec_f)
             spec_f.loader.exec_module(fields_mod)
@@ -44,10 +47,15 @@ def create_app():
 
             fields_bp = getattr(fields_mod, 'fields_bp')
             products_bp = getattr(products_mod, 'products_bp')
+            spec_a = importlib.util.spec_from_file_location('auth_mod', auth_path)
+            auth_mod = importlib.util.module_from_spec(spec_a)
+            spec_a.loader.exec_module(auth_mod)
+            auth_bp = getattr(auth_mod, 'auth_bp')
 
     # register blueprints (keep prefix '' to preserve existing routes)
     app.register_blueprint(fields_bp, url_prefix='')
     app.register_blueprint(products_bp, url_prefix='')
+    app.register_blueprint(auth_bp, url_prefix='')
 
     # simple health endpoint
     @app.route('/health', methods=['GET'])

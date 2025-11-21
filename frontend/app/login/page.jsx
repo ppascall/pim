@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiUrl } from "../lib/api";
 
-const API_BASE = "http://localhost:8000/api/v1";
+const LOGIN_ENDPOINT = "/api/login";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     setStatus({ message: "", color: "" });
     try {
-      const res = await fetch(`${API_BASE}/login`, {
+      const res = await fetch(apiUrl(LOGIN_ENDPOINT), {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ username: email, password }),

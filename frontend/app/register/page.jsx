@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { apiUrl } from "../lib/api";
 
-const API_BASE = "http://localhost:8000/api/v1";
+const REGISTER_ENDPOINT = "/api/register";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -14,7 +15,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setStatus({ message: "", color: "" });
     try {
-      const res = await fetch(`${API_BASE}/register`, {
+      const res = await fetch(apiUrl(REGISTER_ENDPOINT), {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ email, password }),
@@ -70,7 +71,7 @@ export default function RegisterPage() {
           }}
           onClick={() => router.push("/login")}
         >
-          Already have an account? Login8000
+          Already have an account? Login
         </span>
       </div>
       {status.message && (

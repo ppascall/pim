@@ -5,7 +5,9 @@ psycopg2-binary
 alembic
 pydantic
 python-dotenv
+passlib[bcrypt]
 flask
 flask-cors
 requests
 gunicorn
+python-jose[cryptography]
