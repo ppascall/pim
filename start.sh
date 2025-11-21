@@ -1,22 +1,24 @@
 #!/usr/bin/env bash
 set -euo pipefail
+echo "[start.sh] Starting entrypoint..."
 
 # --- Config ---
 BACKEND_HOST=127.0.0.1
 BACKEND_PORT=5000
 # Default to 8080 if PORT is not set by the platform
 FRONTEND_PORT="${PORT:-8080}"
+echo "[start.sh] PORT env: ${PORT:-<unset>} | FRONTEND_PORT=${FRONTEND_PORT}"
 PIM_DATA_DIR="${PIM_DATA_DIR:-/tmp/pim_data}"
 
 # --- Frontend (Next.js) build first to minimize memory while backend is running ---
 cd frontend
 if command -v npm >/dev/null 2>&1; then
   if [ -d ".next" ]; then
-    echo "Detected existing .next build; skipping build step."
+    echo "[start.sh] Detected existing .next build; skipping build step."
   else
-    echo "Installing frontend deps..."
+    echo "[start.sh] Installing frontend deps..."
     npm install --no-audit --no-fund
-    echo "Building Next.js (reduced memory)..."
+    echo "[start.sh] Building Next.js (reduced memory)..."
     export NEXT_TELEMETRY_DISABLED=1
     export NEXT_DISABLE_SOURCEMAPS=1
     # Limit Node heap if platform enforces strict memory
@@ -24,7 +26,7 @@ if command -v npm >/dev/null 2>&1; then
     npm run build
   fi
 else
-  echo "npm not found. Please ensure Node.js is available in this environment."
+  echo "[start.sh] npm not found. Please ensure Node.js is available in this environment."
   exit 1
 fi
 cd ..
@@ -58,17 +60,22 @@ mkdir -p "$PIM_DATA_DIR"
 
 # Prefer gunicorn; fallback to Flask dev server if not available
 if command -v gunicorn >/dev/null 2>&1; then
-  echo "Starting backend with gunicorn on ${BACKEND_HOST}:${BACKEND_PORT}"
+  echo "[start.sh] Starting backend with gunicorn on ${BACKEND_HOST}:${BACKEND_PORT}"
   gunicorn -w 2 -k gthread -b ${BACKEND_HOST}:${BACKEND_PORT} 'backend.app.api.v1.main:create_app()' &
 elif "$PY" -c "import gunicorn" >/dev/null 2>&1; then
-  echo "Starting backend with module gunicorn on ${BACKEND_HOST}:${BACKEND_PORT}"
+  echo "[start.sh] Starting backend with module gunicorn on ${BACKEND_HOST}:${BACKEND_PORT}"
   "$PY" -m gunicorn -w 2 -k gthread -b ${BACKEND_HOST}:${BACKEND_PORT} 'backend.app.api.v1.main:create_app()' &
 else
-  echo "gunicorn not found; starting Flask dev server (not recommended for prod)"
+  echo "[start.sh] gunicorn not found; starting Flask dev server (not recommended for prod)"
   "$PY" backend/app/api/v1/main.py &
 fi
 
 # --- Frontend (Next.js) start ---
 cd frontend
-echo "Starting Next.js on 0.0.0.0:${FRONTEND_PORT} (proxies /api to ${BACKEND_HOST}:${BACKEND_PORT})"
-npx next start -H 0.0.0.0 -p "${FRONTEND_PORT}"
+echo "[start.sh] Starting Next.js on 0.0.0.0:${FRONTEND_PORT} (proxies /api to ${BACKEND_HOST}:${BACKEND_PORT})"
+# Prefer project-local next binary if available
+if [ -x "node_modules/.bin/next" ]; then
+  ./node_modules/.bin/next start -H 0.0.0.0 -p "${FRONTEND_PORT}"
+else
+  npx next start -H 0.0.0.0 -p "${FRONTEND_PORT}"
+fi
