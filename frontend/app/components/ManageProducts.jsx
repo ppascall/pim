@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { apiUrl } from '../lib/api';
 
 const MAX_VISIBLE_FIELDS = 6;
@@ -288,14 +288,28 @@ const ManageProducts = ({
   };
 
   // Group fields by group property
-  const groupedFields = (() => {
+  const effectiveFields = useMemo(() => {
+    if (fields && fields.length) return fields;
+    if (products && products.length) {
+      const sample = products[0] || {};
+      return Object.keys(sample).map((key) => ({
+        field_name: key,
+        description: '',
+        required: 'False',
+        options: '',
+        group: 'Derived'
+      }));
+    }
+    return [];
+  }, [fields, products]);
+
+  const groupedFields = useMemo(() => {
     const groups = {};
-    fields.forEach((field) => {
+    effectiveFields.forEach((field) => {
       const group = field.group && field.group.trim() ? field.group.trim() : "Ungrouped";
       if (!groups[group]) groups[group] = [];
       groups[group].push(field);
     });
-    // Sort group names alphabetically, Ungrouped last
     const ordered = {};
     Object.keys(groups)
       .sort((a, b) => {
@@ -305,17 +319,17 @@ const ManageProducts = ({
       })
       .forEach((g) => (ordered[g] = groups[g]));
     return ordered;
-  })();
+  }, [effectiveFields]);
 
   const groupNames = ["All", ...Object.keys(groupedFields)];
   const [selectedGroup, setSelectedGroup] = useState("All");
 
-  // Only show fields from the selected group, or all fields if "All" is selected
   const allFields = Object.values(groupedFields).flat();
   const groupFields = selectedGroup === "All" ? allFields : (groupedFields[selectedGroup] || []);
   const visibleFields = groupFields.slice(fieldOffset, fieldOffset + MAX_VISIBLE_FIELDS);
   const canPrevField = fieldOffset > 0;
   const canNextField = fieldOffset + MAX_VISIBLE_FIELDS < groupFields.length;
+  const totalFieldCount = allFields.length;
 
   // Pagination for products
   const canPrevPage = page > 0;
@@ -361,10 +375,10 @@ const ManageProducts = ({
           ◀ Prev Fields
         </button>
         <span style={{ fontSize: 15, color: '#444' }}>
-          Fields {fieldOffset + 1} - {Math.min(fieldOffset + MAX_VISIBLE_FIELDS, fields.length)} of {fields.length}
+          Fields {totalFieldCount ? fieldOffset + 1 : 0} - {totalFieldCount ? Math.min(fieldOffset + MAX_VISIBLE_FIELDS, totalFieldCount) : 0} of {totalFieldCount}
         </span>
         <button
-          onClick={() => setFieldOffset(o => Math.min(fields.length - MAX_VISIBLE_FIELDS, o + MAX_VISIBLE_FIELDS))}
+          onClick={() => setFieldOffset(o => Math.min(Math.max(0, groupFields.length - MAX_VISIBLE_FIELDS), o + MAX_VISIBLE_FIELDS))}
           disabled={!canNextField}
           style={{
             ...styles.navButton,

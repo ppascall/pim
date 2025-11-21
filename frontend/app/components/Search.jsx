@@ -448,10 +448,9 @@ const SearchProducts = ({
     setEditProduct(product);
     setEditFields(mapped);
     setEditStatus({ message: "", color: "" });
-    const firstGroup = Object.keys(groupedFields || {})[0];
-    setExpandedGroups(firstGroup ? { [firstGroup]: true } : {});
-    setGroupPages({});
-    setEditModalOpen(true);
+  setExpandedGroups({});
+  setGroupPages({});
+  setEditModalOpen(true);
   };
 
   const closeEditModal = () => {
@@ -568,7 +567,7 @@ const SearchProducts = ({
   const handleGroupPage = (group, direction) => {
     setGroupPages((prev) => {
       const current = prev[group] || 0;
-      const total = groupedFields[group]?.length || 0;
+      const total = modalGroups[group]?.length || 0;
       const maxPage = Math.max(0, Math.ceil(total / CATEGORY_PAGE_SIZE) - 1);
       let next = current + direction;
       if (next < 0) next = 0;
