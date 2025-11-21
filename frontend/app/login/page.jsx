@@ -71,7 +71,7 @@ export default function LoginPage() {
           }}
           onClick={() => router.push("/register")}
         >
-          Don't have an account? Register
+          Don&apos;t have an account? Register
         </span>
       </div>
       {status.message && (

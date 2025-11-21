@@ -13,18 +13,19 @@ PIM_DATA_DIR="${PIM_DATA_DIR:-/tmp/pim_data}"
 # --- Frontend (Next.js) build first to minimize memory while backend is running ---
 cd frontend
 if command -v npm >/dev/null 2>&1; then
-  if [ -d ".next" ]; then
-    echo "[start.sh] Detected existing .next build; skipping build step."
-  else
+  if [ ! -d "node_modules" ]; then
     echo "[start.sh] Installing frontend deps..."
     npm install --no-audit --no-fund
-    echo "[start.sh] Building Next.js (reduced memory)..."
-    export NEXT_TELEMETRY_DISABLED=1
-    export NEXT_DISABLE_SOURCEMAPS=1
-    # Limit Node heap if platform enforces strict memory
-    export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=1024"
-    npm run build
+  else
+    echo "[start.sh] Using cached node_modules"
   fi
+  echo "[start.sh] Building Next.js (fresh build each start)..."
+  export NEXT_TELEMETRY_DISABLED=1
+  export NEXT_DISABLE_SOURCEMAPS=1
+  # Limit Node heap if platform enforces strict memory
+  export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=1024"
+  rm -rf .next
+  npm run build
 else
   echo "[start.sh] npm not found. Please ensure Node.js is available in this environment."
   exit 1
