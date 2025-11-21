@@ -1,5 +1,6 @@
 import os
 import csv
+import shutil
 from pathlib import Path
 from typing import Optional
 
@@ -19,11 +20,31 @@ def _data_dir() -> Path:
             pass
     return V1_DIR
 
+def _get_csv_path(filename: str) -> Path:
+    """Return path under data dir, seeding from template if missing."""
+    path = _data_dir() / filename
+    if not path.exists():
+        template = V1_DIR / filename
+        try:
+            if template.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(template, path)
+            else:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.touch()
+        except Exception:
+            # If copy fails, ensure file exists to avoid repeated attempts
+            try:
+                path.touch(exist_ok=True)
+            except Exception:
+                pass
+    return path
+
 def get_categories_csv_path():
-    return _data_dir() / "categories.csv"
+    return _get_csv_path("categories.csv")
 
 def get_products_csv_path():
-    return _data_dir() / "products.csv"
+    return _get_csv_path("products.csv")
 
 def _safe_str(v):
     return '' if v is None else str(v)
