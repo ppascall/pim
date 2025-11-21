@@ -19,13 +19,19 @@ if command -v npm >/dev/null 2>&1; then
   else
     echo "[start.sh] Using cached node_modules"
   fi
-  echo "[start.sh] Building Next.js (fresh build each start)..."
-  export NEXT_TELEMETRY_DISABLED=1
-  export NEXT_DISABLE_SOURCEMAPS=1
-  # Limit Node heap if platform enforces strict memory
-  export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=1024"
-  rm -rf .next
-  npm run build
+
+  FORCE_FRONTEND_BUILD=${FORCE_FRONTEND_BUILD:-0}
+  if [ -d ".next" ] && [ "$FORCE_FRONTEND_BUILD" != "1" ]; then
+    echo "[start.sh] Detected existing .next build; re-use. Set FORCE_FRONTEND_BUILD=1 to rebuild."
+  else
+    echo "[start.sh] Building Next.js (forcing new build)..."
+    export NEXT_TELEMETRY_DISABLED=1
+    export NEXT_DISABLE_SOURCEMAPS=1
+    # Limit Node heap if platform enforces strict memory
+    export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=1024"
+    rm -rf .next
+    npm run build
+  fi
 else
   echo "[start.sh] npm not found. Please ensure Node.js is available in this environment."
   exit 1
